@@ -8,6 +8,9 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        delius: ["Delius", "serif"]   
+      },
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",

@@ -1,9 +1,18 @@
 
-
+import Link from "next/link"
 export default function Home() {
   return (
     <div>
-      WElcome boys
+     
+      <Link href="/dashboard">GET STARTED(CLICK ME)</Link>
+      <br />
+      <Link href="/login">Log in here(CLICK ME)</Link>
+      <br />
+      <span>or</span>
+      <br />
+      <Link href="/signup">Sign Up(CLICK ME)</Link>
+      
+     
     </div>
   );
 }

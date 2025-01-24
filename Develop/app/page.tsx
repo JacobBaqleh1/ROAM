@@ -1,5 +1,5 @@
-
 import Link from "next/link"
+
 export default function Home() {
   return (
     <div>
@@ -11,8 +11,8 @@ export default function Home() {
       <span>or</span>
       <br />
       <Link href="/signup">Sign Up(CLICK ME)</Link>
-      
-     
+      <br />
+     WHATS UP BOYSSSSSS!!!!!!!! HEY     yoooo!!!
     </div>
   );
 }

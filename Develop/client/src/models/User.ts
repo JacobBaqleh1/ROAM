@@ -1,8 +1,9 @@
-import type { Book } from './Book';
+// import type { Park } from './Park.js';
 
-export interface User {
-  username: string | null;
-  email: string | null;
-  password: string | null;
-  savedBooks: Book[];
+export interface Park {
+  parkId: string;
+  fullName: string;
+  state: string;
+  description: string;
+  images: string[]; // Changed from image: string to images: string[]
 }

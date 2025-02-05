@@ -20,8 +20,8 @@ export const ADD_USER = gql`
       _id
     }
     token
+    }
   }
-}
 `;
 
 export const ADD_REVIEW = gql`
@@ -36,15 +36,15 @@ export const ADD_REVIEW = gql`
       createdAt
     }
   }
-`;
+`;  
 
 export const UPDATE_REVIEW = gql`
-  mutation UpdateReview($reviewId: ID!, $content: String!) {
-    updateReview(reviewId: $reviewId, content: $content) {
-      _id
-      content
-    }
+mutation UpdateReview($reviewId: ID!, $content: String!) {
+  updateReview(reviewId: $reviewId, content: $content) {
+    _id
+    content
   }
+}
 `;
 
 export const DELETE_REVIEW = gql`
@@ -54,5 +54,50 @@ export const DELETE_REVIEW = gql`
     }
   }
 `;
+
+
+export const SAVE_PARK = gql`
+  mutation SavePark($input: ParkInput!) {
+    savePark(input: $input) {
+      _id
+      savedParks {
+        parkId
+        fullName
+        description
+        location
+        states
+        images {
+      credit
+      title
+      altText
+      caption
+      url
+    }
+      }
+    }
+  }
+`;
+
+export const UPDATE_PARK = gql`
+  mutation UpdatePark($id: ID!, $input: UpdateParkInput!) {
+    updatePark(id: $id, input: $input) {
+      _id
+      name
+      state
+      description
+      image
+    }
+  }
+`;
+
+export const DELETE_PARK = gql`
+  mutation DeletePark($id: ID!) {
+    deletePark(id: $id) {
+      _id
+      name
+    }
+  }
+  `;
+
 
 

@@ -6,34 +6,10 @@ import { Link } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
 import { SAVE_PARK } from '../utils/mutations';
 
-
-// Utility functions for localStorage
-// const getSavedParks = () => {
-//   return JSON.parse(localStorage.getItem('saved_parks') || '[]');
-// };
-
-// const savePark = (park: any) => {
-//   const savedParks = getSavedParks();
-//   if (!savedParks.find((p: any) => p.id === park.id)) {
-//     const updatedParks = [...savedParks, park];
-//     localStorage.setItem('saved_parks', JSON.stringify(updatedParks));
-//   }
-// };
-
-// const removePark = (parkId: string) => {
-//   const savedParks = getSavedParks().filter((p: any) => p.id !== parkId);
-//   localStorage.setItem('saved_parks', JSON.stringify(savedParks));
-// };
-
 const SearchParks = () => {
   const [searchedParks, setSearchedParks] = useState<any[]>([]);
   const [searchInput, setSearchInput] = useState('');
-  // const [savedParks, setSavedParks] = useState(getSavedParks());
   const [saveParkMutation] = useMutation(SAVE_PARK);
-
-  // useEffect(() => {
-  //   setSavedParks(getSavedParks());
-  // }, []);
 
   const handleFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -51,17 +27,22 @@ const SearchParks = () => {
     }
   };
 
-  const handleToggleSavePark = async (park: any) => {
+  const handleSavePark = async (park: any) => {
     try {
-      // Here you can call the mutation to save the park for the logged-in user
       await saveParkMutation({
         variables: {
           input: {
             parkId: park.id,
             fullName: park.fullName,
             description: park.description,
-            location: park.states,
-            images: park.images,
+            states: park.states,
+            images: park.images?.map((image: any) => ({
+              credit: image.credit,
+              title: image.title,
+              altText: image.altText,
+              caption: image.caption,
+              url: image.url,
+            })) || [],
           },
         },
       });
@@ -71,7 +52,7 @@ const SearchParks = () => {
     }
   };
 
-   return (
+  return (
     <>
       <div className="text-light bg-dark p-5">
         <Container>
@@ -103,34 +84,30 @@ const SearchParks = () => {
           {searchedParks.length ? `Viewing ${searchedParks.length} results:` : 'Enter your location to begin'}
         </h2>
         <Row>
-          {searchedParks.map((park) => {
-            return (
-              <Col md="4" key={park.id}>
-                <Card border='dark'>
-                  {park.images?.length > 0 && (
-                    <Card.Img src={park.images[0].url} alt={`Image of ${park.fullName}`} variant='top' />
-                  )}
-                  <Card.Body>
-                    <Card.Title>{park.fullName}</Card.Title>
-                    <p className='small'>Location: {park.states}</p>
-                    <Card.Text>{park.description}</Card.Text>
-                    <Link to={`/park/${park.id}`}>
-                      <Button className='btn-block btn-info'>View More Details</Button>
-                    </Link>
-                    <Button className='btn-block btn-info'>
-                      View On Map
-                    </Button>
-                    <Button
-                      className='btn-block btn-success'
-                      onClick={() => handleToggleSavePark(park)}
-                    >
-                      Add to Travel List
-                    </Button>
-                  </Card.Body>
-                </Card>
-              </Col>
-            );
-          })}
+          {searchedParks.map((park) => (
+            <Col md="4" key={park.id}>
+              <Card border='dark'>
+                {park.images?.length > 0 && (
+                  <Card.Img src={park.images[0].url} alt={`Image of ${park.fullName}`} variant='top' />
+                )}
+                <Card.Body>
+                  <Card.Title>{park.fullName}</Card.Title>
+                  <p className='small'>Location: {park.states}</p>
+                  <Card.Text>{park.description}</Card.Text>
+                  <Link to={`/park/${park.id}`}>
+                    <Button className='btn-block btn-info'>View More Details</Button>
+                  </Link>
+                  <Button className='btn-block btn-info'>View On Map</Button>
+                  <Button
+                    className='btn-block btn-success'
+                    onClick={() => handleSavePark(park)}
+                  >
+                    Add to Travel List
+                  </Button>
+                </Card.Body>
+              </Card>
+            </Col>
+          ))}
         </Row>
       </Container>
     </>

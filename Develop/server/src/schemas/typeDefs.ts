@@ -46,6 +46,7 @@ type Image {
     me: User
     getParkReviews(parkId: String!): [Review]
     getSavedParks: [Park]
+      getUserReviews: [Review]
   }
 
 input AddUserInput {
@@ -71,8 +72,7 @@ input ParkInput {
   parkId: String!
     fullName: String!
     description: String
-    location: String
-    state: String
+    states: String
     images: [ImageInput]
   }
 

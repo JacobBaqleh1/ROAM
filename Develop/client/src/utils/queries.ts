@@ -71,3 +71,18 @@ export const QUERY_SAVED_PARKS = gql`
     }
   }
 `;
+
+
+
+export const QUERY_USER_REVIEWS = gql`
+  query GetUserReviews {
+    getUserReviews {
+      _id
+      parkId
+      username
+      comment
+      rating
+      createdAt
+    }
+  }
+`;

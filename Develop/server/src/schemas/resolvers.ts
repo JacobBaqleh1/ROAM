@@ -1,3 +1,4 @@
+import { Types } from 'mongoose';
 import {User, Review} from '../models/index.js'
 
 import {signToken, AuthenticationError} from '../utils/auth.js';
@@ -19,11 +20,11 @@ interface LoginUserArgs {
   email: string;
   password: string;
 }
-interface ParkArgs {
-    input: {
-        parkId: string;
-    };
-}
+// interface ParkArgs {
+//     input: {
+//         parkId: string;
+//     };
+// }
 
 interface ReviewArgs {
   parkId: string;
@@ -57,6 +58,22 @@ const resolvers = {
       }
       throw new AuthenticationError('could not authenticate user.');
     },
+    //get one persons reviews only
+    getUserReviews: async (_parent: any, _args: any, context: any) => {
+  if (!context.user) {
+    throw new AuthenticationError('You need to be logged in.');
+  }
+
+  const reviews = await Review.find({ userId: context.user._id }).sort({ createdAt: -1 });
+
+  return reviews.map(review => ({
+    ...review.toObject(),
+    comment: review.comment || "No review content available.",
+    rating: review.rating,
+    createdAt: review.createdAt
+  }));
+},
+
      // Get all reviews for a specific park
      getParkReviews: async (_parent: any, { parkId }: ReviewArgs) => {
   const reviews = await Review.find({ parkId }).sort({ createdAt: -1 });
@@ -104,40 +121,55 @@ const resolvers = {
             return {token, user}
         },
 
-        savePark: async (_parent: any, { input }: ParkArgs, context: any) => {
-            if (!context.user) {
-                throw new AuthenticationError('You need to be logged in');
-            }
-            const updatedUser = await User.findOneAndUpdate(
-                { _id: context.user._id },
-                {
-                    $push: { savedParks: input }
+         savePark: async (_: any, { input }: any, context: any) => {
+  if (!context.user) {
+    throw new AuthenticationError('You need to be logged in!');
+  }
 
-                },
-                { new: true }
-            ).populate('savedParks');
+  const user = await User.findById(context.user._id);
+  if (!user) {
+    throw new AuthenticationError('User not found.');
+  }
 
-            return updatedUser;
-        },
-        removePark: async (_parent: any, { parkId }: { parkId: string }, context: any) => {
-            if (!context.user) {
-                throw new AuthenticationError('You need to be logged in');
-            }
-            if (!parkId) {
-                throw new Error('parkId is undefined');
-            }
-            try {
-                const updatedUser = await User.findOneAndUpdate(
-                    { _id: context.user._id },
-                    { $pull: { savedParks: { parkId: parkId } } },
-                    { new: true }
-                ).populate('savedParks');
-                return updatedUser;
-            } catch (error) {
-                console.error('Error removing park:', error);
-                throw new Error('Failed to remove park');
-            }
-        },
+  if (!input) {
+    throw new Error('Invalid park data.');
+  }
+  
+  if (!input.parkId) {
+    throw new Error('Invalid park id.');
+  }
+
+  // Check if the park is already saved
+  const parkExists = user.savedParks.some((savedPark) => savedPark.parkId === input.parkId);
+  if (!parkExists) {
+    const newPark: any = {
+  parkId: input.parkId,
+  fullName: input.fullName,
+  description: input.description,
+  states: input.states,
+  images: input.images || [],
+  _id: new Types.ObjectId(), // Generate an ObjectId if required
+};
+
+    user.savedParks.push(newPark);
+    await user.save();
+  }
+
+  return user;
+},
+       removePark: async (_:any, { parkId }:any, context:any) => {
+      if (!context.user) {
+        throw new AuthenticationError('You need to be logged in!');
+      }
+
+      const user = await User.findByIdAndUpdate(
+        context.user._id,
+        { $pull: { savedParks: { parkId } } },
+        { new: true }
+      );
+
+      return user;
+    },
         addReview: async (_parent: any, { input }: AddReviewArgs, context: any) => {
           if (!context.user) {
             throw new AuthenticationError('You need to be logged in.');

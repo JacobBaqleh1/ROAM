@@ -23,6 +23,7 @@ const AppNavbar = () => {
             {/* if user is logged in show saved parks and logout */}
             {Auth.loggedIn() ? (
               <>
+              <Link to="/my-reviews" className="mx-2">My Reviews</Link>
                 <Link to="/saved" className="text-white hover:text-gray-400">
                   See Your Parks
                 </Link>

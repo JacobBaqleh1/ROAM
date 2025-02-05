@@ -39,10 +39,10 @@ export const ADD_REVIEW = gql`
 `;  
 
 export const UPDATE_REVIEW = gql`
-mutation UpdateReview($reviewId: ID!, $content: String!) {
-  updateReview(reviewId: $reviewId, content: $content) {
+mutation UpdateReview($reviewId: ID!, $comment: String!) {
+  updateReview(reviewId: $reviewId, comment: $comment) {
     _id
-    content
+    comment
   }
 }
 `;
@@ -51,6 +51,7 @@ export const DELETE_REVIEW = gql`
   mutation DeleteReview($reviewId: ID!) {
     deleteReview(reviewId: $reviewId) {
       _id
+      comment
     }
   }
 `;
@@ -64,7 +65,6 @@ export const SAVE_PARK = gql`
         parkId
         fullName
         description
-        location
         states
         images {
       credit
@@ -78,23 +78,14 @@ export const SAVE_PARK = gql`
   }
 `;
 
-export const UPDATE_PARK = gql`
-  mutation UpdatePark($id: ID!, $input: UpdateParkInput!) {
-    updatePark(id: $id, input: $input) {
-      _id
-      name
-      state
-      description
-      image
-    }
-  }
-`;
 
 export const DELETE_PARK = gql`
   mutation DeletePark($id: ID!) {
     deletePark(id: $id) {
       _id
-      name
+      savedParks {
+        parkId
+      }
     }
   }
   `;

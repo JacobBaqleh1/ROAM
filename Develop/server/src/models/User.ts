@@ -3,10 +3,19 @@ import bcrypt from 'bcrypt';
 
 
 export interface ParkDocument extends Document {
-  parkId: string;
-  name: string;
-  location: string;
+   parkId: string;
+  fullName: string;
+  images: {
+    url: string;
+    title?: string;
+    altText?: string;
+    caption?: string;
+    credit?: string;
+  }[];
+  description: string;
+  states: string;
 }
+
 export interface UserDocument extends Document {
   id: string;
   username: string;
@@ -14,16 +23,33 @@ export interface UserDocument extends Document {
   password: string;
   savedParks: ParkDocument[];
   isCorrectPassword(password: string): Promise<boolean>;
-  bookCount: number;
+  parkCount: number;
 }
+
+const imageSchema = new Schema({
+  url: { type: String, required: true },
+  title: String,
+  altText: String,
+  caption: String,
+  credit: String
+});
+
 const savedParkSchema = new Schema(
   {
   parkId: {
      type: String,
       required: true 
     },
-  name: String,
-  location: String,
+  fullName: String,
+  description: {
+      type: String,
+      required: false, // Optional; change to true if you want to make it mandatory
+    },
+ images: [imageSchema],
+
+  states: {
+    type: String
+  }
   }
 );
 

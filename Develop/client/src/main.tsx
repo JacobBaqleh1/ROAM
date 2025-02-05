@@ -6,6 +6,7 @@ import App from './App.jsx'
 import SearchParks from './pages/SearchParks.js'
 import SavedParks from './pages/SavedParks.js'
 import ParkInfo from './pages/ParkInfo.js'
+import MyReviews from './pages/MyReviews.js';
 
 const router = createBrowserRouter([
   {
@@ -23,6 +24,11 @@ const router = createBrowserRouter([
       , {
         path: '/park/:id',
         element: <ParkInfo  />
+      }
+      ,
+      {
+        path: '/my-reviews', 
+        element: <MyReviews />
       }
     ]
   }

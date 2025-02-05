@@ -4,14 +4,14 @@ import { useEffect, useState } from 'react';
 import { fetchParkById } from '../utils/API';
 import { QUERY_PARK_REVIEWS } from '../utils/queries';
 import LeaveReviewForm from '../components/LeaveReviewForm';
-import ReviewItem from '../components/ReviewItem';
-import  {useAuth} from '../utils/useAuth'
+// import ReviewItem from '../components/ReviewItem';
+// import  {useAuth} from '../utils/useAuth'
 
 const ParkInfo = () => {
   const { id } = useParams();
   const [park, setPark] = useState<any>(null);
 const [showReviewForm, setShowReviewForm] = useState(false);
-const { user } = useAuth();  // Access the logged-in user
+// const { user } = useAuth();  // Access the logged-in user
   useEffect(() => {
  console.log("Current park ID:", id);
     if (!id) return;

@@ -1,38 +1,55 @@
 import { gql } from '@apollo/client';
 
 export const QUERY_USER = gql`
-query User($username: String!) {
-  user(username: $username) {
-    username
-    _id
-    email
-    savedBooks {
-      authors
-      bookId
-      description
-      image
-      link
-      title
+  query User($username: String!) {
+    user(username: $username) {
+      _id
+      username
+      email
+      savedParks {
+        parkId
+        fullName
+        description
+        images {
+          url
+          altText
+        }
+        states
+      }
     }
   }
-}`;
-
+`;
 
 export const QUERY_ME = gql`
-  query me {
+  query Me {
     me {
-    _id
-    email
-    savedBooks {
-      authors
-      bookId
-      description
-      image
-      link
-      title
+      _id
+      username
+      email
+      savedParks {
+        parkId
+        fullName
+        description
+        images {
+          url
+          altText
+        }
+        states
+      }
     }
-    username
   }
+`;
 
+export const QUERY_PARK_REVIEWS = gql`
+  query GetParkReviews($parkId: String!) {
+    getParkReviews(parkId: $parkId) {
+      _id
+      parkId
+      userId
+      username
+      comment
+      rating
+      createdAt
+    }
   }
 `;

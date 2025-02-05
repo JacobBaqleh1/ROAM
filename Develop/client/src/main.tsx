@@ -3,8 +3,8 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import { AuthProvider } from './utils/useAuth.js';
 import App from './App.jsx'
-import SearchBooks from './pages/SearchParks.js'
-// import SavedBooks from './pages/SavedBooks'
+import SearchParks from './pages/SearchParks.js'
+import SavedParks from './pages/SavedParks.js'
 import ParkInfo from './pages/ParkInfo.js'
 
 const router = createBrowserRouter([
@@ -15,14 +15,12 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <SearchBooks />
-      }, 
-      // {
-      //   path: '/saved',
-      //   element: <SavedBooks />
-      // }
-      // ,
-      {
+        element: <SearchParks />
+      }, {
+        path: '/saved',
+        element: <SavedParks />
+      }
+      , {
         path: '/park/:id',
         element: <ParkInfo  />
       }

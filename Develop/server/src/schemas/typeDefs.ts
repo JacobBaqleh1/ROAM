@@ -5,7 +5,7 @@ const typeDefs = `
     _id: ID
     username: String!
     email: String!
-     savedParks: [String] # Array of saved park IDs
+     savedParks: [Park] # Array of saved park IDs
     
   }
 
@@ -19,17 +19,33 @@ const typeDefs = `
   createdAt: String!
 }
 
+type Image {
+  credit: String
+  title: String
+  altText: String
+  caption: String
+  url: String
+}
 
+ type Park {
+    parkId: String!
+    fullName: String!
+    description: String
+    location: String
+    images: [Image]
+    states: String
+  }
+    
   type Auth {
     token: ID!
     user: User
   }
 
-
   type Query {
     user(username: String!): User
     me: User
     getParkReviews(parkId: String!): [Review]
+    getSavedParks: [Park]
   }
 
 input AddUserInput {
@@ -43,6 +59,22 @@ input AddReviewInput {
   comment: String!
   rating: Int
 }
+  input ImageInput {
+  credit: String
+  title: String
+  altText: String
+  caption: String
+  url: String
+}
+
+input ParkInput {
+  parkId: String!
+    fullName: String!
+    description: String
+    location: String
+    state: String
+    images: [ImageInput]
+  }
 
 type Mutation {
   addUser(input: AddUserInput!): Auth
@@ -50,7 +82,12 @@ type Mutation {
   addReview(input: AddReviewInput!): Review
   updateReview(reviewId: ID!, comment: String!): Review
   deleteReview(reviewId: ID!): Review
+  savePark(input: ParkInput!): User
+  removePark(parkId: String!): User
 }
 `;
+
+
+
 
 export default typeDefs;

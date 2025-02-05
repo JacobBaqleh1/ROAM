@@ -17,8 +17,9 @@ export const QUERY_USER = gql`
         states
       }
     }
-  }
-`;
+}`;
+
+
 
 export const QUERY_ME = gql`
   query Me {
@@ -50,6 +51,23 @@ export const QUERY_PARK_REVIEWS = gql`
       comment
       rating
       createdAt
+    }
+}`;
+
+export const QUERY_SAVED_PARKS = gql`
+  query GetSavedParks {
+    getSavedParks {
+      parkId
+      fullName
+      description
+      images {
+        url
+        altText
+        credit
+        title
+        caption
+      }
+      states
     }
   }
 `;

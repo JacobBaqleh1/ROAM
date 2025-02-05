@@ -11,8 +11,13 @@ const seedDatabase = async () => {
   try {
      await db(); // Await the connection
 
-    console.log('Database connected!');
+     console.log('Database connected!');
 
+     // Clear the collections
+     await User.deleteMany({});
+     await Review.deleteMany({});
+ 
+     console.log('Collections cleared!');
     
 
     const users = await User.insertMany([

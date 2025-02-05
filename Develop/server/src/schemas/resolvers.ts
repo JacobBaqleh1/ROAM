@@ -1,27 +1,44 @@
-import {User} from '../models/index.js'
+import {User, Review} from '../models/index.js'
 
 import {signToken, AuthenticationError} from '../utils/auth.js';
 console.log('jacob wz here')
 
 interface UserArgs {
-    username: string;
+  username: string;
 }
+
 interface AddUserArgs {
-    input:{
-        username:string,
-        email: string,
-        password:string;
-    }
+  input: {
+    username: string;
+    email: string;
+    password: string;
+  };
 }
-interface LoginUserArgs{
-    email:string,
-    password:string;
+
+interface LoginUserArgs {
+  email: string;
+  password: string;
 }
-// interface BookArgs{
-//     input: {
-//         bookId:string 
-//     }
-// }
+
+interface ReviewArgs {
+  parkId: string;
+}
+
+interface AddReviewArgs {
+  input: {
+    parkId: string;
+    comment: string;
+  };
+}
+
+interface UpdateReviewArgs {
+  reviewId: string;
+  comment: string;
+}
+
+interface DeleteReviewArgs {
+  reviewId: string;
+}
 
 
 const resolvers = {
@@ -36,9 +53,17 @@ const resolvers = {
       throw new AuthenticationError('could not authenticate user.');
     },
      // Get all reviews for a specific park
-    // getParkReviews: async (_parent: any, { parkId }:any) => {
-    //   return await Review.find({ parkId }).sort({ createdAt: -1 });
-    // },
+     getParkReviews: async (_parent: any, { parkId }: ReviewArgs) => {
+  const reviews = await Review.find({ parkId }).sort({ createdAt: -1 });
+  
+
+  return reviews.map(review => ({
+    ...review.toObject(),
+    comment: review.comment || "No review content available.", // Ensure comment is never null
+     rating: review.rating,
+    createdAt: review.createdAt
+  }));
+},
     },
     Mutation: {
         addUser: async(_parent: any, {input}: AddUserArgs) => {
@@ -55,56 +80,60 @@ const resolvers = {
             }
             const correctPw = await  user.isCorrectPassword(password);
             if(!correctPw){
-                throw new AuthenticationError('could not authenticate usre.')
+                throw new AuthenticationError('could not authenticate user.')
             }
             const token = signToken(user.username, user.email, user._id);
             return {token, user}
         },
-        //   saveBook: async (_parent: any, { input }: BookArgs, context: any) => {
-        //     // Check if the user is authenticated
-        //     if (!context.user) {
-        //         throw new AuthenticationError('You need to be logged in');
-        //     }
-
-        //     // Find and update the user, adding the book to their savedBooks
-        //     const updatedUser = await User.findOneAndUpdate(
-        //         { _id: context.user._id }, // Find the authenticated user
-        //         {
-        //             $addToSet: { // Prevent duplicate books
-        //                 savedBooks: input, // Add the book directly
-        //             },
-        //         },
-        //         { new: true } // Return the updated user document
-        //     ).populate('savedBooks'); // Optional: Populate savedBooks if they're references
-
-        //     // Return the updated user with the newly saved book
-        //     return updatedUser;
-        // },
-  //  removeBook: async (_parent: any, { bookId }: { bookId: string }, context: any) => {
-  //     if (!context.user) {
-  //       throw new AuthenticationError('You need to be logged in');
-  //     }
-  //     console.log('Context user:', context.user);
-  //     console.log('Removing book with ID:', bookId);
-  //     if (!bookId) {
-  //       throw new Error('bookId is undefined');
-  //     }
-  //     try {
-           
-
-
-  //       const updatedUser = await User.findOneAndUpdate(
-  //         { _id: context.user._id },
-  //         { $pull: { savedBooks: { bookId: bookId } } },
-  //         { new: true }
-  //       ).populate('savedBooks');
-  //       console.log('Updated user after removing book:', updatedUser);
-  //       return updatedUser;
-  //     } catch (error) {
-  //       console.error('Error removing book:', error);
-  //       throw new Error('Failed to remove book');
-  //     }
-  //   },
+          addReview: async (_parent: any, { input }: AddReviewArgs, context: any) => {
+      if (!context.user) {
+        throw new AuthenticationError('You need to be logged in.');
+      }
+      const review = await Review.create({
+        ...input,
+          parkId: input.parkId,
+    comment: input.comment, 
+        userId: context.user._id,
+        username: context.user.username,
+      });
+        return {
+    ...review.toObject(),
+    comment: review.comment // Ensure returned field is `content`
+  };
+    },
+        updateReview: async (_parent: any, { reviewId, comment }: UpdateReviewArgs, context: any) => {
+      if (!context.user) {
+        throw new AuthenticationError('You need to be logged in.');
+      }
+      const review = await Review.findOneAndUpdate(
+        { _id: reviewId, userId: context.user._id },
+        { comment:comment },
+        { new: true }
+      );
+      if (!review) {
+        throw new Error('Review not found or unauthorized.');
+      }
+        return {
+    ...review.toObject(),
+    comment: review.comment // Ensure returned field is `content`
+  };
+    },
+    deleteReview: async (_parent: any, { reviewId }: DeleteReviewArgs, context: any) => {
+      if (!context.user) {
+        throw new AuthenticationError('You need to be logged in.');
+      }
+      const review = await Review.findOneAndDelete({
+        _id: reviewId,
+        userId: context.user._id,
+      });
+      if (!review) {
+        throw new Error('Review not found or unauthorized.');
+      }
+        return {
+    ...review.toObject(),
+    comment: review.comment // Ensure returned field is `content`
+  };
+    },
     },
 
     }

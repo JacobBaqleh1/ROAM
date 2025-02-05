@@ -1,10 +1,10 @@
 import ReactDOM from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import 'bootstrap/dist/css/bootstrap.min.css'
-
+import { AuthProvider } from './utils/useAuth.js';
 import App from './App.jsx'
 import SearchBooks from './pages/SearchParks.js'
-import SavedBooks from './pages/SavedBooks'
+// import SavedBooks from './pages/SavedBooks'
 import ParkInfo from './pages/ParkInfo.js'
 
 const router = createBrowserRouter([
@@ -16,11 +16,13 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <SearchBooks />
-      }, {
-        path: '/saved',
-        element: <SavedBooks />
-      }
-      , {
+      }, 
+      // {
+      //   path: '/saved',
+      //   element: <SavedBooks />
+      // }
+      // ,
+      {
         path: '/park/:id',
         element: <ParkInfo  />
       }
@@ -29,5 +31,7 @@ const router = createBrowserRouter([
 ])
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
+   <AuthProvider>
   <RouterProvider router={router} />
+  </AuthProvider>
 )

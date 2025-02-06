@@ -11,28 +11,46 @@ const AppNavbar = () => {
 
   return (
     <>
-      <nav className="bg-gray-800 p-4">
+      <nav className="bg-black p-4">
         <div className="container mx-auto flex justify-between items-center">
-          <Link to="/" className="text-white text-2xl font-semibold">
-            ROAM
+          <Link to="/" className="flex items-center space-x-4 no-underline">
+
+            <span className="text-white text-2xl font-semibold border-b-2 border-white no-underline">ROAM</span>
           </Link>
           <div className="flex space-x-6">
-            <Link to="/" className="text-white hover:text-gray-400">
+            <Link 
+              to="/" 
+              className="text-white px-2 py-1 rounded hover:bg-yellow-500 hover:text-gray-800 transition-colors duration-200"
+            >
               Search National Parks
             </Link>
             {/* if user is logged in show saved parks and logout */}
             {Auth.loggedIn() ? (
               <>
-              <Link to="/my-reviews" className="mx-2">My Reviews</Link>
-                <Link to="/saved" className="text-white hover:text-gray-400">
+                <Link 
+                  to="/my-reviews" 
+                  className="text-white mx-2 px-2 py-1 rounded hover:bg-yellow-500 hover:text-gray-800 transition-colors duration-200"
+                >
+                  My Reviews
+                </Link>
+                <Link 
+                  to="/saved" 
+                  className="text-white px-2 py-1 rounded hover:bg-yellow-500 hover:text-gray-800 transition-colors duration-200"
+                >
                   See Your Parks
                 </Link>
-                <button onClick={Auth.logout} className="text-white hover:text-gray-400">
+                <button 
+                  onClick={Auth.logout} 
+                  className="text-white px-2 py-1 rounded hover:bg-yellow-500 hover:text-gray-800 transition-colors duration-200"
+                >
                   Logout
                 </button>
               </>
             ) : (
-              <button onClick={() => setShowModal(true)} className="text-white hover:text-gray-400">
+              <button 
+                onClick={() => setShowModal(true)} 
+                className="text-white px-2 py-1 rounded hover:bg-yellow-500 hover:text-gray-800 transition-colors duration-200"
+              >
                 Login/Sign Up
               </button>
             )}

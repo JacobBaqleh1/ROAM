@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useMutation } from '@apollo/client';
 import { ADD_REVIEW } from '../utils/mutations'; // Import the mutation
-import { QUERY_PARK_REVIEWS } from '../utils/queries'; // Ensure the UI updates after submission
+import { QUERY_PARK_REVIEWS, QUERY_USER_REVIEWS } from '../utils/queries'; // Ensure the UI updates after submission
 
 
 const LeaveReviewForm = ({ parkId, onClose }: { parkId: string; onClose: () => void }) => {
@@ -10,7 +10,9 @@ const LeaveReviewForm = ({ parkId, onClose }: { parkId: string; onClose: () => v
 
    // Apollo Client mutation hook
   const [addReview, { loading, error }] = useMutation(ADD_REVIEW, {
-    refetchQueries: [{ query: QUERY_PARK_REVIEWS, variables: { parkId } }], // Refresh reviews after submission
+    refetchQueries: [{ query: QUERY_PARK_REVIEWS, variables: { parkId } },
+      { query: QUERY_USER_REVIEWS } 
+    ], // Refresh reviews after submission
   });
 
  const handleSubmit = async (e: React.FormEvent) => {

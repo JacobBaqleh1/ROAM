@@ -32,9 +32,13 @@ const MyReviews = () => {
             <div key={review._id} className="border p-4 rounded-lg shadow-lg bg-white">
               <p className="text-lg">{review.comment}</p>
               <p className="text-sm text-gray-500">{new Date(parseInt(review.createdAt)).toLocaleDateString()}</p>
-              
+               <p className="text-yellow-500 font-bold">Rating: ⭐ {review.rating}/5</p>
               {editingReviewId === review._id ? (
-                <EditReviewForm reviewId={review._id} initialComment={review.comment} onClose={() => setEditingReviewId(null)} />
+                <EditReviewForm 
+                reviewId={review._id}
+                 initialComment={review.comment}
+                 initialRating={review.rating}
+                 onClose={() => setEditingReviewId(null)} />
               ) : (
                 <>
                   <button className="mr-2 border px-4 py-1 rounded bg-blue-500 text-white" onClick={() => setEditingReviewId(review._id)}>

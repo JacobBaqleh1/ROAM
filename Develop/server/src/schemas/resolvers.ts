@@ -40,6 +40,7 @@ interface AddReviewArgs {
 interface UpdateReviewArgs {
   reviewId: string;
   comment: string;
+  rating: number;
 }
 
 interface DeleteReviewArgs {
@@ -186,13 +187,13 @@ const resolvers = {
         comment: review.comment // Ensure returned field is `content`
       };
         },
-            updateReview: async (_parent: any, { reviewId, comment }: UpdateReviewArgs, context: any) => {
+            updateReview: async (_parent: any, { reviewId, comment, rating}: UpdateReviewArgs, context: any) => {
           if (!context.user) {
             throw new AuthenticationError('You need to be logged in.');
           }
           const review = await Review.findOneAndUpdate(
             { _id: reviewId, userId: context.user._id },
-            { comment:comment },
+            { comment, rating },
             { new: true }
           );
           if (!review) {
@@ -200,7 +201,8 @@ const resolvers = {
           }
             return {
         ...review.toObject(),
-        comment: review.comment // Ensure returned field is `content`
+        comment: review.comment, // Ensure returned field is `content`
+        rating: review.rating,
       };
         },
         deleteReview: async (_parent: any, { reviewId }: DeleteReviewArgs, context: any) => {

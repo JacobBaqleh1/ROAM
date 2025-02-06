@@ -39,10 +39,11 @@ export const ADD_REVIEW = gql`
 `;  
 
 export const UPDATE_REVIEW = gql`
-mutation UpdateReview($reviewId: ID!, $comment: String!) {
-  updateReview(reviewId: $reviewId, comment: $comment) {
+mutation UpdateReview($reviewId: ID!, $comment: String!, $rating: Int!) {
+  updateReview(reviewId: $reviewId, comment: $comment, rating: $rating) {
     _id
     comment
+    rating
   }
 }
 `;

@@ -47,27 +47,76 @@ const renderRating = (rating: number) => {
 };
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold">{park.fullName}</h1>
-      <p className="text-gray-700">{park.description}</p>
-      {park.images?.length > 0 && <img
-      className='w-86 h-86'
-       src={park.images[0].url} alt={park.fullName} />}
+ <div className="container mx-auto p-6">
+  <h1 className="text-4xl font-extrabold text-gray-800 mb-4">{park.fullName}</h1>
+  <p className="text-lg text-gray-700 mb-6">{park.description}</p>
+
+  {park.images?.length > 0 && (
+    <img className="w-full h-auto rounded-lg shadow-lg mb-6" src={park.images[0].url} alt={park.fullName} />
+  )}
+
+  <a href={park.url} target="_blank" className="text-blue-500 hover:text-blue-700 font-semibold mb-4 inline-block">
+    Official Website
+  </a>
+
+  {/* Buttons Wrapper */}
+  <div className="flex gap-4 mb-6 flex-wrap">
+    {/* Add to Travel List Button */}
+    <button className="w-full sm:w-auto bg-blue-500 text-white py-2 px-6 rounded-lg hover:bg-blue-600 transition duration-300">
+      ADD TO TRAVEL LIST
+    </button>
+
+    {/* Leave a Review Button */}
+    {!showReviewForm ? (
+      <button
+        className="w-full sm:w-auto border border-gray-300 text-gray-800 py-2 px-6 rounded-lg hover:bg-gray-100 transition duration-300"
+        onClick={() => setShowReviewForm(true)}
+      >
+        Leave a REVIEW
+      </button>
+    ) : null}
+  </div>
+
+  {/* Leave Review Form */}
+  {showReviewForm && (
+    <div className="w-full sm:w-auto mt-4">
+      <LeaveReviewForm parkId={id ?? ''} onClose={() => setShowReviewForm(false)} />
+    </div>
+  )}
+
+  {/* Display Reviews */}
+  <h2 className="text-2xl font-semibold mt-6">Reviews</h2>
+  {loading && <p>Loading reviews...</p>}
+  {error && <p className="text-red-500">Error fetching reviews: {error.message}</p>}
+  {data?.getParkReviews?.length === 0 && <p>No reviews yet.</p>}
+
+  <div className="space-y-4 mt-4">
+    {data?.getParkReviews?.map((review: any) => (
+      <div key={review._id} className="border border-gray-300 rounded-lg shadow-lg p-4 bg-white">
+        {/* Review Item Components (if needed) */}
+
+        {/* User Info */}
+        <div className="flex items-center space-x-3">
+          <div className="w-12 h-12 bg-gray-200 rounded-full"></div>
+          <div>
+            <h3 className="text-lg font-semibold">{review.username}</h3>
+            <p className="text-sm text-gray-500">{formatDate(review.createdAt)}</p>
+          </div>
+        </div>
+
+        {/* Review Text */}
+        <p className="mt-3 text-gray-700">{review.comment || "No review content available."}</p>
+
+        {/* Display Rating */}
+        <p className="mt-2 text-yellow-500">{renderRating(review.rating)}</p>
+      </div>
+    ))}
+  </div>
 
 
-      <a href={park.url} target="_blank" className="text-blue-500">Official Website</a>
 
-{/* Add to Travel List & Review Buttons */}
-      <button className='border border-black'>ADD TO TRAVEL LIST</button>
-      {/* Leave a Review Button */}
-      {!showReviewForm ? (
-        <button className='border border-black' onClick={() => setShowReviewForm(true)}>
-          Leave a REVIEW
-        </button>
-      ) : (
-       <LeaveReviewForm parkId={id ?? ''} onClose={() => setShowReviewForm(false)} />
 
-      )}
+
   {/* Display Reviews */}
 <h2 className="text-2xl font-semibold mt-6">Reviews</h2>
 {loading && <p>Loading reviews...</p>}

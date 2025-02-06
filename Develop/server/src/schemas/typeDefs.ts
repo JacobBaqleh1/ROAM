@@ -80,7 +80,7 @@ type Mutation {
   addUser(input: AddUserInput!): Auth
   login(email: String!, password: String!): Auth
   addReview(input: AddReviewInput!): Review
-  updateReview(reviewId: ID!, comment: String!): Review
+  updateReview(reviewId: ID!, comment: String!, rating: Int): Review
   deleteReview(reviewId: ID!): Review
   savePark(input: ParkInput!): User
   removePark(parkId: String!): User

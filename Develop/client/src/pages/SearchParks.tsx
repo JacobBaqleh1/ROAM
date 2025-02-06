@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { FormEvent } from 'react';
-import { Container, Col, Form, Button, Card, Row } from 'react-bootstrap';
+import { Container, Col, Form, Button,  Row } from 'react-bootstrap';
 import { fetchParks } from '../utils/API';
 import { Link } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
@@ -79,37 +79,46 @@ const SearchParks = () => {
         </Container>
       </div>
 
-      <Container>
-        <h2 className='pt-5'>
-          {searchedParks.length ? `Viewing ${searchedParks.length} results:` : 'Enter your location to begin'}
-        </h2>
-        <Row>
-          {searchedParks.map((park) => (
-            <Col md="4" key={park.id}>
-              <Card border='dark'>
-                {park.images?.length > 0 && (
-                  <Card.Img src={park.images[0].url} alt={`Image of ${park.fullName}`} variant='top' />
-                )}
-                <Card.Body>
-                  <Card.Title>{park.fullName}</Card.Title>
-                  <p className='small'>Location: {park.states}</p>
-                  <Card.Text>{park.description}</Card.Text>
-                  <Link to={`/park/${park.id}`}>
-                    <Button className='btn-block btn-info'>View More Details</Button>
-                  </Link>
-                  <Button className='btn-block btn-info'>View On Map</Button>
-                  <Button
-                    className='btn-block btn-success'
-                    onClick={() => handleSavePark(park)}
-                  >
-                    Add to Travel List
-                  </Button>
-                </Card.Body>
-              </Card>
-            </Col>
-          ))}
-        </Row>
-      </Container>
+     <Container>
+  <h2 className="pt-5">
+    {searchedParks.length ? `Viewing ${searchedParks.length} results:` : 'Enter your location to begin'}
+  </h2>
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+    {searchedParks.map((park) => (
+      <div className="bg-white border border-gray-200 rounded-lg shadow-lg" key={park.id}>
+         {park.images?.length > 0 ? (
+          <img src={park.images[0].url} alt={`Image of ${park.fullName}`} className="w-full h-48 object-cover rounded-t-lg" />
+        ) : (
+          <div className="w-full h-48 bg-gray-200 flex items-center justify-center rounded-t-lg">
+            <span className="text-gray-500">No Image Available</span>
+          </div>
+        )}
+        <div className="p-4">
+          <h3 className="text-xl font-semibold">{park.fullName}</h3>
+          <p className="text-sm text-gray-500">Location: {park.states}</p>
+          <p className="mt-2 text-gray-700">{park.description}</p>
+          <div className="mt-4 space-y-2">
+            <Link to={`/park/${park.id}`} className="block">
+              <button className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600">
+                View More Details
+              </button>
+            </Link>
+            <button className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600">
+              View On Map
+            </button>
+            <button
+              className="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600"
+              onClick={() => handleSavePark(park)}
+            >
+              Add to Travel List
+            </button>
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+</Container>
+
     </>
   );
 };

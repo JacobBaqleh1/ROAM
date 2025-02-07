@@ -90,26 +90,7 @@ const renderRating = (rating: number) => {
   {data?.getParkReviews?.length === 0 && <p>No reviews yet.</p>}
 
   <div className="space-y-4 mt-4">
-    {data?.getParkReviews?.map((review: any) => (
-      <div key={review._id} className="border border-gray-300 rounded-lg shadow-lg p-4 bg-white">
-        {/* Review Item Components (if needed) */}
-
-        {/* User Info */}
-        <div className="flex items-center space-x-3">
-          <div className="w-12 h-12 bg-gray-200 rounded-full"></div>
-          <div>
-            <h3 className="text-lg font-semibold">{review.username}</h3>
-            <p className="text-sm text-gray-500">{formatDate(review.createdAt)}</p>
-          </div>
-        </div>
-
-        {/* Review Text */}
-        <p className="mt-3 text-gray-700">{review.comment || "No review content available."}</p>
-
-        {/* Display Rating */}
-        <p className="mt-2 text-yellow-500">{renderRating(review.rating)}</p>
-      </div>
-    ))}
+   
   </div>
 
 

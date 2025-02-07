@@ -17,7 +17,7 @@ interface UserData {
 
 const SavedParks = () => {
   // Fetch user data
-  const { loading, error, data, refetch } = useQuery(QUERY_ME, {
+  const { loading, error, data } = useQuery(QUERY_ME, {
     skip: !Auth.loggedIn(),// Avoid fetching if user is not logged in
      
   });
@@ -39,26 +39,32 @@ const SavedParks = () => {
 
   // Function to remove a saved park
   const handleDeletePark = async (parkId: string) => {
-    const token = Auth.loggedIn() ? Auth.getToken() : null;
-    if (!token) {
-      console.error('No valid token found.');
-      return;
-    }
+  const token = Auth.loggedIn() ? Auth.getToken() : null;
+  if (!token) {
+    console.error('No valid token found.');
+    return;
+  }
 
-    try {
-      await deletePark({
-        variables: {  parkId },
-      });
+  try {
+     await deletePark({
+      variables: { parkId },
+    });
 
-      // Remove from localStorage
-      removeParkId(parkId);
+    // Remove from localStorage
+    removeParkId(parkId);
 
-      // Refetch user data after deletion
-      refetch();
-    } catch (err) {
-      console.error('Error deleting park:', err);
-    }
-  };
+    // Update local state manually instead of waiting for refetch()
+    setUserData((prevUserData) => {
+      if (!prevUserData) return null;
+      return {
+        ...prevUserData,
+        savedParks: prevUserData.savedParks.filter((park) => park.parkId !== parkId),
+      };
+    });
+  } catch (err) {
+    console.error('Error deleting park:', err);
+  }
+};
 
   // Loading state
   if (loading) return <div className="text-center py-5"><Spinner animation="border" variant="light" /></div>;

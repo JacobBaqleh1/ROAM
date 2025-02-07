@@ -56,30 +56,28 @@ const SearchParks = () => {
 
   return (
     <>
-      <div className="text-light bg-dark p-5">
-        <Container>
-          <h1>Search for National Parks near you!</h1>
-          <Form onSubmit={handleFormSubmit}>
-            <Row>
-              <Col xs={12} md={8}>
-                <Form.Control
-                  name='searchInput'
-                  value={searchInput}
-                  onChange={(e) => setSearchInput(e.target.value)}
-                  type='text'
-                  size='lg'
-                  placeholder='Enter your zipcode or state'
-                />
-              </Col>
-              <Col xs={12} md={4}>
-                <Button type='submit' variant='success' size='lg'>
-                  Submit Search
-                </Button>
-              </Col>
-            </Row>
-          </Form>
-        </Container>
-      </div>
+     <div className="bg-blue-900 text-light p-5">
+  <div className="max-w-4xl mx-auto">
+    <h1 className="text-2xl font-bold text-center mb-4">Search for National Parks near you!</h1>
+    <form onSubmit={handleFormSubmit} className="flex flex-col md:flex-row gap-4">
+      <input
+        name="searchInput"
+        value={searchInput}
+        onChange={(e) => setSearchInput(e.target.value)}
+        type="text"
+        placeholder="Enter your state"
+        className="w-full md:w-2/3 p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500"
+      />
+      <button
+        type="submit"
+        className="w-full md:w-1/3 bg-green-600 text-white p-3 rounded-lg hover:bg-green-700 transition"
+      >
+        Submit Search
+      </button>
+    </form>
+  </div>
+</div>
+
 
      <Container>
   

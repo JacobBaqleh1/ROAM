@@ -2,7 +2,6 @@ import { Types } from 'mongoose';
 import {User, Review} from '../models/index.js'
 
 import {signToken, AuthenticationError} from '../utils/auth.js';
-console.log('jacob wz here')
 
 interface UserArgs {
   username: string;
@@ -20,6 +19,7 @@ interface LoginUserArgs {
   email: string;
   password: string;
 }
+
 // interface ParkArgs {
 //     input: {
 //         parkId: string;

@@ -28,7 +28,7 @@ const LeaveReviewForm = ({ parkId, onClose }: { parkId: string; onClose: () => v
         }, },
       });
 
-      console.log('Review submitted:', { parkId, rating, comment });
+    
 
       // Close form after successful submission
       onClose();
@@ -53,7 +53,7 @@ const LeaveReviewForm = ({ parkId, onClose }: { parkId: string; onClose: () => v
           Comment:
           <textarea value={comment} onChange={(e) => setComment(e.target.value)} className="border p-1 w-full" />
         </label>
-        {error && <p className="text-red-500">Error submitting review. Try again.</p>}
+        {error && <p className="text-red-500">Error submitting review. Make sure you are signed in.</p>}
         <div className="flex gap-2">
           <button type="submit" className="bg-blue-500 text-white px-4 py-2" disabled={loading}>
             {loading ? 'Submitting...' : 'Submit'}

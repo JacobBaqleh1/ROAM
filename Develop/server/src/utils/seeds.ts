@@ -1,7 +1,6 @@
 import mongoose from 'mongoose';
 import  dotenv from 'dotenv';
 dotenv.config();
-console.log('✅ ENV Variables:', process.env.MONGODB_URI);
 import db from '../config/connection.js'; // Ensure this is correct!
 import User from '../models/User.js';
 import Review from '../models/Review.js';

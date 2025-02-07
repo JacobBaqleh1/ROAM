@@ -13,13 +13,12 @@ const ParkInfo = () => {
 const [showReviewForm, setShowReviewForm] = useState(false);
 // const { user } = useAuth();  // Access the logged-in user
   useEffect(() => {
- console.log("Current park ID:", id);
+ 
     if (!id) return;
 setPark(null);
- console.log("Current park ID:", id);
+ 
     const getParkDetails = async () => {
       const data = await fetchParkById(id);
-      console.log("Fetched park data:", data);
       setPark(data);
     };
 
@@ -117,11 +116,7 @@ const renderRating = (rating: number) => {
 
 
 
-  {/* Display Reviews */}
-<h2 className="text-2xl font-semibold mt-6">Reviews</h2>
-{loading && <p>Loading reviews...</p>}
-{error && <p className="text-red-500">Error fetching reviews: {error.message}</p>}
-{data?.getParkReviews?.length === 0 && <p>No reviews yet.</p>}
+
 
 <div className="space-y-4 mt-4">
   {data?.getParkReviews?.map((review: any) => {

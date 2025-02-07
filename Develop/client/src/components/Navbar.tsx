@@ -63,15 +63,16 @@ const AppNavbar = () => {
         <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white rounded-lg w-full max-w-lg p-8">
             <div className="flex justify-between items-center mb-4">
-              <div className="flex space-x-4">
+              <div className="flex flex-col space-x-4">
                 <button
                   className="text-gray-700 font-semibold"
                   onClick={() => setShowModal(false)}
                 >
                   Close
                 </button>
-                <button className="text-gray-700 font-semibold">Login</button>
-                <button className="text-gray-700 font-semibold">Sign Up</button>
+                <br />
+                <h2 className="text-gray-700 font-semibold ">Login</h2>
+                
               </div>
             </div>
             {/* Tab Content */}
@@ -80,6 +81,7 @@ const AppNavbar = () => {
                 <div>
                   <LoginForm handleModalClose={() => setShowModal(false)} />
                 </div>
+                <h2 className="text-gray-700 font-semibold">Sign Up</h2>
                 <div>
                   <SignUpForm handleModalClose={() => setShowModal(false)} />
                 </div>

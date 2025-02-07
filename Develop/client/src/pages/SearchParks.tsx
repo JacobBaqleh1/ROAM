@@ -46,7 +46,6 @@ const SearchParks = () => {
           },
         },
       });
-      console.log(`Park ${park.fullName} has been saved successfully.`);
     } catch (err) {
       console.error('Error saving park:', err);
     }
@@ -80,9 +79,7 @@ const SearchParks = () => {
       </div>
 
      <Container>
-  <h2 className="pt-5">
-    {searchedParks.length ? `Viewing ${searchedParks.length} results:` : 'Enter your location to begin'}
-  </h2>
+  
   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
     {searchedParks.map((park) => (
       <div className="bg-white border border-gray-200 rounded-lg shadow-lg" key={park.id}>
@@ -103,9 +100,9 @@ const SearchParks = () => {
                 View More Details
               </button>
             </Link>
-            <button className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600">
+            {/* <button className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600">
               View On Map
-            </button>
+            </button> */}
             <button
               className="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600"
               onClick={() => handleSavePark(park)}

@@ -23,22 +23,23 @@ export const QUERY_USER = gql`
 
 export const QUERY_ME = gql`
   query Me {
-    me {
-      _id
-      username
-      email
-      savedParks {
-        parkId
-        fullName
-        description
-        images {
-          url
-          altText
-        }
-        states
+     me {
+    savedParks {
+      description
+      fullName
+      images {
+        url
+        altText
+        caption
+        credit
+        title
       }
+      location
+      states
+      parkId
     }
   }
+}
 `;
 
 export const QUERY_PARK_REVIEWS = gql`

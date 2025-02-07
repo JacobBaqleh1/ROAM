@@ -5,11 +5,14 @@ import { fetchParks } from '../utils/API';
 import { Link } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
 import { SAVE_PARK } from '../utils/mutations';
+import { QUERY_ME } from '../utils/queries';
 
 const SearchParks = () => {
   const [searchedParks, setSearchedParks] = useState<any[]>([]);
   const [searchInput, setSearchInput] = useState('');
-  const [saveParkMutation] = useMutation(SAVE_PARK);
+  const [saveParkMutation] = useMutation(SAVE_PARK,{
+    refetchQueries: [{ query: QUERY_ME }],
+  });
 
   const handleFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();

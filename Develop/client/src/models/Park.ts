@@ -3,5 +3,5 @@ export interface Park {
   fullName: string;
   states: string;
   description: string;
-  images: string;
+  images:  { url: string }[];
 }

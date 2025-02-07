@@ -1,4 +1,3 @@
-import { Types } from 'mongoose';
 import {User, Review} from '../models/index.js'
 
 import {signToken, AuthenticationError} from '../utils/auth.js';
@@ -20,11 +19,11 @@ interface LoginUserArgs {
   password: string;
 }
 
-// interface ParkArgs {
-//     input: {
-//         parkId: string;
-//     };
-// }
+interface ParkArgs {
+    input: {
+        parkId: string;
+    };
+}
 
 interface ReviewArgs {
   parkId: string;
@@ -122,7 +121,7 @@ const resolvers = {
             return {token, user}
         },
 
-         savePark: async (_: any, { input }: any, context: any) => {
+         savePark: async (_: any, { input }: ParkArgs, context: any) => {
   if (!context.user) {
     throw new AuthenticationError('You need to be logged in!');
   }
@@ -140,23 +139,18 @@ const resolvers = {
     throw new Error('Invalid park id.');
   }
 
-  // Check if the park is already saved
-  const parkExists = user.savedParks.some((savedPark) => savedPark.parkId === input.parkId);
-  if (!parkExists) {
-    const newPark: any = {
-  parkId: input.parkId,
-  fullName: input.fullName,
-  description: input.description,
-  states: input.states,
-  images: input.images || [],
-  _id: new Types.ObjectId(), // Generate an ObjectId if required
-};
+            const updatedUser = await User.findOneAndUpdate(
+                { _id: context.user._id }, // Find the authenticated user
+                {
+                    $addToSet: { 
+                        savedParks: input, 
+                    },
+                },
+                { new: true } // Return the updated user document
+            ).populate('savedParks'); // Optional: Populate  if they're references
 
-    user.savedParks.push(newPark);
-    await user.save();
-  }
-
-  return user;
+            // Return the updated user 
+            return updatedUser;
 },
        removePark: async (_:any, { parkId }:any, context:any) => {
       if (!context.user) {
@@ -165,7 +159,7 @@ const resolvers = {
 
       const user = await User.findByIdAndUpdate(
         context.user._id,
-        { $pull: { savedParks: { parkId } } },
+        { $pull: { savedParks:  parkId  } },
         { new: true }
       );
 

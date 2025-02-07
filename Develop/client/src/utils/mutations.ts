@@ -61,28 +61,31 @@ export const DELETE_REVIEW = gql`
 export const SAVE_PARK = gql`
   mutation SavePark($input: ParkInput!) {
     savePark(input: $input) {
-      _id
-      savedParks {
-        parkId
-        fullName
-        description
-        states
-        images {
-      credit
-      title
-      altText
-      caption
-      url
-    }
+    _id
+    email
+    username
+    savedParks {
+      description
+      fullName
+      location
+      parkId
+      states
+      images {
+        altText
+        caption
+        credit
+        title
+        url
       }
     }
   }
+}
 `;
 
 
 export const DELETE_PARK = gql`
-  mutation DeletePark($id: ID!) {
-    deletePark(id: $id) {
+  mutation RemovePark($parkId: String!) {
+    removePark(parkId: $parkId) {
       _id
       savedParks {
         parkId

@@ -3,7 +3,7 @@ import { Container, Card, Button, Row, Col, Spinner } from 'react-bootstrap';
 import { useQuery, useMutation } from '@apollo/client';
 
 import Auth from '../utils/auth.js';
-import { QUERY_SAVED_PARKS } from '../utils/queries.js';
+import { QUERY_ME } from '../utils/queries.js';
 import { DELETE_PARK } from '../utils/mutations.js';
 import { removeParkId } from '../utils/localStorage.js';
 import { Park } from '../models/Park.js';
@@ -17,12 +17,15 @@ interface UserData {
 
 const SavedParks = () => {
   // Fetch user data
-  const { loading, error, data, refetch } = useQuery(QUERY_SAVED_PARKS, {
-    skip: !Auth.loggedIn(), // Avoid fetching if user is not logged in
+  const { loading, error, data, refetch } = useQuery(QUERY_ME, {
+    skip: !Auth.loggedIn(),// Avoid fetching if user is not logged in
+     
   });
 
   // Delete park mutation
-  const [deletePark] = useMutation(DELETE_PARK);
+  const [deletePark] = useMutation(DELETE_PARK,{
+     refetchQueries: [{ query: QUERY_ME }],
+  });
 
   // State to hold user data
   const [userData, setUserData] = useState<UserData | null>(null);
@@ -44,7 +47,7 @@ const SavedParks = () => {
 
     try {
       await deletePark({
-        variables: { id: parkId },
+        variables: {  parkId },
       });
 
       // Remove from localStorage
@@ -82,9 +85,9 @@ const SavedParks = () => {
             {userData.savedParks.map((park) => (
               <Col md="4" key={park.parkId} className="d-flex">
                 <Card className="flex-fill" border="dark">
-                  {park.images && (
-                    <Card.Img src={park.images} alt={`View of ${park.fullName}`} variant="top" />
-                  )}
+                  {park.images?.length > 0 && (
+  <Card.Img src={park.images[0].url} alt={`View of ${park.fullName}`} variant="top" />
+)}
                   <Card.Body>
                     <Card.Title>{park.fullName}</Card.Title>
                     <p className="small text-muted">Location: {park.states}</p>

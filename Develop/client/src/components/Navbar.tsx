@@ -13,10 +13,10 @@ const AppNavbar = () => {
     <>
       <nav className="bg-black p-4">
         <div className="container mx-auto flex justify-between items-center">
-          <Link to="/" className="flex items-center space-x-4 no-underline">
+          <a href="/" style={{ textDecoration: 'none' }} className="flex items-center space-x-4 no-underline">
 
             <span className="text-white text-2xl font-semibold border-b-2 border-white no-underline">ROAM</span>
-          </Link>
+          </a>
           <div className="flex space-x-6">
             <Link 
               to="/" 

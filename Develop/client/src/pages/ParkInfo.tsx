@@ -1,9 +1,11 @@
-import { useQuery } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { fetchParkById } from '../utils/API';
-import { QUERY_PARK_REVIEWS } from '../utils/queries';
+import { QUERY_ME, QUERY_PARK_REVIEWS } from '../utils/queries';
+import { SAVE_PARK } from '../utils/mutations';
 import LeaveReviewForm from '../components/LeaveReviewForm';
+import Auth from '../utils/auth.js';
 // import ReviewItem from '../components/ReviewItem';
 // import  {useAuth} from '../utils/useAuth'
 
@@ -11,6 +13,12 @@ const ParkInfo = () => {
   const { id } = useParams();
   const [park, setPark] = useState<any>(null);
 const [showReviewForm, setShowReviewForm] = useState(false);
+const [saveParkMutation] = useMutation(SAVE_PARK,{
+    refetchQueries: [{ query: QUERY_ME }],
+  });
+  const { data: userData } = useQuery(QUERY_ME, {
+  skip: !Auth.loggedIn(), // Ensure the user is logged in
+});
 // const { user } = useAuth();  // Access the logged-in user
   useEffect(() => {
  
@@ -24,6 +32,29 @@ setPark(null);
 
     getParkDetails();
   }, [id]);
+const handleSavePark = async (park: any) => {
+    try {
+      await saveParkMutation({
+        variables: {
+          input: {
+            parkId: park.id,
+            fullName: park.fullName,
+            description: park.description,
+            states: park.states,
+            images: park.images?.map((image: any) => ({
+              credit: image.credit,
+              title: image.title,
+              altText: image.altText,
+              caption: image.caption,
+              url: image.url,
+            })) || [],
+          },
+        },
+      });
+    } catch (err) {
+      console.error('Error saving park:', err);
+    }
+  };
 
    const { loading, error, data } = useQuery(QUERY_PARK_REVIEWS, {
     variables: { parkId: id },
@@ -44,6 +75,9 @@ const renderRating = (rating: number) => {
   const stars = "★".repeat(rating) + "☆".repeat(5 - rating); // Fill with stars up to 5
   return <span className="text-yellow-500">{stars}</span>;
 };
+const isParkSaved = userData?.me?.savedParks?.some(
+  (savedPark: any) => savedPark.parkId === park.id
+);
 
   return (
  <div className="container mx-auto p-6">
@@ -61,9 +95,17 @@ const renderRating = (rating: number) => {
   {/* Buttons Wrapper */}
   <div className="flex gap-4 mb-6 flex-wrap">
     {/* Add to Travel List Button */}
-    <button className="w-full sm:w-auto bg-blue-500 text-white py-2 px-6 rounded-lg hover:bg-blue-600 transition duration-300">
-      ADD TO TRAVEL LIST
-    </button>
+    <button
+    onClick={() => handleSavePark(park)}
+    disabled={isParkSaved} // Disable button if already saved
+    className={`w-full sm:w-auto py-2 px-6 rounded-lg transition duration-300 ${
+      isParkSaved
+        ? "bg-gray-400 cursor-not-allowed"
+        : "bg-blue-500 text-white hover:bg-blue-600"
+    }`}
+  >
+    {isParkSaved ? "Already Saved" : "ADD TO TRAVEL LIST"}
+  </button>
 
     {/* Leave a Review Button */}
     {!showReviewForm ? (

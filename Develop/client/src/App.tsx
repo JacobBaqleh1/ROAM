@@ -4,7 +4,7 @@ import { ApolloClient, ApolloProvider, createHttpLink, InMemoryCache } from '@ap
 import { setContext } from '@apollo/client/link/context';
 import Navbar from './components/Navbar';
 const httpLink = createHttpLink({
-  uri: '/graphql',
+  uri: 'https://roam-ynw2.onrender.com/graphql',
 });
 // Construct request middleware that will attach the JWT token to every request as an `authorization` header
 const authLink = setContext((_, { headers }) => {

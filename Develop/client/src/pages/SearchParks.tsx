@@ -56,7 +56,7 @@ const SearchParks = () => {
 
   return (
     <>
-     <div className="bg-blue-900 text-light p-5">
+     <div className="bg-gray-800 text-light p-5">
   <div className="max-w-4xl mx-auto">
     <h1 className="text-2xl font-bold text-center mb-4">Search for National Parks near you!</h1>
     <form onSubmit={handleFormSubmit} className="flex flex-col md:flex-row gap-4">

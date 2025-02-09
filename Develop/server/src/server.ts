@@ -26,8 +26,10 @@ const startApolloServer = async () => {
   const app = express();
   app.use(
   cors({
-    origin: 'https://roam-sigma.vercel.app/', // Replace with your frontend URL
-    credentials: true,  // Enable credentials (cookies, headers, etc.)
+       origin: 'https://roam-sigma.vercel.app', // Your frontend URL
+    methods: ['GET', 'POST', 'OPTIONS'],  // Explicitly allow OPTIONS method
+    allowedHeaders: ['Authorization', 'Content-Type'],  // Allow necessary headers
+    credentials: true,  // Allow credentials (cookies, authorization)
   })
 );
   const PORT = process.env.PORT || 3001;

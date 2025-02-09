@@ -7,6 +7,7 @@ import type { Request, Response } from 'express';
 import { expressMiddleware } from '@apollo/server/express4';
 import { typeDefs, resolvers } from './schemas/index.js';
 import { authenticateToken } from './utils/auth.js';
+import cors from 'cors';
 
 // Define __filename and __dirname for ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -23,6 +24,12 @@ const startApolloServer = async () => {
   await db();
 
   const app = express();
+  app.use(
+  cors({
+    origin: 'https://roam-sigma.vercel.app/', // Replace with your frontend URL
+    credentials: true,  // Enable credentials (cookies, headers, etc.)
+  })
+);
   const PORT = process.env.PORT || 3001;
 
   app.use(express.urlencoded({ extended: true }));

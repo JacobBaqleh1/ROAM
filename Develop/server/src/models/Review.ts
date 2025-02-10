@@ -7,6 +7,8 @@ export interface ReviewDocument extends Document {
     rating: number;
     comment: string;
     createdAt: Date;
+    parkFullName:  String ,
+
 }
 
 const reviewSchema = new Schema(
@@ -27,6 +29,7 @@ const reviewSchema = new Schema(
       min: 1, 
       max: 5 
     },
+    parkFullName: { type: String },
   comment: String,
   createdAt: { 
     type: Date, 

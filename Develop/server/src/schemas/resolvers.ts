@@ -70,6 +70,7 @@ const resolvers = {
     ...review.toObject(),
     comment: review.comment || "No review content available.",
     rating: review.rating,
+    parkFullName: review.parkFullName,
     createdAt: review.createdAt
   }));
 },
@@ -83,6 +84,7 @@ const resolvers = {
     ...review.toObject(),
     comment: review.comment || "No review content available.", // Ensure comment is never null
      rating: review.rating,
+     
     createdAt: review.createdAt
   }));
 },

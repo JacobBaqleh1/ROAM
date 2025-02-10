@@ -30,7 +30,7 @@ const MyReviews = () => {
         <div className="space-y-4 mt-4">
           {data?.getUserReviews?.map((review: any) => (
             <div key={review._id} className="border p-4 rounded-lg shadow-lg bg-white">
-              <p>{review.parkFullname}</p>
+              <p className="text-lg">{review.parkFullName}</p>
               <p className="text-lg">{review.comment}</p>
               <p className="text-sm text-gray-500">{new Date(parseInt(review.createdAt)).toLocaleDateString()}</p>
                <p className="text-yellow-500 font-bold">Rating: ⭐ {review.rating}/5</p>

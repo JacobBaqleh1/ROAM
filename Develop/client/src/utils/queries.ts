@@ -52,6 +52,7 @@ export const QUERY_PARK_REVIEWS = gql`
       comment
       rating
       createdAt
+      
     }
 }`;
 
@@ -80,6 +81,7 @@ export const QUERY_USER_REVIEWS = gql`
     getUserReviews {
       _id
       parkId
+      parkFullName
       username
       comment
       rating

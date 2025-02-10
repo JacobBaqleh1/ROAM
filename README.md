@@ -1,7 +1,7 @@
 # ROAM 🌍
 
 ## Live URL
-[ROAM Website](https://roam-sigma.vercel.app/)
+[ROAM Website](https://roam-sigma.vercel.app/){:target="_blank" rel="noopener noreferrer"}
 
 
 ## Description 🏕️

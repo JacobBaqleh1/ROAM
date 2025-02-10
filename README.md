@@ -1,7 +1,7 @@
 # ROAM 🌍
 
 ## Live URL
-[ROAM Website](https://roam-ynw2.onrender.com)
+[ROAM Website](https://roam-sigma.vercel.app/)
 
 
 ## Description 🏕️

@@ -6,12 +6,12 @@ import { QUERY_ME, QUERY_PARK_REVIEWS } from '../utils/queries';
 import { SAVE_PARK } from '../utils/mutations';
 import LeaveReviewForm from '../components/LeaveReviewForm';
 import Auth from '../utils/auth.js';
-// import ReviewItem from '../components/ReviewItem';
-// import  {useAuth} from '../utils/useAuth'
+
 
 const ParkInfo = () => {
   const { id } = useParams();
   const [park, setPark] = useState<any>(null);
+   const [parkFullName, setParkFullName] = useState<string>('');
 const [showReviewForm, setShowReviewForm] = useState(false);
 const [saveParkMutation] = useMutation(SAVE_PARK,{
     refetchQueries: [{ query: QUERY_ME }],
@@ -19,7 +19,7 @@ const [saveParkMutation] = useMutation(SAVE_PARK,{
   const { data: userData } = useQuery(QUERY_ME, {
   skip: !Auth.loggedIn(), // Ensure the user is logged in
 });
-// const { user } = useAuth();  // Access the logged-in user
+
   useEffect(() => {
  
     if (!id) return;
@@ -28,6 +28,7 @@ setPark(null);
     const getParkDetails = async () => {
       const data = await fetchParkById(id);
       setPark(data);
+      setParkFullName(data.fullName);
     };
 
     getParkDetails();
@@ -121,7 +122,7 @@ const isParkSaved = userData?.me?.savedParks?.some(
   {/* Leave Review Form */}
   {showReviewForm && (
     <div className="w-full sm:w-auto mt-4">
-      <LeaveReviewForm parkId={id ?? ''} onClose={() => setShowReviewForm(false)} />
+      <LeaveReviewForm parkFullName={parkFullName} parkId={id ?? ''} onClose={() => setShowReviewForm(false)} />
     </div>
   )}
 
@@ -145,12 +146,7 @@ const isParkSaved = userData?.me?.savedParks?.some(
   {data?.getParkReviews?.map((review: any) => {
     return (  // Explicitly returning the JSX
       <div key={review._id} className="border border-gray-300 rounded-lg shadow-lg p-4 bg-white">
-        {/* ReviewItem Component */}
-        {/* <ReviewItem 
-          review={review} 
-          currentUserId={user?.id ?? ''} 
-          parkId={id ?? ''} 
-        /> */}
+       
 
         {/* User Info */}
         <div className="flex items-center space-x-3">

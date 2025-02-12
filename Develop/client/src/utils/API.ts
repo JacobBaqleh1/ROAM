@@ -24,9 +24,11 @@ export async function fetchParks(userInput: string) {
         // If input is already a valid state abbreviation
         const stateCode = userInput.toUpperCase();
         url = `https://developer.nps.gov/api/v1/parks?limit=10&stateCode=${stateCode}&api_key=${apiKey}`;
-    } else {
-        console.error("Invalid state name, abbreviation, or ZIP code.");
-        return [];
+    } 
+    
+   else {
+        // General search by park name
+        url = `https://developer.nps.gov/api/v1/parks?limit=10&q=${encodeURIComponent(userInput)}&api_key=${apiKey}`;
     }
 
     try {

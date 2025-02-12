@@ -25,7 +25,7 @@ const AppNavbar = () => {
             <span className="text-white text-2xl font-semibold">ROAM</span>
           </Link>
 
-          <div className="hidden md:block flex space-x-6">
+          <div className="hidden md:block  space-x-6">
             <Link 
               to="/" 
               className="text-white px-2 py-1 rounded hover:bg-yellow-500 hover:text-gray-800 transition-colors duration-200"
@@ -68,7 +68,7 @@ const AppNavbar = () => {
             
              {/* hamburger popup */}
   {isOpen && 
-  <div className='md:hidden block absolute top-15 right-0 text-white bg-black flex flex-col items-center py-4 space-y-2 rounded'>
+  <div className='md:hidden block absolute top-15 right-0 text-white bg-black flex-col items-center py-4 space-y-2 rounded'>
                  <Link 
               to="/" 
               className="text-white px-2 py-1 rounded hover:bg-yellow-500 hover:text-gray-800 transition-colors duration-200"
@@ -116,8 +116,8 @@ const AppNavbar = () => {
             
             {/* mobile view */}
 
-<div className="block md-hidden text-white">
-  <button  onClick={() => setIsOpen(!isOpen)} className="text-[#FFF4E5] lg:hidden text-6xl">
+<div className="block md:hidden text-white">
+  <button  onClick={() => setIsOpen(!isOpen)} className="text-[#FFF4E5]  text-6xl">
   ☰
   </button>
 </div>

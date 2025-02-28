@@ -1,12 +1,13 @@
 import ReactDOM from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
-import 'bootstrap/dist/css/bootstrap.min.css'
+
 import { AuthProvider } from './utils/useAuth.js';
 import App from './App.jsx'
 import SearchParks from './pages/SearchParks.js'
 import SavedParks from './pages/SavedParks.js'
 import ParkInfo from './pages/ParkInfo.js'
 import MyReviews from './pages/MyReviews.js';
+import ResultsPage from './pages/ResultsPage.js';
 
 const router = createBrowserRouter([
   {
@@ -30,6 +31,11 @@ const router = createBrowserRouter([
         path: '/my-reviews', 
         element: <MyReviews />
       }
+      ,
+      {
+         path:'/results',
+          element: <ResultsPage /> 
+        },
     ]
   }
 ])

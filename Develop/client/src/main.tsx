@@ -1,6 +1,6 @@
 import ReactDOM from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
-import 'bootstrap/dist/css/bootstrap.min.css'
+
 import { AuthProvider } from './utils/useAuth.js';
 import App from './App.jsx'
 import SearchParks from './pages/SearchParks.js'

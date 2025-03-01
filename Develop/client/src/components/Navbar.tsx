@@ -133,7 +133,7 @@ const AppNavbar = () => {
             <div className="flex justify-between items-center mb-4">
               <div className="flex flex-col space-x-4">
                 <button
-                  className="text-gray-700 font-semibold"
+                  className="text-gray-700 font-semibold cursor-pointer"
                   onClick={() => setShowModal(false)}
                 >
                   Close

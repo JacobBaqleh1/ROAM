@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import type { ChangeEvent, FormEvent } from 'react';
-import { Form, Button, Alert } from 'react-bootstrap';
 import { useMutation } from '@apollo/client';
 import { ADD_USER } from '../utils/mutations';
 import Auth from '../utils/auth';
@@ -43,73 +42,69 @@ const SignupForm = ({ handleModalClose }: { handleModalClose: () => void }) => {
   return (
     <>
       {data ? (
-        <p>
+        <p className="text-center text-green-600">
           Success! You may now head{' '}
-          <a href="/" onClick={handleModalClose}>
+          <a href="/" onClick={handleModalClose} className="text-blue-500 underline">
             back to the homepage.
           </a>
         </p>
       ) : (
-        <Form noValidate onSubmit={handleFormSubmit}>
+        <form noValidate onSubmit={handleFormSubmit} className="space-y-4">
           {/* Alert for signup errors */}
-          {error && (
-            <Alert
-              dismissible
-              onClose={() => setShowAlert(false)}
-              show={showAlert}
-              variant="danger"
-            >
-              {error.message || 'Something went wrong with your signup!'}
-            </Alert>
+          {error && showAlert && (
+            <div className="bg-red-500 text-white p-3 rounded-md flex justify-between items-center">
+              <span>{error.message || 'Something went wrong with your signup!'}</span>
+              <button onClick={() => setShowAlert(false)} className="text-white font-bold text-lg">✖</button>
+            </div>
           )}
 
-          <Form.Group className="mb-3">
-            <Form.Label htmlFor="username">Username</Form.Label>
-            <Form.Control
+          <div className="mb-3">
+            <label htmlFor="username" className="block font-medium text-gray-700">Username</label>
+            <input
               type="text"
               placeholder="Your username"
               name="username"
               value={formState.username}
               onChange={handleChange}
               required
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none bg-gray-100"
             />
-          </Form.Group>
+          </div>
 
-          <Form.Group className="mb-3">
-            <Form.Label htmlFor="email">Email</Form.Label>
-            <Form.Control
+          <div className="mb-3">
+            <label htmlFor="email" className="block font-medium text-gray-700">Email</label>
+            <input
               type="email"
               placeholder="Your email"
               name="email"
               value={formState.email}
               onChange={handleChange}
               required
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none bg-gray-100"
             />
-          </Form.Group>
+          </div>
 
-          <Form.Group className="mb-3">
-            <Form.Label htmlFor="password">Password</Form.Label>
-            <Form.Control
+          <div className="mb-3">
+            <label htmlFor="password" className="block font-medium text-gray-700">Password</label>
+            <input
               type="password"
               placeholder="Your password"
               name="password"
               value={formState.password}
               onChange={handleChange}
               required
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none bg-gray-100"
             />
-          </Form.Group>
+          </div>
 
-          <Button
-            className="w-100"
-            variant="primary"
+          <button
             type="submit"
-            disabled={
-              !(formState.username && formState.email && formState.password)
-            }
+            disabled={!(formState.username && formState.email && formState.password)}
+            className="w-full bg-blue-500 text-white p-3 rounded-lg font-bold shadow-md hover:bg-blue-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Submit
-          </Button>
-        </Form>
+          </button>
+        </form>
       )}
     </>
   );

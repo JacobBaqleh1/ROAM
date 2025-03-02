@@ -35,7 +35,7 @@ setError('');
 
    return (
     <div>
-  <div className="relative min-h-screen flex flex-col items-center justify-start ">
+  <div className="relative flex h-[15rem] md:h-[40rem] flex-col items-center justify-start ">
     {/* Background Slideshow */}
     <div className="absolute inset-0 -z-10 w-full h-full overflow-hidden">
       <AutoCarousel />
@@ -68,6 +68,9 @@ setError('');
       {error && <p className="text-red-500 text-center">{error}</p>}
     </div>
     
+  </div>
+  <div className='bg-red-200 h-[20rem]'>
+    <h2>Guides and Safety Tips Reading coming soon</h2>
   </div>
   <Footer /> 
   </div>

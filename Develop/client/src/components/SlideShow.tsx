@@ -23,7 +23,7 @@ export default function AutoCarousel() {
 
   return (
     <div
-      className="absolute inset-0 w-full h-[70%] transition-all duration-500 bg-cover bg-center"
+      className="absolute inset-0 w-full transition-all duration-500 bg-cover bg-center"
       style={{ backgroundImage: views[index].img }}
     >
       <div className="flex flex-col absolute bottom-0 left-0  p-4  ">

@@ -23,6 +23,7 @@ const AppNavbar = () => {
           <Link to="/"  className="flex items-center space-x-4 ">
 
             <span className="text-white text-2xl font-semibold">ROAM</span>
+            
           </Link>
 
           <div className="hidden md:block  space-x-6">

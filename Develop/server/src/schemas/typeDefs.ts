@@ -46,6 +46,7 @@ type Image {
     user(username: String!): User
     me: User
     getParkReviews(parkId: String!): [Review]
+    getAllReviews: [Review]
     getSavedParks: [Park]
       getUserReviews: [Review]
   }

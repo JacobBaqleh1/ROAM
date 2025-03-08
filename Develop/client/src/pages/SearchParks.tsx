@@ -1,15 +1,31 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { FormEvent } from 'react';
 import { fetchParks } from '../utils/API';
 import {  useNavigate } from 'react-router-dom';
 import searchImg from '../assets/search.svg'
 import AutoCarousel from '../components/SlideShow';
 import Footer from '../components/Footer';
+import { QUERY_ALL_REVIEWS } from '../utils/queries.js';
+import { useQuery } from '@apollo/client';
 
 const SearchParks = () => {
   const [searchInput, setSearchInput] = useState('');
-  const [error, setError] = useState('');
+  const [err, setError] = useState('');
    const navigate = useNavigate();
+const { loading, error, data, refetch } = useQuery(QUERY_ALL_REVIEWS, {
+  fetchPolicy: "network-only",
+});
+console.log(data);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      refetch();
+    }, 1000);
+
+    return () => clearInterval(interval); // Cleanup interval on unmount
+  }, [refetch]);
+
+
+
 
   const handleFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -32,10 +48,15 @@ setError('');
       console.error('Error fetching parks:', err);
     }
   };
+   const formatDate = (timestamp:any) => {
+  if (!timestamp) return "Invalid date";  // handle invalid date
+  const date = new Date(parseInt(timestamp)); // Convert string to number if needed
+  return date.toLocaleDateString();
+}
 
    return (
     <div>
-  <div className="relative min-h-screen flex flex-col items-center justify-start ">
+  <div className="relative flex h-[15rem] md:h-[40rem] flex-col items-center justify-start ">
     {/* Background Slideshow */}
     <div className="absolute inset-0 -z-10 w-full h-full overflow-hidden">
       <AutoCarousel />
@@ -65,10 +86,24 @@ setError('');
         </button>
       </form>
       </div>
-      {error && <p className="text-red-500 text-center">{error}</p>}
+      {err && <p className="text-red-500 text-center">{err}</p>}
     </div>
     
   </div>
+  {loading ?   <div className="flex justify-center items-center h-20">
+    <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-gray-700"></div>
+  </div> : error ? <p>error getting reviews</p> : <div className="max-w-2xl mx-auto p-4">
+      <h2 className="text-2xl font-bold mb-4">Recent Activity</h2>
+      {data.getAllReviews.map((review:any) => (
+        <div key={review._id} className="border-b border-gray-300 mb-4 pb-2">
+          <h3 className="font-semibold">{review.username} wrote a review</h3>
+          <p className="text-sm text-gray-500">{formatDate(review.createdAt)}</p>
+          <p className="mt-2">{review.comment}</p>
+          <p className="text-yellow-500">⭐ {review.rating}/5</p>
+        </div>
+      ))}
+    </div>  }
+
   <Footer /> 
   </div>
 );

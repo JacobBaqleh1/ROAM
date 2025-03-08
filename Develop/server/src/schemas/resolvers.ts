@@ -88,6 +88,20 @@ const resolvers = {
     createdAt: review.createdAt
   }));
 },
+//Get all reviews entirely
+  getAllReviews: async(_parent: any, _args: any ) => {
+    
+  const reviews = await Review.find().sort({ createdAt: -1 });
+    return reviews.map(review => ({
+    ...review.toObject(),
+    comment: review.comment || "No review content available.", 
+    rating: review.rating,
+    parkFullName: review.parkFullName,
+    createdAt: review.createdAt
+  }));
+    
+  },
+
 //Get all parks for the user
   getSavedParks: async (_parent: any, _args: any, context: any) => {
       if (!context.user) {

@@ -56,6 +56,20 @@ export const QUERY_PARK_REVIEWS = gql`
     }
 }`;
 
+export const QUERY_ALL_REVIEWS = gql`
+query GetAllReviews {
+getAllReviews {
+      _id
+      parkId
+      userId
+      username
+      comment
+      rating
+      createdAt
+}
+}
+`;
+
 export const QUERY_SAVED_PARKS = gql`
   query GetSavedParks {
     getSavedParks {

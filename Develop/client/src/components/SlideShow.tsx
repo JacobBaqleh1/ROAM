@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import utahImg from '../assets/brycecan.png';
-import caliImg from '../assets/yosemite.png'
-import oregonImg from '../assets/craterlake.png';
-import newMexicoImg from '../assets/chacopark.png'
+import caliImg from '../assets/yosemite2.png'
+import oregonImg from '../assets/craterlake4.png';
+import newMexicoImg from '../assets/chacopark4.png'
 const views = [
   { img: `url(${utahImg})`, text: "Discover Utah", subText: "Bryce Canyon National Park" },
   { img: `url(${caliImg})`, text: "Discover California", subText: "Yosemite National Park" },
@@ -16,7 +16,7 @@ export default function AutoCarousel() {
   useEffect(() => {
     const interval = setInterval(() => {
       setIndex((prevIndex) => (prevIndex + 1) % views.length);
-    }, 3000); // Changes every 3 seconds
+    }, 6000); // Changes every 6 seconds
 
     return () => clearInterval(interval);
   }, []);

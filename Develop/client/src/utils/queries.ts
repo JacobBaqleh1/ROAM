@@ -50,6 +50,8 @@ export const QUERY_PARK_REVIEWS = gql`
       userId
       username
       comment
+       parkFullName
+      image
       rating
       createdAt
       
@@ -62,6 +64,8 @@ getAllReviews {
       _id
       parkId
       userId
+      parkFullName
+      image
       username
       comment
       rating

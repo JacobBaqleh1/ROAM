@@ -33,6 +33,8 @@ interface AddReviewArgs {
   input: {
     parkId: string;
     comment: string;
+    parkFullName: string;
+    image: string;
   };
 }
 
@@ -84,7 +86,8 @@ const resolvers = {
     ...review.toObject(),
     comment: review.comment || "No review content available.", // Ensure comment is never null
      rating: review.rating,
-     
+       parkFullName: review.parkFullName,
+    image: review.image || "No image available.",
     createdAt: review.createdAt
   }));
 },
@@ -97,6 +100,7 @@ const resolvers = {
     comment: review.comment || "No review content available.", 
     rating: review.rating,
     parkFullName: review.parkFullName,
+    image: review.image || "No image available.",
     createdAt: review.createdAt
   }));
     
@@ -191,6 +195,8 @@ const resolvers = {
         comment: input.comment, 
             userId: context.user._id,
             username: context.user.username,
+            image: input.image,
+            parkFullName: input.parkFullName,
           });
             return {
         ...review.toObject(),

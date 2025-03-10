@@ -14,6 +14,7 @@ const typeDefs = `
   parkId: String!
   userId: ID!
   parkFullName: String
+  image: String!
   username: String!
   comment: String
   rating: Int
@@ -62,6 +63,7 @@ input AddReviewInput {
   comment: String!
   rating: Int
   parkFullName: String!
+  image: String
 }
   input ImageInput {
   credit: String

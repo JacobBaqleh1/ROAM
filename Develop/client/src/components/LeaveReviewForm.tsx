@@ -4,7 +4,7 @@ import { ADD_REVIEW } from '../utils/mutations'; // Import the mutation
 import { QUERY_PARK_REVIEWS, QUERY_USER_REVIEWS } from '../utils/queries'; // Ensure the UI updates after submission
 
 
-const LeaveReviewForm = ({parkFullName, parkId, onClose }: {parkFullName:string, parkId: string; onClose: () => void }) => {
+const LeaveReviewForm = ({parkFullName, parkId, parkImage, onClose }: {parkFullName:string, parkId: string, parkImage: string, onClose: () => void }) => {
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState('');
 
@@ -24,6 +24,7 @@ const LeaveReviewForm = ({parkFullName, parkId, onClose }: {parkFullName:string,
              input: { 
           parkId,
           parkFullName,
+          image : parkImage,
           rating,
           comment,
         }, },

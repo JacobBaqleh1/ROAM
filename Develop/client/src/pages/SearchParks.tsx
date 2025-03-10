@@ -92,16 +92,23 @@ setError('');
   </div>
   {loading ?   <div className="flex justify-center items-center h-20">
     <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-gray-700"></div>
-  </div> : error ? <p>error getting reviews</p> : <div className="max-w-2xl mx-auto p-4">
-      <h2 className="text-2xl font-bold mb-4">Recent Activity</h2>
+  </div> : error ? <p></p> 
+  :
+   <div className="max-w-5xl mx-auto p-4">
+      <h2 className="text-2xl font-bold mb-4 text-center">Recent Activity</h2>
+      <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 lg:gap-20 gap-4 '>
       {data.getAllReviews.map((review:any) => (
-        <div key={review._id} className="border-b border-gray-300 mb-4 pb-2">
+        <div key={review._id} className="border border-gray-300">
           <h3 className="font-semibold">{review.username} wrote a review</h3>
           <p className="text-sm text-gray-500">{formatDate(review.createdAt)}</p>
-          <p className="mt-2">{review.comment}</p>
+          <img src={review.image} className="w-[30rem] h-[20rem] " />
+          <p>{review.parkFullName}</p>
           <p className="text-yellow-500">⭐ {review.rating}/5</p>
+          <p className="mt-2">{review.comment}</p>
+          
         </div>
       ))}
+      </div>
     </div>  }
 
   <Footer /> 

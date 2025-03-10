@@ -16,13 +16,13 @@ const { loading, error, data, refetch } = useQuery(QUERY_ALL_REVIEWS, {
   fetchPolicy: "network-only",
 });
 console.log(data);
-  useEffect(() => {
-    const interval = setInterval(() => {
-      refetch();
-    }, 1000);
+ useEffect(() => {
+  const timer = setTimeout(() => {
+    refetch();
+  }, 2000);
 
-    return () => clearInterval(interval); // Cleanup interval on unmount
-  }, [refetch]);
+  return () => clearTimeout(timer);
+}, [refetch]);
 
 
 

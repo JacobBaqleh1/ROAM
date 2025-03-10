@@ -30,6 +30,8 @@ export const ADD_REVIEW = gql`
       _id
       parkId
       userId
+      parkFullName
+      image
       username
       rating
       comment

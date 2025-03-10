@@ -11,7 +11,7 @@ import Auth from '../utils/auth.js';
 const ParkInfo = () => {
   const { id } = useParams();
   const [park, setPark] = useState<any>(null);
-   const [parkFullName, setParkFullName] = useState<string>('');
+  //  const [parkFullName, setParkFullName] = useState<string>('');
 const [showReviewForm, setShowReviewForm] = useState(false);
 const [saveParkMutation] = useMutation(SAVE_PARK,{
     refetchQueries: [{ query: QUERY_ME }],
@@ -28,11 +28,13 @@ setPark(null);
     const getParkDetails = async () => {
       const data = await fetchParkById(id);
       setPark(data);
-      setParkFullName(data.fullName);
+      // setParkFullName(data.fullName);
+      console.log(data)
     };
 
     getParkDetails();
   }, [id]);
+  
 const handleSavePark = async (park: any) => {
     try {
       await saveParkMutation({
@@ -122,7 +124,13 @@ const isParkSaved = userData?.me?.savedParks?.some(
   {/* Leave Review Form */}
   {showReviewForm && (
     <div className="w-full sm:w-auto mt-4">
-      <LeaveReviewForm parkFullName={parkFullName} parkId={id ?? ''} onClose={() => setShowReviewForm(false)} />
+      <LeaveReviewForm
+       parkFullName={park.fullName}
+       parkId={id ?? ''}
+       parkImage = {park.images?.[0]?.url || ''}
+       onClose={() => setShowReviewForm(false)}
+         
+         />
     </div>
   )}
 
@@ -144,15 +152,18 @@ const isParkSaved = userData?.me?.savedParks?.some(
 
 <div className="space-y-4 mt-4">
   {data?.getParkReviews?.map((review: any) => {
+    console.log(review);
     return (  // Explicitly returning the JSX
       <div key={review._id} className="border border-gray-300 rounded-lg shadow-lg p-4 bg-white">
        
 
         {/* User Info */}
         <div className="flex items-center space-x-3">
-          <div className="w-12 h-12 bg-gray-200 rounded-full"></div>
+          
+          
           <div>
             <h3 className="text-lg font-semibold">{review.username}</h3>
+            <p>{review.parkFullName}</p>
             <p className="text-sm text-gray-500">{formatDate(review.createdAt)}</p>
           </div>
         </div>

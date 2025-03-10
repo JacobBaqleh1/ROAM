@@ -20,16 +20,16 @@ export async function fetchParks(userInput: string) {
      if (stateMap[userInput]) {
         // If input is a full state name, convert to abbreviation
         const stateCode = stateMap[userInput];
-        url = `https://developer.nps.gov/api/v1/parks?limit=10&stateCode=${stateCode}&api_key=${apiKey}`;
+        url = `https://developer.nps.gov/api/v1/parks?limit=20&stateCode=${stateCode}&api_key=${apiKey}`;
     } else if (Object.values(stateMap).includes(userInput.toUpperCase())) {
         // If input is already a valid state abbreviation
         const stateCode = userInput.toUpperCase();
-        url = `https://developer.nps.gov/api/v1/parks?limit=10&stateCode=${stateCode}&api_key=${apiKey}`;
+        url = `https://developer.nps.gov/api/v1/parks?limit=20&stateCode=${stateCode}&api_key=${apiKey}`;
     } 
     
    else {
         // General search by park name
-        url = `https://developer.nps.gov/api/v1/parks?limit=10&q=${encodeURIComponent(userInput)}&api_key=${apiKey}`;
+        url = `https://developer.nps.gov/api/v1/parks?limit=20&q=${encodeURIComponent(userInput)}&api_key=${apiKey}`;
     }
 
     try {

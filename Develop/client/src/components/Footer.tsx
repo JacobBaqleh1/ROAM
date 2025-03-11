@@ -1,5 +1,7 @@
 import jakeImg from '../assets/jake.png';
-import samImg from '../assets/sam.png'
+import samImg from '../assets/sam.png';
+import davidImg from '../assets/david.jpg';
+
 const Footer = () => {
   return (
     <footer className="bg-black text-white py-8 ">
@@ -26,7 +28,7 @@ const Footer = () => {
           </div>
           <div>
             <img
-              src="https://via.placeholder.com/100"
+              src={davidImg}
               alt="David"
               className="w-24 h-24 rounded-full mb-4"
             />

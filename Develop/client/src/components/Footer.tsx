@@ -2,7 +2,7 @@ import jakeImg from '../assets/jake.png';
 import samImg from '../assets/sam.png'
 const Footer = () => {
   return (
-    <footer className="bg-black text-white py-8">
+    <footer className="bg-black text-white py-8 ">
       <div className="container mx-auto text-center">
         <h2 className="text-2xl font-bold mb-4">Meet the Devs</h2>
         <div className="flex flex-col md:flex-row justify-center gap-8">

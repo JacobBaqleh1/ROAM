@@ -3,6 +3,7 @@ import { Outlet } from 'react-router-dom';
 import { ApolloClient, ApolloProvider, createHttpLink, InMemoryCache } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 import Navbar from './components/Navbar';
+import Footer from './components/Footer';
 const httpLink = createHttpLink({
   uri : process.env.NODE_ENV === 'development'
   ? 'http://localhost:3000/graphql'  // Local development endpoint
@@ -29,9 +30,10 @@ const client = new ApolloClient({
 function App() {
   return (
     <ApolloProvider client={client}>
-    <div>
+    <div className='min-h-screen'>
       <Navbar />
       <Outlet />
+      <Footer />
     </div>
     </ApolloProvider>
   );

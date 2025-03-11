@@ -4,7 +4,6 @@ import { fetchParks } from '../utils/API';
 import {  useNavigate } from 'react-router-dom';
 import searchImg from '../assets/search.svg'
 import AutoCarousel from '../components/SlideShow';
-import Footer from '../components/Footer';
 import { QUERY_ALL_REVIEWS } from '../utils/queries.js';
 import { useQuery } from '@apollo/client';
 
@@ -111,7 +110,7 @@ setError('');
       </div>
     </div>  }
 
-  <Footer /> 
+  
   </div>
 );
 

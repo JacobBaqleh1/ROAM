@@ -5,7 +5,6 @@ import { useQuery, useMutation } from '@apollo/client';
 import Auth from '../utils/auth.js';
 import { QUERY_ME } from '../utils/queries.js';
 import { DELETE_PARK } from '../utils/mutations.js';
-import { removeParkId } from '../utils/localStorage.js';
 import { Park } from '../models/Park.js';
 
 interface UserData {
@@ -39,20 +38,10 @@ const SavedParks = () => {
 
   // Function to remove a saved park
   const handleDeletePark = async (parkId: string) => {
-  const token = Auth.loggedIn() ? Auth.getToken() : null;
-  if (!token) {
-    console.error('No valid token found.');
-    return;
-  }
-
   try {
-     await deletePark({
-      variables: { parkId },
-    });
-
-    // Remove from localStorage
-    removeParkId(parkId);
-
+  await deletePark({
+    variables: { parkId },
+  });
     // Update local state manually instead of waiting for refetch()
     setUserData((prevUserData) => {
       if (!prevUserData) return null;

@@ -73,9 +73,9 @@ const ParkInfo = () => {
     return "★".repeat(rating) + "☆".repeat(5 - rating);
   };
 
-  const isParkSaved = userData?.me?.savedParks?.some(
-    (savedPark: any) => savedPark.parkId === park.id
-  );
+ const isParkSaved = !!(park && userData?.me?.savedParks?.some(
+  (savedPark: any) => savedPark.parkId === park.id
+));
 
   const handlePrevImage = () => {
     setCurrentImageIndex((prevIndex) =>

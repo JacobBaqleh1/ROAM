@@ -6,7 +6,9 @@ import EditReviewForm from "../components/EditReviewForm"; // Create this compon
 
 const MyReviews = () => {
   const { loading, error, data } = useQuery(QUERY_USER_REVIEWS);
-  const [deleteReview] = useMutation(DELETE_REVIEW);
+  const [deleteReview] = useMutation(DELETE_REVIEW, {
+     refetchQueries: [{ query: QUERY_USER_REVIEWS }],
+  });
   const [editingReviewId, setEditingReviewId] = useState<string | null>(null);
 
   if (loading) return <p>Loading reviews...</p>;
@@ -15,7 +17,7 @@ const MyReviews = () => {
   const handleDelete = async (reviewId: string) => {
     try {
       await deleteReview({ variables: { reviewId } });
-      window.location.reload(); // Refresh reviews after deletion
+      
     } catch (err) {
       console.error("Error deleting review:", err);
     }

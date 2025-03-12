@@ -57,7 +57,7 @@ setError('');
     <div>
   <div className="relative flex h-[15rem] md:h-[40rem] flex-col items-center justify-start ">
     {/* Background Slideshow */}
-    <div className="absolute inset-0 -z-10 w-full h-full overflow-hidden">
+    <div className="absolute inset-0 -z-10 w-full h-full overflow-hidden " >
       <AutoCarousel />
     </div>
 

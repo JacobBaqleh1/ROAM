@@ -179,9 +179,9 @@ const resolvers = {
 
       const user = await User.findByIdAndUpdate(
         context.user._id,
-        { $pull: { savedParks:  parkId  } },
-        { new: true }
-      );
+         { $pull: { savedParks: { parkId: parkId } } }, // Pull by matching parkId inside objects
+    { new: true }
+  ).populate('savedParks');
 
       return user;
     },

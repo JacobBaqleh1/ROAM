@@ -2,35 +2,36 @@ import { FormEvent, useState } from "react";
 import { fetchParks } from "../utils/API";
 import { useNavigate } from "react-router-dom";
 import searchImg from '../assets/search.svg'
+
 export default function StateSearchBar() {
-const [searchInput, setSearchInput] = useState('');
+  const [searchInput, setSearchInput] = useState('');
   const [err, setError] = useState('');
- const navigate = useNavigate();
+  const navigate = useNavigate();
   const handleFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
-      event.preventDefault();
-  setError('');
-      if (!searchInput) {
-        console.error('Please enter a location.');
+    event.preventDefault();
+    setError('');
+    if (!searchInput) {
+      console.error('Please enter a location.');
+      return;
+    }
+
+    try {
+      const response = await fetchParks(searchInput);
+      if (!response || response.length === 0) {
+        setError('No parks found. Try another location.');
         return;
       }
-  
-      try {
-        const response = await fetchParks(searchInput);
-          if (!response || response.length === 0) {
-          setError('No parks found. Try another location.');
-          return;
-        }
-        navigate('/results', { state: { parks: response } });
-        // setSearchedParks(response || []);
-      } catch (err) {
-          setError('Error fetching parks. Please try again.');
-        console.error('Error fetching parks:', err);
-      }
-    };
+      navigate('/results', { state: { parks: response } });
+      // setSearchedParks(response || []);
+    } catch (err) {
+      setError('Error fetching parks. Please try again.');
+      console.error('Error fetching parks:', err);
+    }
+  };
 
-    return (
-        <>
-          <form onSubmit={handleFormSubmit} className="flex gap-2 items-center">
+  return (
+    <>
+      <form onSubmit={handleFormSubmit} className="flex gap-2 items-center">
         <input
           name="searchInput"
           value={searchInput}
@@ -43,12 +44,12 @@ const [searchInput, setSearchInput] = useState('');
           type="submit"
           className="w-[5rem] bg-green-600 text-white p-3 rounded-lg hover:bg-green-700 transition"
         >
-           <img src={searchImg} alt="Search" className="h-6 w-4 inline-block" />
+          <img src={searchImg} alt="Search" className="h-6 w-4 inline-block" />
 
         </button>
       </form>
-     
-       {err && <p className="text-red-500 text-center">{err}</p>}
-        </>
-    )
+
+      {err && <p className="text-red-500 text-center">{err}</p>}
+    </>
+  )
 }

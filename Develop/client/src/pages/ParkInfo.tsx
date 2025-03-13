@@ -8,6 +8,7 @@ import LeaveReviewForm from '../components/LeaveReviewForm';
 import Auth from '../utils/auth.js';
 import StateSearchBar from '../components/StateSearchBar.js';
 import { ArrowLeft, ArrowRight } from 'lucide-react'; // Optional: For nicer arrows
+import saveSvg from "../assets/save-svgrepo-com.svg";
 
 const ParkInfo = () => {
   const { id } = useParams();
@@ -73,9 +74,9 @@ const ParkInfo = () => {
     return "★".repeat(rating) + "☆".repeat(5 - rating);
   };
 
- const isParkSaved = !!(park && userData?.me?.savedParks?.some(
-  (savedPark: any) => savedPark.parkId === park.id
-));
+  const isParkSaved = !!(park && userData?.me?.savedParks?.some(
+    (savedPark: any) => savedPark.parkId === park.id
+  ));
 
   const handlePrevImage = () => {
     setCurrentImageIndex((prevIndex) =>
@@ -131,29 +132,20 @@ const ParkInfo = () => {
       {/* Park Info */}
       <h1 className="text-4xl font-extrabold text-gray-800">{park.fullName}</h1>
       <p className="text-lg text-gray-600 mt-2">{park.states}</p>
-      <p className="mt-4 text-gray-700">{park.description}</p>
-
-      <a
-        href={park.url}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="block mt-4 text-blue-500 hover:text-blue-700"
-      >
-        Official Website
-      </a>
-
       {/* Buttons */}
-      <div className="flex gap-4 mt-6">
+      <div className="flex gap-4 mt-6 justify-center">
         <button
           onClick={() => handleSavePark(park)}
           disabled={isParkSaved}
-          className={`py-2 px-4 rounded-lg transition ${
-            isParkSaved
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-blue-600 hover:bg-blue-700 text-white"
-          }`}
+          className={`py-2 px-4 rounded-lg transition ${isParkSaved
+            ? "bg-gray-400 cursor-not-allowed"
+            : "bg-blue-600 hover:bg-blue-700 text-white"
+            }`}
         >
-          {isParkSaved ? "Already Saved" : "Add to Travel List"}
+          <div className='flex justify-center align-middle '>
+            <img src={saveSvg} alt="save icon" className='w-8 h-8' />
+            <p className='content-center'>{isParkSaved ? "Saved!" : "Save Park"}</p>
+          </div>
         </button>
 
         {!showReviewForm && (
@@ -161,10 +153,33 @@ const ParkInfo = () => {
             onClick={() => setShowReviewForm(true)}
             className="py-2 px-4 border border-gray-300 rounded-lg hover:bg-gray-100"
           >
-            Leave a Review
+            <div className='flex justify-center align-middle items-center'>
+              <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024" height="1.5em" width="1.5em" xmlns="http://www.w3.org/2000/svg"><path d="M908.1 353.1l-253.9-36.9L540.7 86.1c-3.1-6.3-8.2-11.4-14.5-14.5-15.8-7.8-35-1.3-42.9 14.5L369.8 316.2l-253.9 36.9c-7 1-13.4 4.3-18.3 9.3a32.05 32.05 0 0 0 .6 45.3l183.7 179.1-43.4 252.9a31.95 31.95 0 0 0 46.4 33.7L512 754l227.1 119.4c6.2 3.3 13.4 4.4 20.3 3.2 17.4-3 29.1-19.5 26.1-36.9l-43.4-252.9 183.7-179.1c5-4.9 8.3-11.3 9.3-18.3 2.7-17.5-9.5-33.7-27-36.3zM664.8 561.6l36.1 210.3L512 672.7 323.1 772l36.1-210.3-152.8-149L417.6 382 512 190.7 606.4 382l211.2 30.7-152.8 148.9z"></path></svg>
+              <p className='content-center'>  Leave a Review </p>
+            </div>
           </button>
         )}
       </div>
+      <div className='grid grid-cols-2 mt-6'>
+        <div className=' '>
+          <h2 className='text-2xl underline text-center '>Description</h2>
+          <p className="mt-2 text-gray-700">{park.description}</p>
+        </div>
+        <div className="border-2 border-gray-200" >
+          <a
+            href={park.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block mt-4 text-blue-500 hover:text-blue-700"
+          >
+            Park Website
+          </a>
+          <p>{park.contacts.phoneNumbers?.[0].phoneNumber}</p>
+          <p>{park.contacts.emailAddresses?.[0].emailAddress}</p>
+        </div>
+      </div>
+
+
 
       {/* Review Form */}
       {showReviewForm && (

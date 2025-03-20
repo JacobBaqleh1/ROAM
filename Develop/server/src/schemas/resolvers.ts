@@ -1,7 +1,21 @@
 import {User, Review} from '../models/index.js'
-
+import AWS from "aws-sdk"
+import {v4 as uuidv4} from "uuid"
 import {signToken, AuthenticationError} from '../utils/auth.js';
+import dotenv from "dotenv";
 
+dotenv.config();
+
+
+if (!process.env.AWS_ACCESS_KEY || !process.env.AWS_SECRET_KEY || !process.env.AWS_REGION) {
+  throw new Error('Missing AWS configuration in environment variables.');
+}
+
+const s3 = new AWS.S3({
+  accessKeyId: process.env.AWS_ACCESS_KEY,
+  secretAccessKey: process.env.AWS_SECRET_KEY,
+  region: process.env.AWS_REGION,
+});
 interface UserArgs {
   username: string;
 }
@@ -237,6 +251,22 @@ const resolvers = {
         comment: review.comment // Ensure returned field is `content`
       };
     },
+    generateSignedUrl: async(_: any, { fileType }: any) => {
+      const fileName = `profile-pictures/${uuidv4()}.${fileType.split("/")[1]}`;
+
+      const params = {
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Key: fileName,
+        Expires: 60,
+        ContentType: fileType,
+        ACL: "public-read",
+
+      };
+
+      const signedUrl = await s3.getSignedUrlPromise("putObject", params);
+
+      return { url: signedUrl}
+    }
   },
 }
 

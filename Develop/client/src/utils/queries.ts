@@ -107,3 +107,11 @@ export const QUERY_USER_REVIEWS = gql`
     }
   }
 `;
+
+export const GENERATE_SIGNED_URL = gql`
+  mutation GenerateSignedUrl($fileType: String!) {
+    generateSignedUrl(fileType: $fileType) {
+      url
+    }
+  }
+`;

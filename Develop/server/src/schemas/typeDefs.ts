@@ -1,6 +1,11 @@
 
 
 const typeDefs = `
+
+  type SignedUrl {
+   url: String!
+}
+
   type User {
     _id: ID
     username: String!
@@ -89,6 +94,7 @@ type Mutation {
   deleteReview(reviewId: ID!): Review
   savePark(input: ParkInput!): User
   removePark(parkId: String!): User
+  generateSignedUrl(fileType: String!): SignedUrl!
 }
 `;
 

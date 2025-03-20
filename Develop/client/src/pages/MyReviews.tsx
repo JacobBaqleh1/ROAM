@@ -1,13 +1,15 @@
 import { useQuery, useMutation } from "@apollo/client";
 import { QUERY_USER_REVIEWS } from "../utils/queries";
-import { DELETE_REVIEW} from "../utils/mutations";
+import { DELETE_REVIEW } from "../utils/mutations";
 import { useState } from "react";
 import EditReviewForm from "../components/EditReviewForm"; // Create this component for editing reviews
+// Profile picture component still needs work
+// import ProfilePictureUpload from "../components/ProfilePictureUpload";
 
 const MyReviews = () => {
   const { loading, error, data } = useQuery(QUERY_USER_REVIEWS);
   const [deleteReview] = useMutation(DELETE_REVIEW, {
-     refetchQueries: [{ query: QUERY_USER_REVIEWS }],
+    refetchQueries: [{ query: QUERY_USER_REVIEWS }],
   });
   const [editingReviewId, setEditingReviewId] = useState<string | null>(null);
 
@@ -17,7 +19,7 @@ const MyReviews = () => {
   const handleDelete = async (reviewId: string) => {
     try {
       await deleteReview({ variables: { reviewId } });
-      
+
     } catch (err) {
       console.error("Error deleting review:", err);
     }
@@ -25,23 +27,29 @@ const MyReviews = () => {
 
   return (
     <div className="container mx-auto p-4">
+      <div>
+        {/* in the works */}
+        {/* <ProfilePictureUpload /> */}
+      </div>
       <h1 className="text-3xl font-bold">My Reviews</h1>
       {data?.getUserReviews?.length === 0 ? (
         <p>No reviews yet.</p>
       ) : (
         <div className="space-y-4 mt-4">
+
+
           {data?.getUserReviews?.map((review: any) => (
             <div key={review._id} className="border p-4 rounded-lg shadow-lg bg-white">
               <p className="text-lg">{review.parkFullName}</p>
               <p className="text-lg">{review.comment}</p>
               <p className="text-sm text-gray-500">{new Date(parseInt(review.createdAt)).toLocaleDateString()}</p>
-               <p className="text-yellow-500 font-bold">Rating: ⭐ {review.rating}/5</p>
+              <p className="text-yellow-500 font-bold">Rating: ⭐ {review.rating}/5</p>
               {editingReviewId === review._id ? (
-                <EditReviewForm 
-                reviewId={review._id}
-                 initialComment={review.comment}
-                 initialRating={review.rating}
-                 onClose={() => setEditingReviewId(null)} />
+                <EditReviewForm
+                  reviewId={review._id}
+                  initialComment={review.comment}
+                  initialRating={review.rating}
+                  onClose={() => setEditingReviewId(null)} />
               ) : (
                 <>
                   <button className="mr-2 border px-4 py-1 rounded bg-blue-500 text-white" onClick={() => setEditingReviewId(review._id)}>

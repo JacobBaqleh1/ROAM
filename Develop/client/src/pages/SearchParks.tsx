@@ -1,17 +1,11 @@
-import { useEffect, useState } from 'react';
-import type { FormEvent } from 'react';
-import { fetchParks } from '../utils/API';
-import { useNavigate } from 'react-router-dom';
-import searchImg from '../assets/search.svg'
+import { useEffect, } from 'react';
 import AutoCarousel from '../components/SlideShow';
 import { QUERY_ALL_REVIEWS } from '../utils/queries.js';
 import { useQuery } from '@apollo/client';
 import StateSearchBar from '../components/StateSearchBar.js';
 
 const SearchParks = () => {
-  const [searchInput, setSearchInput] = useState('');
-  const [err, setError] = useState('');
-  const navigate = useNavigate();
+
   const { loading, error, data, refetch } = useQuery(QUERY_ALL_REVIEWS);
 
   useEffect(() => {
@@ -25,27 +19,7 @@ const SearchParks = () => {
 
 
 
-  const handleFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setError('');
-    if (!searchInput) {
-      console.error('Please enter a location.');
-      return;
-    }
 
-    try {
-      const response = await fetchParks(searchInput);
-      if (!response || response.length === 0) {
-        setError('No parks found. Try another location.');
-        return;
-      }
-      navigate('/results', { state: { parks: response } });
-
-    } catch (err) {
-      setError('Error fetching parks. Please try again.');
-      console.error('Error fetching parks:', err);
-    }
-  };
 
   const formatDate = (timestamp: any) => {
     if (!timestamp) return "Invalid date";  // handle invalid date
@@ -78,7 +52,7 @@ const SearchParks = () => {
         <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-gray-700"></div>
       </div>
         :
-        error ? <p>Server error loading reviews</p>
+        error ? <div></div>
           :
           <div className="max-w-5xl mx-auto p-4">
             <h2 className="text-2xl font-bold mb-4 text-center">Recent Activity</h2>

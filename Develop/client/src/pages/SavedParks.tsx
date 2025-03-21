@@ -18,12 +18,12 @@ const SavedParks = () => {
   // Fetch user data
   const { loading, error, data } = useQuery(QUERY_ME, {
     skip: !Auth.loggedIn(),// Avoid fetching if user is not logged in
-     
+
   });
 
   // Delete park mutation
-  const [deletePark] = useMutation(DELETE_PARK,{
-     refetchQueries: [{ query: QUERY_ME }],
+  const [deletePark] = useMutation(DELETE_PARK, {
+    refetchQueries: [{ query: QUERY_ME }],
   });
 
   // State to hold user data
@@ -38,22 +38,22 @@ const SavedParks = () => {
 
   // Function to remove a saved park
   const handleDeletePark = async (parkId: string) => {
-  try {
-  await deletePark({
-    variables: { parkId },
-  });
-    // Update local state manually instead of waiting for refetch()
-    setUserData((prevUserData) => {
-      if (!prevUserData) return null;
-      return {
-        ...prevUserData,
-        savedParks: prevUserData.savedParks.filter((park) => park.parkId !== parkId),
-      };
-    });
-  } catch (err) {
-    console.error('Error deleting park:', err);
-  }
-};
+    try {
+      await deletePark({
+        variables: { parkId },
+      });
+      // Update local state manually instead of waiting for refetch()
+      setUserData((prevUserData) => {
+        if (!prevUserData) return null;
+        return {
+          ...prevUserData,
+          savedParks: prevUserData.savedParks.filter((park) => park.parkId !== parkId),
+        };
+      });
+    } catch (err) {
+      console.error('Error deleting park:', err);
+    }
+  };
 
   // Loading state
   if (loading) return <div className="text-center py-5"><Spinner animation="border" variant="light" /></div>;
@@ -67,43 +67,41 @@ const SavedParks = () => {
   }
 
   return (
-    <div className="bg-dark text-light py-5">
-      <Container>
-        <h2 className="text-center">
+    <div className="bg-white text-black py-5">
+      <div className="max-w-5xl mx-auto px-4">
+        <h2 className="text-center text-xl font-semibold mb-6">
           {userData?.savedParks.length
             ? `Viewing ${userData.savedParks.length} saved ${userData.savedParks.length === 1 ? 'park' : 'parks'}:`
             : 'You have no saved parks!'}
         </h2>
 
         {userData?.savedParks.length ? (
-          <Row className="gy-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             {userData.savedParks.map((park) => (
-              <Col md="4" key={park.parkId} className="d-flex">
-                <Card className="flex-fill" border="dark">
-                  {park.images?.length > 0 && (
-  <Card.Img src={park.images[0].url} alt={`View of ${park.fullName}`} variant="top" />
-)}
-                  <Card.Body>
-                    <Card.Title>{park.fullName}</Card.Title>
-                    <p className="small text-muted">Location: {park.states}</p>
-                    <Card.Text>{park.description}</Card.Text>
-                    <Button
-                      variant="danger"
-                      className="w-100"
-                      onClick={() => handleDeletePark(park.parkId)}
-                    >
-                      Remove from Travel List
-                    </Button>
-                  </Card.Body>
-                </Card>
-              </Col>
+              <div key={park.parkId} className="bg-gray-800 rounded-lg shadow-lg overflow-hidden flex flex-col">
+                {park.images?.length > 0 && (
+                  <img src={park.images[0].url} alt={`View of ${park.fullName}`} className="w-full h-40 object-cover" />
+                )}
+                <div className="p-4 flex flex-col flex-grow">
+                  <h3 className="text-lg text-white font-semibold">{park.fullName}</h3>
+                  <p className="text-sm text-gray-400">Location: {park.states}</p>
+                  <p className="text-gray-300 flex-grow">{park.description}</p>
+                  <button
+                    className="mt-4 w-full bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-md transition-all"
+                    onClick={() => handleDeletePark(park.parkId)}
+                  >
+                    Remove from Travel List
+                  </button>
+                </div>
+              </div>
             ))}
-          </Row>
+          </div>
         ) : (
-          <p className="text-center">No saved parks found. Explore some parks and save them to your list!</p>
+          <p className="text-center text-gray-400">No saved parks found. Explore some parks and save them to your list!</p>
         )}
-      </Container>
+      </div>
     </div>
+
   );
 };
 

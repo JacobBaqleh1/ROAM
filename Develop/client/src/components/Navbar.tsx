@@ -117,14 +117,14 @@ const AppNavbar = () => {
 
           {/* mobile view */}
 
-          <div className="block md:hidden text-white">
+          {/* <div className="block md:hidden text-white">
             <button onClick={() => setIsOpen(!isOpen)} className="text-[#FFF4E5]  text-6xl">
               ☰
             </button>
-          </div>
+          </div> */}
 
           {/* bottom navbar */}
-          <div className="fixed bottom-0 left-0 w-full bg-white flex justify-around py-3 px-4 ">
+          <div className="md:hidden fixed bottom-0 left-0 w-full bg-white flex justify-around py-3 px-4 ">
 
             <Link to="/">
               <div className='flex flex-col items-center '>
@@ -141,12 +141,22 @@ const AppNavbar = () => {
 
 
             {Auth.loggedIn() ?
-              <Link to="/">
-                <div className='flex flex-col items-center '>
-                  <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 384 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M336 0H48C21.49 0 0 21.49 0 48v464l192-112 192 112V48c0-26.51-21.49-48-48-48zm0 428.43l-144-84-144 84V54a6 6 0 0 1 6-6h276c3.314 0 6 2.683 6 5.996V428.43z"></path></svg>
-                  Saved
+              <>
+                <Link to="/saved">
+                  <div className='flex flex-col items-center '>
+                    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 384 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M336 0H48C21.49 0 0 21.49 0 48v464l192-112 192 112V48c0-26.51-21.49-48-48-48zm0 428.43l-144-84-144 84V54a6 6 0 0 1 6-6h276c3.314 0 6 2.683 6 5.996V428.43z"></path></svg>
+                    Saved
+                  </div>
+                </ Link>
+                <div
+                  onClick={Auth.logout}
+                  className="flex flex-col items-center "
+                >
+                  <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M16 13L16 11 7 11 7 8 2 12 7 16 7 13z"></path><path d="M20,3h-9C9.897,3,9,3.897,9,5v4h2V5h9v14h-9v-4H9v4c0,1.103,0.897,2,2,2h9c1.103,0,2-0.897,2-2V5C22,3.897,21.103,3,20,3z"></path></svg>
+                  Logout
                 </div>
-              </ Link>
+              </>
+
               :
               <div className='hidden'></div>
             }
@@ -159,7 +169,7 @@ const AppNavbar = () => {
       </nav>
 
       {/* Modal */}
-      {showModal && (
+      {/* {showModal && (
         <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white rounded-lg w-full max-w-lg p-8">
             <div className="flex justify-between items-center mb-2">
@@ -182,7 +192,7 @@ const AppNavbar = () => {
               to access your profile
             </div>
 
-            {/* Tab Content */}
+            
             <div className="mt-6 ">
 
 
@@ -200,7 +210,7 @@ const AppNavbar = () => {
             </div>
           </div>
         </div>
-      )}
+      )} */}
     </>
   );
 };

@@ -137,7 +137,7 @@ const AppNavbar = () => {
 
 
 
-            {Auth.loggedIn() ?
+            {Auth.loggedIn() ? (
               <>
                 <Link to="/saved">
                   <div className='flex flex-col items-center '>
@@ -152,15 +152,16 @@ const AppNavbar = () => {
                   <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M16 13L16 11 7 11 7 8 2 12 7 16 7 13z"></path><path d="M20,3h-9C9.897,3,9,3.897,9,5v4h2V5h9v14h-9v-4H9v4c0,1.103,0.897,2,2,2h9c1.103,0,2-0.897,2-2V5C22,3.897,21.103,3,20,3z"></path></svg>
                   Logout
                 </div>
-              </>
-
-              :
-              <div className=''>
-                <div onClick={() => setShowModal(true)} className='flex flex-col items-center '>
+              </>)
+              : (
+                <div
+                  onClick={() => setShowModal(true)}
+                  className='flex flex-col items-center '
+                >
                   <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M13 16L18 12 13 8 13 11 4 11 4 13 13 13z"></path><path d="M20,3h-9C9.897,3,9,3.897,9,5v4h2V5h9v14h-9v-4H9v4c0,1.103,0.897,2,2,2h9c1.103,0,2-0.897,2-2V5C22,3.897,21.103,3,20,3z"></path></svg>
                   Login/Sign Up
                 </div>
-              </div>
+              )
             }
 
           </div>
@@ -171,7 +172,7 @@ const AppNavbar = () => {
       </nav>
 
       {/* Modal */}
-      {/* {showModal && (
+      {showModal && (
         <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white rounded-lg w-full max-w-lg p-8">
             <div className="flex justify-between items-center mb-2">
@@ -194,7 +195,7 @@ const AppNavbar = () => {
               to access your profile
             </div>
 
-            
+
             <div className="mt-6 ">
 
 
@@ -212,7 +213,7 @@ const AppNavbar = () => {
             </div>
           </div>
         </div>
-      )} */}
+      )}
     </>
   );
 };

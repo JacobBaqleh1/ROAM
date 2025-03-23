@@ -6,7 +6,7 @@ export default function Login() {
     const navigate = useNavigate();
 
     return (
-        <div className="  flex justify-center items-center ">
+        <div className="flex justify-center items-center ">
             <div className="bg-white rounded-lg w-full max-w-sm md:max-w-lg p-8">
                 <div className="flex justify-between items-center mb-2">
                     <button

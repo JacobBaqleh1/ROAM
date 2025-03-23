@@ -123,7 +123,7 @@ const AppNavbar = () => {
           </div> */}
 
           {/* bottom navbar */}
-          <div className="md:hidden fixed  bottom-0 left-0 w-full bg-black text-white flex justify-around py-3 px-4 ">
+          <div className="md:hidden fixed  bottom-0 left-0 w-full bg-black text-white flex justify-around py-3 px-4 z-10 ">
 
             <Link to="/">
               <div className='flex flex-col items-center '>

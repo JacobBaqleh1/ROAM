@@ -8,6 +8,7 @@ import SavedParks from './pages/SavedParks.js'
 import ParkInfo from './pages/ParkInfo.js'
 import MyReviews from './pages/MyReviews.js';
 import ResultsPage from './pages/ResultsPage.js';
+import Login from './pages/Login.js';
 
 const router = createBrowserRouter([
   {
@@ -24,24 +25,28 @@ const router = createBrowserRouter([
       }
       , {
         path: '/park/:id',
-        element: <ParkInfo  />
+        element: <ParkInfo />
       }
       ,
       {
-        path: '/my-reviews', 
+        path: '/my-reviews',
         element: <MyReviews />
       }
       ,
       {
-         path:'/results',
-          element: <ResultsPage /> 
-        },
+        path: '/results',
+        element: <ResultsPage />
+      },
+      {
+        path: '/login',
+        element: <Login />
+      }
     ]
   }
 ])
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-   <AuthProvider>
-  <RouterProvider router={router} />
+  <AuthProvider>
+    <RouterProvider router={router} />
   </AuthProvider>
 )

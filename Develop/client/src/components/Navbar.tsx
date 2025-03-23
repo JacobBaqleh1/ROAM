@@ -1,13 +1,12 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import SignUpForm from './SignupForm';
-import LoginForm from './LoginForm';
+import { Link, useNavigate } from 'react-router-dom';
+// import SignUpForm from './SignupForm';
+// import LoginForm from './LoginForm';
 
 import Auth from '../utils/auth';
 
 const AppNavbar = () => {
-  // set modal display state
-  const [showModal, setShowModal] = useState(false);
+  const navigate = useNavigate();
 
 
   const [isOpen, setIsOpen] = useState(false);
@@ -58,7 +57,7 @@ const AppNavbar = () => {
               </>
             ) : (
               <button
-                onClick={() => setShowModal(true)}
+                onClick={() => navigate('/login')}
                 className="text-white px-2 py-1 rounded hover:bg-yellow-500 hover:text-gray-800 transition-colors duration-200"
               >
                 Login/Sign Up
@@ -103,7 +102,7 @@ const AppNavbar = () => {
                 </>
               ) : (
                 <button
-                  onClick={() => setShowModal(true)}
+                  onClick={() => navigate('/login')}
                   className="text-white px-2 py-1 rounded hover:bg-yellow-500 hover:text-gray-800 transition-colors duration-200"
                 >
                   Login/Sign Up
@@ -155,7 +154,7 @@ const AppNavbar = () => {
               </>)
               : (
                 <div
-                  onClick={() => setShowModal(true)}
+                  onClick={() => navigate('/login')}
                   className='flex flex-col items-center '
                 >
                   <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M13 16L18 12 13 8 13 11 4 11 4 13 13 13z"></path><path d="M20,3h-9C9.897,3,9,3.897,9,5v4h2V5h9v14h-9v-4H9v4c0,1.103,0.897,2,2,2h9c1.103,0,2-0.897,2-2V5C22,3.897,21.103,3,20,3z"></path></svg>
@@ -172,7 +171,7 @@ const AppNavbar = () => {
       </nav>
 
       {/* Modal */}
-      {showModal && (
+      {/* {showModal && (
         <div className="min-h-screen max-h-screen fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white rounded-lg w-full max-w-lg p-8  ">
             <div className="flex justify-between items-center mb-2">
@@ -213,7 +212,7 @@ const AppNavbar = () => {
             </div>
           </div>
         </div>
-      )}
+      )} */}
     </>
   );
 };

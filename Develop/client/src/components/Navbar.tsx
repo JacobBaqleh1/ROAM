@@ -173,8 +173,8 @@ const AppNavbar = () => {
 
       {/* Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white rounded-lg w-full max-w-lg p-8">
+        <div className="min-h-screen max-h-screen fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white rounded-lg w-full max-w-lg p-8  ">
             <div className="flex justify-between items-center mb-2">
               <div className="flex flex-col space-x-4">
                 <button

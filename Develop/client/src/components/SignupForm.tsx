@@ -4,7 +4,7 @@ import { useMutation } from '@apollo/client';
 import { ADD_USER } from '../utils/mutations';
 import Auth from '../utils/auth';
 
-const SignupForm = ({ handleModalClose }: { handleModalClose: () => void }) => {
+const SignupForm = () => {
   const [formState, setFormState] = useState({
     username: '',
     email: '',
@@ -32,7 +32,7 @@ const SignupForm = ({ handleModalClose }: { handleModalClose: () => void }) => {
       });
 
       Auth.login(data.addUser.token);
-      handleModalClose(); // Close the modal on successful signup
+      // Close the modal on successful signup
     } catch (e) {
       console.error(e);
       setShowAlert(true); // Show alert on error
@@ -44,7 +44,7 @@ const SignupForm = ({ handleModalClose }: { handleModalClose: () => void }) => {
       {data ? (
         <p className="text-center text-green-600">
           Success! You may now head{' '}
-          <a href="/" onClick={handleModalClose} className="text-blue-500 underline">
+          <a href="/" className="text-blue-500 underline">
             back to the homepage.
           </a>
         </p>

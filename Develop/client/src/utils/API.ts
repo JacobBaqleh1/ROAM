@@ -12,12 +12,13 @@ const stateMap: Record<string, string> = {
     "virginia": "VA", "washington": "WA", "west virginia": "WV", "wisconsin": "WI", "wyoming": "WY"
 };
 
-export async function fetchParks(userInput: string) {
+export 
+async function fetchParks(userInput: string) {
     const apiKey = 'IjtCC2uKsdG5k1DIn07ABIZDFBvB0shlKY0Whu2i';
     let url;
     userInput = userInput.trim().toLowerCase();
 
-     if (stateMap[userInput]) {
+    if (stateMap[userInput]) {
         // If input is a full state name, convert to abbreviation
         const stateCode = stateMap[userInput];
         url = `https://developer.nps.gov/api/v1/parks?limit=20&stateCode=${stateCode}&api_key=${apiKey}`;
@@ -25,9 +26,7 @@ export async function fetchParks(userInput: string) {
         // If input is already a valid state abbreviation
         const stateCode = userInput.toUpperCase();
         url = `https://developer.nps.gov/api/v1/parks?limit=20&stateCode=${stateCode}&api_key=${apiKey}`;
-    } 
-    
-   else {
+    } else {
         // General search by park name
         url = `https://developer.nps.gov/api/v1/parks?limit=20&q=${encodeURIComponent(userInput)}&api_key=${apiKey}`;
     }
@@ -39,7 +38,7 @@ export async function fetchParks(userInput: string) {
         if (data.data.length === 0) {
             console.log("No parks found.");
         } else {
-           console.log("Parks found:", data.data);
+            console.log("Parks found:", data.data);
             return data.data;
         }
     } catch (error) {

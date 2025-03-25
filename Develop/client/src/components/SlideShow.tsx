@@ -5,10 +5,10 @@ import oregonImg from '../assets/craterlake4.png';
 import newMexicoImg from '../assets/chacopark4.png';
 
 const views = [
-  { img: utahImg, text: "Discover Utah", subText: "Bryce Canyon National Park" },
-  { img: caliImg, text: "Discover California", subText: "Yosemite National Park" },
-  { img: oregonImg, text: "Discover Oregon", subText: "Crater Lake National Park" },
-  { img: newMexicoImg, text: "Discover New Mexico", subText: "Chaco Culture National Historical Park" },
+  { img: utahImg, text: "Utah", subText: "Bryce Canyon National Park" },
+  { img: caliImg, text: "California", subText: "Yosemite National Park" },
+  { img: oregonImg, text: "Oregon", subText: "Crater Lake National Park" },
+  { img: newMexicoImg, text: "New Mexico", subText: "Chaco Culture National Historical Park" },
 ];
 
 export default function AutoCarousel() {
@@ -34,18 +34,17 @@ export default function AutoCarousel() {
         src={views[index].img}
         alt={views[index].text}
         data-darkreader-ignore
-        className={`w-full h-full object-cover transition-opacity duration-1000 ${
-          fade ? "opacity-100" : "opacity-0"
-        }`}
+        className={`w-full h-full object-cover transition-opacity duration-1000 ${fade ? "opacity-90" : "opacity-0"
+          }`}
       />
-      
+
       {/* Text Overlay */}
-      <div className="flex flex-col absolute bottom-0 left-0 p-4 z-10">
-        <h1 className="text-white text-3xl px-4 py-2 inline-block bg-black/50 rounded-lg">
-          {views[index].text}
-        </h1>
-        <p className="text-white text-lg px-4 py-2 rounded-lg inline-block mt-2 bg-black/50">
+      <div className="flex flex-col absolute bottom-0 left-0 mb-4 z-10 ">
+        <h1 className="text-white text-xl  inline-block rounded-lg font-extrabold ">
           {views[index].subText}
+        </h1>
+        <p className="text-white text-lg  rounded-lg p-1 inline-block mt-2 font-extrabold ">
+          {views[index].text}
         </p>
       </div>
     </div>

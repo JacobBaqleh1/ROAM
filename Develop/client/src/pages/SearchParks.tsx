@@ -2,7 +2,7 @@ import { useEffect, } from 'react';
 import AutoCarousel from '../components/SlideShow';
 import { QUERY_ALL_REVIEWS } from '../utils/queries.js';
 import { useQuery } from '@apollo/client';
-import StateSearchBar from '../components/StateSearchBar.js';
+import HomeSearchBar from '../components/HomeSearchBar.js';
 
 const SearchParks = () => {
 
@@ -29,21 +29,23 @@ const SearchParks = () => {
 
   return (
     <div>
-      <div className="relative flex min-h-[30rem] sm:h-[15rem] md:h-[40rem] flex-col items-center justify-start ">
-        <StateSearchBar />
+      <div className="relative flex min-h-[38rem] sm:h-[15rem] md:h-[40rem] flex-col items-center justify-start ">
+
         {/* Background Slideshow */}
-        <div className="absolute inset-0 -z-10 w-full  h-full overflow-hidden" >
+        <div className="absolute inset-0 -z-10 w-full  mx-auto  h-full overflow-hidden" >
           <AutoCarousel />
         </div>
 
         {/* Form Container - Centering the Form */}
-        <div className="relative  bg-opacity-50 w-full max-w-4xl mx-auto p-5 rounded-lg">
-          <div className="flex flex-col md:flex-row items-center gap-4">
-            <h1 className="text-3xl font-black text-center mb-4 text-white ">
-              Search for National Parks near you!
-            </h1>
+        <div className="absolute inset-0 flex flex-col justify-center items-center ">
 
+          <h1 className="text-3xl font-black text-center mb-4 text-white ">
+            Exlpore National Parks
+          </h1>
+          <div>
+            <HomeSearchBar />
           </div>
+
 
         </div>
 

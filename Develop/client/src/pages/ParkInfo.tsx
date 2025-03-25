@@ -6,7 +6,7 @@ import { QUERY_ME, QUERY_PARK_REVIEWS } from '../utils/queries';
 import { SAVE_PARK } from '../utils/mutations';
 import LeaveReviewForm from '../components/LeaveReviewForm';
 import Auth from '../utils/auth.js';
-import StateSearchBar from '../components/StateSearchBar.js';
+ 
 import { ArrowLeft, ArrowRight } from 'lucide-react'; // Optional: For nicer arrows
 import saveSvg from "../assets/save-svgrepo-com.svg";
 
@@ -95,10 +95,7 @@ const ParkInfo = () => {
 
   return (
     <div className="max-w-6xl mx-auto p-6">
-      {/* Search Bar */}
-      <div className="flex justify-end mb-4">
-        <StateSearchBar />
-      </div>
+    
 
       {/* Image Carousel */}
       {park.images?.length > 0 && (

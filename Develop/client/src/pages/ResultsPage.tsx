@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
-import StateSearchBar from '../components/StateSearchBar';
+
 
 interface Park {
   id: string;
@@ -47,9 +47,7 @@ const ResultsPage = () => {
 
   return (
     <>
-      <div className='flex justify-center'>
-        <StateSearchBar />
-      </div>
+     
       <div className="flex flex-col h-screen relative transition-all duration-300 md:flex-row ">
 
         {/* Map Section */}

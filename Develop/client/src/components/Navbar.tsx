@@ -1,31 +1,37 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-// import SignUpForm from './SignupForm';
-// import LoginForm from './LoginForm';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+
 
 import Auth from '../utils/auth';
+import NavSearchBar from './NavSearchBar';
 
 const AppNavbar = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
 
   const [isOpen, setIsOpen] = useState(false);
 
-  //setIsOpen(false);
+
 
 
 
   return (
     <>
-      <nav className="bg-black p-4">
-        <div className="container mx-auto flex justify-between items-center">
+      <nav className='bg-black'>
+        <div className={location.pathname === '/' ? "hidden md:container md:mx-auto md:flex md:justify-between md:items-center md:py-4" : "container mx-auto flex justify-between items-center md:py-4"}>
           <Link to="/" className="flex items-center space-x-4 ">
-
-            <span className="text-white text-2xl font-semibold">ROAM</span>
-
+            <div className='flex justify-center items-center'>
+              {/* <img src={logo} className='w-20 h-20' alt="logo" /> */}
+              <span className="text-white text-2xl font-semibold">ROAM</span>
+            </div>
           </Link>
+          <div className={location.pathname === '/' ? "hidden" : "block"} >
+            <NavSearchBar />
+          </div>
 
-          <div className="hidden md:block  space-x-6">
+
+          <div className='hidden md:block' >
             <Link
               to="/"
               className="text-white px-2 py-1 rounded hover:bg-yellow-500 hover:text-gray-800 transition-colors duration-200"
@@ -122,50 +128,52 @@ const AppNavbar = () => {
             </button>
           </div> */}
 
-          {/* bottom navbar */}
-          <div className="md:hidden fixed  bottom-0 left-0 w-full bg-black text-white flex justify-around py-3 px-4 z-10 ">
 
-            <Link to="/">
-              <div className='flex flex-col items-center '>
-                <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M946.5 505L560.1 118.8l-25.9-25.9a31.5 31.5 0 0 0-44.4 0L77.5 505a63.9 63.9 0 0 0-18.8 46c.4 35.2 29.7 63.3 64.9 63.3h42.5V940h691.8V614.3h43.4c17.1 0 33.2-6.7 45.3-18.8a63.6 63.6 0 0 0 18.7-45.3c0-17-6.7-33.1-18.8-45.2zM568 868H456V664h112v204zm217.9-325.7V868H632V640c0-22.1-17.9-40-40-40H432c-22.1 0-40 17.9-40 40v228H238.1V542.3h-96l370-369.7 23.1 23.1L882 542.3h-96.1z"></path></svg>
-                Home
+
+
+
+        </div>
+
+        {/* bottom navbar */}
+        <div className="md:hidden fixed  bottom-0 left-0 w-full bg-black text-white flex justify-around py-3 px-4 z-10 ">
+
+          <Link to="/">
+            <div className='flex flex-col items-center '>
+              <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M946.5 505L560.1 118.8l-25.9-25.9a31.5 31.5 0 0 0-44.4 0L77.5 505a63.9 63.9 0 0 0-18.8 46c.4 35.2 29.7 63.3 64.9 63.3h42.5V940h691.8V614.3h43.4c17.1 0 33.2-6.7 45.3-18.8a63.6 63.6 0 0 0 18.7-45.3c0-17-6.7-33.1-18.8-45.2zM568 868H456V664h112v204zm217.9-325.7V868H632V640c0-22.1-17.9-40-40-40H432c-22.1 0-40 17.9-40 40v228H238.1V542.3h-96l370-369.7 23.1 23.1L882 542.3h-96.1z"></path></svg>
+              Home
+            </div>
+          </Link>
+
+
+
+
+
+          {Auth.loggedIn() ? (
+            <>
+              <Link to="/saved">
+                <div className='flex flex-col items-center '>
+                  <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 384 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M336 0H48C21.49 0 0 21.49 0 48v464l192-112 192 112V48c0-26.51-21.49-48-48-48zm0 428.43l-144-84-144 84V54a6 6 0 0 1 6-6h276c3.314 0 6 2.683 6 5.996V428.43z"></path></svg>
+                  Saved
+                </div>
+              </ Link>
+              <div
+                onClick={Auth.logout}
+                className="flex flex-col items-center "
+              >
+                <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M16 13L16 11 7 11 7 8 2 12 7 16 7 13z"></path><path d="M20,3h-9C9.897,3,9,3.897,9,5v4h2V5h9v14h-9v-4H9v4c0,1.103,0.897,2,2,2h9c1.103,0,2-0.897,2-2V5C22,3.897,21.103,3,20,3z"></path></svg>
+                Logout
               </div>
-            </Link>
-
-
-
-
-
-            {Auth.loggedIn() ? (
-              <>
-                <Link to="/saved">
-                  <div className='flex flex-col items-center '>
-                    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 384 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M336 0H48C21.49 0 0 21.49 0 48v464l192-112 192 112V48c0-26.51-21.49-48-48-48zm0 428.43l-144-84-144 84V54a6 6 0 0 1 6-6h276c3.314 0 6 2.683 6 5.996V428.43z"></path></svg>
-                    Saved
-                  </div>
-                </ Link>
-                <div
-                  onClick={Auth.logout}
-                  className="flex flex-col items-center "
-                >
-                  <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M16 13L16 11 7 11 7 8 2 12 7 16 7 13z"></path><path d="M20,3h-9C9.897,3,9,3.897,9,5v4h2V5h9v14h-9v-4H9v4c0,1.103,0.897,2,2,2h9c1.103,0,2-0.897,2-2V5C22,3.897,21.103,3,20,3z"></path></svg>
-                  Logout
-                </div>
-              </>)
-              : (
-                <div
-                  onClick={() => navigate('/login')}
-                  className='flex flex-col items-center '
-                >
-                  <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M13 16L18 12 13 8 13 11 4 11 4 13 13 13z"></path><path d="M20,3h-9C9.897,3,9,3.897,9,5v4h2V5h9v14h-9v-4H9v4c0,1.103,0.897,2,2,2h9c1.103,0,2-0.897,2-2V5C22,3.897,21.103,3,20,3z"></path></svg>
-                  Login/Sign Up
-                </div>
-              )
-            }
-
-          </div>
-
-
+            </>)
+            : (
+              <div
+                onClick={() => navigate('/login')}
+                className='flex flex-col items-center '
+              >
+                <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M13 16L18 12 13 8 13 11 4 11 4 13 13 13z"></path><path d="M20,3h-9C9.897,3,9,3.897,9,5v4h2V5h9v14h-9v-4H9v4c0,1.103,0.897,2,2,2h9c1.103,0,2-0.897,2-2V5C22,3.897,21.103,3,20,3z"></path></svg>
+                Login/Sign Up
+              </div>
+            )
+          }
 
         </div>
       </nav>

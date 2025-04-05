@@ -1,6 +1,6 @@
 import { useLocation, Link } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, ArrowUpDown } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
@@ -26,7 +26,16 @@ const ResultsPage = () => {
   const parks: Park[] = location.state?.parks || [];
   const [imageIndexes, setImageIndexes] = useState<{ [key: string]: number }>({});
   const [isExpanded, setIsExpanded] = useState(false);
+  const mapRef = useRef<L.Map | null>(null);
+  const query = location.state?.query || '';
 
+  useEffect(() => {
+    if (mapRef.current) {
+      setTimeout(() => {
+        mapRef.current?.invalidateSize();
+      }, 300); // Slight delay to allow for transition
+    }
+  }, [isExpanded]);
   const handleImageChange = (parkId: string, direction: 'next' | 'prev', imagesLength: number) => {
     setImageIndexes(prevIndexes => {
       const currentIndex = prevIndexes[parkId] || 0;
@@ -47,12 +56,25 @@ const ResultsPage = () => {
 
   return (
     <>
-     
+
       <div className="flex flex-col h-screen relative transition-all duration-300 md:flex-row ">
+        <div className='bg-black text-white text-center' >
+          Results for <span className='font-bold ml-1 uppercase'>{query}</span>
+        </div>
 
         {/* Map Section */}
         <div className={`transition-all duration-300 ${isExpanded ? "h-3/4 md:h-full md:w-2/3" : "h-1/4 md:h-full lg:w-1/3"} w-full sticky top-0 md:static`}>
-          <MapContainer center={getCenter()} zoom={6} scrollWheelZoom={true} className="h-full w-full">
+          <MapContainer
+            center={getCenter()}
+            zoom={6}
+            scrollWheelZoom={true}
+            className="h-full w-full"
+            whenReady={() => {
+              if (mapRef.current) {
+                mapRef.current = mapRef.current;
+              }
+            }}
+          >
             <TileLayer
               attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

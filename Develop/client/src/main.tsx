@@ -1,5 +1,5 @@
 import ReactDOM from 'react-dom/client'
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { createBrowserRouter, Link, RouterProvider } from 'react-router-dom'
 
 import { AuthProvider } from './utils/useAuth.js';
 import App from './App.jsx'
@@ -14,7 +14,7 @@ const router = createBrowserRouter([
   {
     path: '/',
     element: <App />,
-    errorElement: <h1 className='display-2'>Wrong page!</h1>,
+    errorElement: <h1 className='display-2'>Wrong page! <span className='text-blue-500'><Link to='/'>Return Home</Link></span></h1>,
     children: [
       {
         index: true,

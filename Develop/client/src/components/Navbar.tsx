@@ -23,10 +23,10 @@ const AppNavbar = () => {
           <Link to="/" className="flex items-center space-x-4 ">
             <div className='flex justify-center items-center'>
               {/* <img src={logo} className='w-20 h-20' alt="logo" /> */}
-              <span className="text-white text-2xl font-semibold">ROAM</span>
+              <span className="text-white text-2xl font-semibold ml-0.5">ROAM</span>
             </div>
           </Link>
-          <div className={location.pathname === '/' ? "hidden" : "block"} >
+          <div className={location.pathname === '/' ? "hidden" : "block my-2"} >
             <NavSearchBar />
           </div>
 

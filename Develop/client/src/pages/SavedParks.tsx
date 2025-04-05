@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Container, Card, Button, Row, Col, Spinner } from 'react-bootstrap';
+import { Spinner } from 'react-bootstrap';
 import { useQuery, useMutation } from '@apollo/client';
 
 import Auth from '../utils/auth.js';
@@ -67,7 +67,7 @@ const SavedParks = () => {
   }
 
   return (
-    <div className="bg-white text-black py-5">
+    <div className="bg-white text-black py-5 min-h-screen">
       <div className="max-w-5xl mx-auto px-4">
         <h2 className="text-center text-xl font-semibold mb-6">
           {userData?.savedParks.length
@@ -76,16 +76,15 @@ const SavedParks = () => {
         </h2>
 
         {userData?.savedParks.length ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 ">
             {userData.savedParks.map((park) => (
-              <div key={park.parkId} className="bg-gray-800 rounded-lg shadow-lg overflow-hidden flex flex-col">
+              <div key={park.parkId} className=" rounded-lg shadow-lg overflow-hidden flex flex-col">
                 {park.images?.length > 0 && (
-                  <img src={park.images[0].url} alt={`View of ${park.fullName}`} className="w-full h-40 object-cover" />
+                  <img src={park.images[0].url} alt={`View of ${park.fullName}`} className="w-full h-68 object-cover" />
                 )}
                 <div className="p-4 flex flex-col flex-grow">
-                  <h3 className="text-lg text-white font-semibold">{park.fullName}</h3>
+                  <h3 className="text-lg  font-semibold">{park.fullName}</h3>
                   <p className="text-sm text-gray-400">Location: {park.states}</p>
-                  <p className="text-gray-300 flex-grow">{park.description}</p>
                   <button
                     className="mt-4 w-full bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-md transition-all"
                     onClick={() => handleDeletePark(park.parkId)}
@@ -97,7 +96,10 @@ const SavedParks = () => {
             ))}
           </div>
         ) : (
-          <p className="text-center text-gray-400">No saved parks found. Explore some parks and save them to your list!</p>
+          <div className=''>
+
+            <p className="text-center text-gray-400 text-2xl"> Explore some parks and save them to your list!</p>
+          </div>
         )}
       </div>
     </div>

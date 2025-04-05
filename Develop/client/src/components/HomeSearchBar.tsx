@@ -57,7 +57,7 @@ export default function HomeSearchBar() {
                 setError('No parks found. Try another location.');
                 return;
             }
-            navigate('/results', { state: { parks: response } });
+            navigate('/results', { state: { parks: response, query: searchInput } });
             // setSearchedParks(response || []);
         } catch (err) {
             setError('Error fetching parks. Please try again.');

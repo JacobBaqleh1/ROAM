@@ -31,25 +31,28 @@ export default function NavSearchBar() {
 
   return (
     <div >
-      <form onSubmit={handleFormSubmit} className="flex gap-2 items-center">
-        <div className="flex items-center bg-white rounded-full overflow-hidden shadow-md">
+      <form
+        onSubmit={handleFormSubmit}
+        className="w-full max-w-2xl mx-auto px-4"
+      >
+        <div className="flex  sm:flex-row items-stretch bg-white rounded-full overflow-hidden shadow-md">
           <input
             name="searchInput"
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             type="text"
             placeholder="Enter your state"
-            className="w-full md:w-2/3 p-3 rounded-lg border border-white focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-100"
+            className="flex-1 p-3 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-100"
           />
           <button
             type="submit"
-            className="w-[5rem] bg-green-600 text-white p-3 rounded-lg hover:bg-green-700 transition"
+            className="bg-green-600 text-white px-5 py-3 sm:rounded-r-full hover:bg-green-700 transition flex items-center justify-center"
           >
-            <img src={searchImg} alt="Search" className="h-6 w-4 inline-block" />
-
+            <img src={searchImg} alt="Search" className="h-5 w-5" />
           </button>
         </div>
       </form>
+
 
       {err && <p className="text-red-500 text-center">{err}</p>}
     </div>

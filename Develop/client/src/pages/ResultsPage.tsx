@@ -57,8 +57,8 @@ const ResultsPage = () => {
   return (
     <>
 
-      <div className="flex flex-col h-screen relative transition-all duration-300 md:flex-row ">
-        <div className='bg-black text-white text-center' >
+      <div className="flex flex-col h-screen relative transition-all duration-300 md:flex-row md:flex-wrap ">
+        <div className='bg-black text-white text-center w-full' >
           Results for <span className='font-bold ml-1 uppercase'>{query}</span>
         </div>
 

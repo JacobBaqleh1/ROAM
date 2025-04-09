@@ -3,7 +3,9 @@ import { fetchParks } from "../utils/API";
 import { useNavigate } from "react-router-dom";
 import searchImg from '../assets/search.svg'
 // import logo from '../assets/roam-logo.svg'
+
 export default function NavSearchBar() {
+
   const [searchInput, setSearchInput] = useState('');
   const [err, setError] = useState('');
   const navigate = useNavigate();

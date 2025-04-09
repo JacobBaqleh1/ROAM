@@ -1,5 +1,5 @@
-import { useEffect, } from 'react';
-import AutoCarousel from '../components/SlideShow';
+import { useEffect, useState, } from 'react';
+import AutoCarousel from '../components/SlideShow.js';
 import { QUERY_ALL_REVIEWS } from '../utils/queries.js';
 import { useQuery } from '@apollo/client';
 import HomeSearchBar from '../components/HomeSearchBar.js';
@@ -7,6 +7,7 @@ import HomeSearchBar from '../components/HomeSearchBar.js';
 const SearchParks = () => {
 
   const { loading, error, data, refetch } = useQuery(QUERY_ALL_REVIEWS);
+  const [visibleReviews, setVisibleReviews] = useState(5);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -25,6 +26,10 @@ const SearchParks = () => {
     if (!timestamp) return "Invalid date";  // handle invalid date
     const date = new Date(parseInt(timestamp)); // Convert string to number if needed
     return date.toLocaleDateString();
+  }
+
+  const handleShowMoreReviews = () => {
+    setVisibleReviews((prev) => prev + 5)
   }
 
   return (
@@ -59,7 +64,7 @@ const SearchParks = () => {
           <div className="max-w-5xl mx-auto p-4">
             <h2 className="text-2xl font-bold mb-4 text-center">Recent Activity</h2>
             <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 lg:gap-20 gap-4 '>
-              {data.getAllReviews.map((review: any) => (
+              {data.getAllReviews.slice(0, visibleReviews).map((review: any) => (
                 <div key={review._id} className="border border-gray-300">
                   <h3 className="font-semibold">{review.username} wrote a review</h3>
                   <p className="text-sm text-gray-500">{formatDate(review.createdAt)}</p>
@@ -71,6 +76,11 @@ const SearchParks = () => {
                 </div>
               ))}
             </div>
+            {visibleReviews < data.getAllReviews.length && (
+              <div className='flex mt-4 justify-center'>
+                <button className='py-2 px-4 rounded-lg bg-blue-600 text-white' onClick={handleShowMoreReviews}>See More Reviews</button>
+              </div>
+            )}
           </div>}
 
 

@@ -4,6 +4,7 @@ const Footer = () => {
   return (
     <footer className="bg-black text-white py-8 mb-8 ">
       <div className="container mx-auto text-center">
+        <div>ROAM</div>
         <h2 className="text-2xl font-bold mb-4">Meet the Devs</h2>
         <div className="flex flex-col md:flex-row justify-center gap-8">
           <div>

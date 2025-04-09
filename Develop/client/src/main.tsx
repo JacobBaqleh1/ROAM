@@ -3,7 +3,7 @@ import { createBrowserRouter, Link, RouterProvider } from 'react-router-dom'
 
 import { AuthProvider } from './utils/useAuth.js';
 import App from './App.jsx'
-import SearchParks from './pages/SearchParks.js'
+import SearchParks from './pages/Home.js'
 import SavedParks from './pages/SavedParks.js'
 import ParkInfo from './pages/ParkInfo.js'
 import MyReviews from './pages/MyReviews.js';

@@ -1,30 +1,38 @@
-import { FormEvent, useState } from "react";
+import { useState } from "react";
 import { fetchParks } from "../utils/API";
 import { useNavigate } from "react-router-dom";
-import searchImg from '../assets/search.svg'
-// import logo from '../assets/roam-logo.svg'
+
+const stateMap: Record<string, string> = {
+  "alabama": "AL", "alaska": "AK", "arizona": "AZ", "arkansas": "AR", "california": "CA",
+  "colorado": "CO", "connecticut": "CT", "delaware": "DE", "florida": "FL", "georgia": "GA",
+  "hawaii": "HI", "idaho": "ID", "illinois": "IL", "indiana": "IN", "iowa": "IA",
+  "kansas": "KS", "kentucky": "KY", "louisiana": "LA", "maine": "ME", "maryland": "MD",
+  "massachusetts": "MA", "michigan": "MI", "minnesota": "MN", "mississippi": "MS", "missouri": "MO",
+  "montana": "MT", "nebraska": "NE", "nevada": "NV", "new hampshire": "NH", "new jersey": "NJ",
+  "new mexico": "NM", "new york": "NY", "north carolina": "NC", "north dakota": "ND", "ohio": "OH",
+  "oklahoma": "OK", "oregon": "OR", "pennsylvania": "PA", "rhode island": "RI", "south carolina": "SC",
+  "south dakota": "SD", "tennessee": "TN", "texas": "TX", "utah": "UT", "vermont": "VT",
+  "virginia": "VA", "washington": "WA", "west virginia": "WV", "wisconsin": "WI", "wyoming": "WY"
+};
 
 export default function NavSearchBar() {
-
-  const [searchInput, setSearchInput] = useState('');
+  const [selectedState, setSelectedState] = useState('');
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false); // State to control dropdown visibility
   const [err, setError] = useState('');
   const navigate = useNavigate();
-  const handleFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+
+  const handleStateSelect = async (state: string) => {
+    setSelectedState(state);
+    setIsDropdownOpen(false); // Close the dropdown after selecting a state
     setError('');
-    if (!searchInput) {
-      console.error('Please enter a location.');
-      return;
-    }
 
     try {
-      const response = await fetchParks(searchInput);
+      const response = await fetchParks(state);
       if (!response || response.length === 0) {
-        setError('No parks found. Try another location.');
+        setError('No parks found. Try another state.');
         return;
       }
-      navigate('/results', { state: { parks: response } });
-      // setSearchedParks(response || []);
+      navigate('/results', { state: { parks: response, query: state } });
     } catch (err) {
       setError('Error fetching parks. Please try again.');
       console.error('Error fetching parks:', err);
@@ -32,31 +40,43 @@ export default function NavSearchBar() {
   };
 
   return (
-    <div >
-      <form
-        onSubmit={handleFormSubmit}
-        className="w-full max-w-2xl mx-auto px-4"
-      >
-        <div className="flex  sm:flex-row items-stretch bg-white rounded-full overflow-hidden shadow-md">
-          <input
-            name="searchInput"
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-            type="text"
-            placeholder="Enter your state"
-            className="flex-1 p-3 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-100"
-          />
+    <div>
+      <div className="w-full max-w-2xl mx-auto px-4">
+        <div className="relative">
           <button
-            type="submit"
-            className="bg-green-600 text-white px-5 py-3 sm:rounded-r-full hover:bg-green-700 transition flex items-center justify-center"
+            onClick={() => setIsDropdownOpen(!isDropdownOpen)} // Toggle dropdown visibility
+            className="w-full p-3 rounded-full border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-green-500 text-lg text-center flex items-center justify-between"
           >
-            <img src={searchImg} alt="Search" className="h-5 w-5" />
+            <span>{selectedState || "Select a state"}</span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5 text-gray-500"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fillRule="evenodd"
+                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                clipRule="evenodd"
+              />
+            </svg>
           </button>
+          {isDropdownOpen && ( // Only show the dropdown if isDropdownOpen is true
+            <div className="absolute z-10 w-full bg-white border border-gray-300 rounded-lg shadow-lg max-h-[16rem] overflow-y-auto">
+              {Object.keys(stateMap).map((state) => (
+                <div
+                  key={state}
+                  onClick={() => handleStateSelect(state)}
+                  className="p-2 hover:bg-gray-100 cursor-pointer"
+                >
+                  {state.charAt(0).toUpperCase() + state.slice(1)} {/* Capitalize */}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
-      </form>
-
-
-      {err && <p className="text-red-500 text-center">{err}</p>}
+      </div>
+      {err && <p className="text-red-500 text-center mt-2">{err}</p>}
     </div>
-  )
+  );
 }

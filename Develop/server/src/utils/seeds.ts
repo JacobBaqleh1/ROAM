@@ -36,7 +36,7 @@ const seedDatabase = async () => {
 
     const reviews = [
   { 
-    parkId: 'B7FF43E5-3A95-4C8E-8DBE-72D8608D6588', 
+    parkId: '6B1D053D-714F-46D1-B410-04BE868F14C1', 
     userId: users[0]._id, 
     username: users[0].username, 
     comment: 'The Grand Canyon is absolutely breathtaking!', 
@@ -45,7 +45,7 @@ const seedDatabase = async () => {
     parkFullName: 'Grand Canyon National Park' 
   },
   { 
-    parkId: '7DC1050A-0DDE-4EF9-B777-3C9349BCC4DE', 
+    parkId: 'F58C6D24-8D10-4573-9826-65D42B8B83AD', 
     userId: users[1]._id, 
     username: users[1].username, 
     comment: 'Crater Lake is a must-visit! The water is so blue!', 
@@ -54,7 +54,7 @@ const seedDatabase = async () => {
     parkFullName: 'Crater Lake National Park' 
   },
   { 
-    parkId: 'C9A9FF7A-BE78-4C76-BBB6-2EBDEDD59946', 
+    parkId: 'F58C6D24-8D10-4573-9826-65D42B8B83AD', 
     userId: users[2]._id, 
     username: users[2].username, 
     comment: 'Yellowstone is full of adventure! Geysers everywhere!', 
@@ -63,7 +63,7 @@ const seedDatabase = async () => {
     parkFullName: 'Yellowstone National Park' 
   },
   { 
-    parkId: 'E9C6B1A5-FB76-4C3B-9204-3B0D6EB7B8AA', 
+    parkId: '4324B2B4-D1A3-497F-8E6B-27171FAE4DB2', 
     userId: users[3]._id, 
     username: users[3].username, 
     comment: 'Yosemite’s waterfalls are unreal!', 
@@ -72,7 +72,7 @@ const seedDatabase = async () => {
     parkFullName: 'Yosemite National Park' 
   },
   { 
-    parkId: 'AB8FA3CD-609A-4F51-93B3-349AE21FD69F', 
+    parkId: '67A56B17-F533-4A56-B2DA-26091C6AD295', 
     userId: users[4]._id, 
     username: users[4].username, 
     comment: 'Rocky Mountain NP has some of the best hiking trails!', 
@@ -81,7 +81,7 @@ const seedDatabase = async () => {
     parkFullName: 'Rocky Mountain National Park' 
   },
   { 
-    parkId: '87F5F568-731D-49F6-8C30-621DAF12C9C7', 
+    parkId: '41BAB8ED-C95F-447D-9DA1-FCC4E4D808B2', 
     userId: users[5]._id, 
     username: users[5].username, 
     comment: 'Zion is a paradise for climbers!', 
@@ -90,7 +90,7 @@ const seedDatabase = async () => {
     parkFullName: 'Zion National Park' 
   },
   { 
-    parkId: '3B0E8B1E-7AA7-4E5D-902E-FCA11E1E78D4', 
+    parkId: '5EA02193-276A-4037-B7DB-5765A56935FD', 
     userId: users[6]._id, 
     username: users[6].username, 
     comment: 'Everglades is a unique experience with so much wildlife.', 
@@ -99,7 +99,7 @@ const seedDatabase = async () => {
     parkFullName: 'Everglades National Park' 
   },
   { 
-    parkId: '1D3EF2D4-70BE-48E8-905A-F378E6C7F3D7', 
+    parkId: 'D9819727-18DF-4A84-BDDE-D4F2696DE340', 
     userId: users[7]._id, 
     username: users[7].username, 
     comment: 'Great Smoky Mountains in the fall is something else!', 
@@ -108,7 +108,7 @@ const seedDatabase = async () => {
     parkFullName: 'Great Smoky Mountains National Park' 
   },
   { 
-    parkId: '42BB6318-8E2E-4661-AC8C-6E734DD60D94', 
+    parkId: '6B1D053D-714F-46D1-B410-04BE868F14C1', 
     userId: users[8]._id, 
     username: users[8].username, 
     comment: 'Bryce Canyon’s hoodoos are surreal.', 
@@ -117,7 +117,7 @@ const seedDatabase = async () => {
     parkFullName: 'Bryce Canyon National Park' 
   },
   { 
-    parkId: '6EDB9067-1E2C-4A96-BBDA-C83DB6BA2F6C', 
+    parkId: '36240051-018E-4915-B6EA-3F1A7F24FBE4', 
     userId: users[9]._id, 
     username: users[9].username, 
     comment: 'Arches NP is just stunning.', 
@@ -126,7 +126,7 @@ const seedDatabase = async () => {
     parkFullName: 'Arches National Park' 
   },
   { 
-    parkId: '37DD8C84-BDBD-4A7B-8EFA-9B45C83C2D97', 
+    parkId: '2B5178C6-2446-488C-AC31-47E3CEBF7159', 
     userId: users[10]._id, 
     username: users[10].username, 
     comment: 'Glacier NP is a dream for nature lovers.', 
@@ -135,7 +135,7 @@ const seedDatabase = async () => {
     parkFullName: 'Glacier National Park' 
   },
   { 
-    parkId: 'FA6E81F4-30BB-4F8A-A798-162CE56A98A6', 
+    parkId: 'C0BF2A42-E353-4FAE-B4C4-AA0676B58100', 
     userId: users[11]._id, 
     username: users[11].username, 
     comment: 'Denali NP is majestic.', 
@@ -144,7 +144,7 @@ const seedDatabase = async () => {
     parkFullName: 'Denali National Park' 
   },
   { 
-    parkId: 'C3F70F7D-79A2-4AC5-AC4B-047D2BBE7D79', 
+    parkId: 'E991C8BC-C203-4A09-AFD5-87380CF5C387', 
     userId: users[12]._id, 
     username: users[12].username, 
     comment: 'Shenandoah is peaceful and stunning.', 
@@ -153,7 +153,7 @@ const seedDatabase = async () => {
     parkFullName: 'Shenandoah National Park' 
   },
   { 
-    parkId: 'D93D4927-7CD1-4965-AB06-4FA3407E69D8', 
+    parkId: 'F5CD58FB-05DC-4074-99DA-F327A537F1BC', 
     userId: users[13]._id, 
     username: users[13].username, 
     comment: 'Joshua Tree is unlike anywhere else!', 
@@ -162,7 +162,7 @@ const seedDatabase = async () => {
     parkFullName: 'Joshua Tree National Park' 
   },
   { 
-    parkId: 'A582D10D-24F2-4BF5-975C-5F8456C1D39F', 
+    parkId: '07229CB8-8533-4669-B614-2B884779DD93', 
     userId: users[14]._id, 
     username: users[14].username, 
     comment: 'Mount Rainier’s wildflowers are gorgeous.', 
@@ -171,7 +171,7 @@ const seedDatabase = async () => {
     parkFullName: 'Mount Rainier National Park' 
   },
   { 
-    parkId: '71F3E24D-21A4-4F32-82E8-DA61F96D3AA8', 
+    parkId: '6DA17C86-088E-4B4D-B862-7C1BD5CF236B', 
     userId: users[15]._id, 
     username: users[15].username, 
     comment: 'Acadia is a hidden gem of the East Coast.', 

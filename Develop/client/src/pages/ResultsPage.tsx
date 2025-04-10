@@ -1,10 +1,9 @@
 import { useLocation, Link } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, ArrowUpDown } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
-
 
 interface Park {
   id: string;
@@ -21,13 +20,41 @@ const parkIcon = new L.Icon({
   popupAnchor: [1, -34],
 });
 
+const StoreMapRef = ({ mapRef }: { mapRef: React.MutableRefObject<L.Map | null> }) => {
+  const map = useMap();
+  useEffect(() => {
+    mapRef.current = map;
+  }, [map]);
+  return null;
+};
+
+
 const ResultsPage = () => {
   const location = useLocation();
   const parks: Park[] = location.state?.parks || [];
+  const query = location.state?.query || '';
   const [imageIndexes, setImageIndexes] = useState<{ [key: string]: number }>({});
   const [isExpanded, setIsExpanded] = useState(false);
   const mapRef = useRef<L.Map | null>(null);
-  const query = location.state?.query || '';
+
+  const getCenter = () => {
+    const validParks = parks.filter((park) => park.latitude && park.longitude);
+    if (validParks.length === 0) return [39.8283, -98.5795] as [number, number]; // Default center (USA)
+    const avgLat = validParks.reduce((sum, p) => sum + parseFloat(p.latitude), 0) / validParks.length;
+    const avgLng = validParks.reduce((sum, p) => sum + parseFloat(p.longitude), 0) / validParks.length;
+    return [avgLat, avgLng] as [number, number];
+  };
+
+  const center = getCenter();
+
+  // Custom hook to update the map center
+  const UpdateMapCenter = ({ center }: { center: [number, number] }) => {
+    const map = useMap();
+    useEffect(() => {
+      map.setView(center, map.getZoom());
+    }, [center, map]);
+    return null;
+  };
 
   useEffect(() => {
     if (mapRef.current) {
@@ -36,8 +63,9 @@ const ResultsPage = () => {
       }, 300); // Slight delay to allow for transition
     }
   }, [isExpanded]);
+
   const handleImageChange = (parkId: string, direction: 'next' | 'prev', imagesLength: number) => {
-    setImageIndexes(prevIndexes => {
+    setImageIndexes((prevIndexes) => {
       const currentIndex = prevIndexes[parkId] || 0;
       const newIndex = direction === 'next'
         ? (currentIndex + 1) % imagesLength
@@ -46,46 +74,44 @@ const ResultsPage = () => {
     });
   };
 
-  const getCenter = () => {
-    const validParks = parks.filter((park) => park.latitude && park.longitude);
-    if (validParks.length === 0) return [39.8283, -98.5795] as [number, number];
-    const avgLat = validParks.reduce((sum, p) => sum + parseFloat(p.latitude), 0) / validParks.length;
-    const avgLng = validParks.reduce((sum, p) => sum + parseFloat(p.longitude), 0) / validParks.length;
-    return [avgLat, avgLng] as [number, number];
-  };
-
   return (
     <>
-
-      <div className="flex flex-col h-screen relative transition-all duration-300 md:flex-row md:flex-wrap ">
-        <div className='bg-black text-white text-center w-full border-t ' >
-          Results for <span className='font-bold ml-1 uppercase'>{query}</span>
+      <div className="flex flex-col h-screen relative transition-all duration-300 md:flex-row md:flex-wrap">
+        <div className="bg-black text-white text-center w-full border-t">
+          Results for <span className="font-bold ml-1 uppercase">{query}</span>
         </div>
 
         {/* Map Section */}
-        <div className={`transition-all duration-300 ${isExpanded ? "h-3/4 md:h-full md:w-2/3" : "h-1/4 md:h-full lg:w-1/3"} w-full sticky top-0 md:static`}>
+        <div
+          className={`transition-all duration-300 ${isExpanded ? 'h-3/4 md:h-full md:w-2/3' : 'h-1/4 md:h-full lg:w-1/3'
+            } w-full sticky top-0 md:static`}
+        >
           <MapContainer
-            center={getCenter()}
+            center={center}
             zoom={6}
             scrollWheelZoom={true}
             className="h-full w-full"
-            whenReady={() => {
-              if (mapRef.current) {
-                mapRef.current = mapRef.current;
-              }
-            }}
+
           >
+            <StoreMapRef mapRef={mapRef} />
+            <UpdateMapCenter center={center} />
             <TileLayer
               attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
             {parks.map((park) =>
               park.latitude && park.longitude ? (
-                <Marker key={park.id} position={[parseFloat(park.latitude), parseFloat(park.longitude)]} icon={parkIcon}>
+                <Marker
+                  key={park.id}
+                  position={[parseFloat(park.latitude), parseFloat(park.longitude)]}
+                  icon={parkIcon}
+                >
                   <Popup>
                     <strong>{park.fullName}</strong>
                     <br />
-                    <Link to={`/park/${park.id}`} className="text-blue-500 underline">View Details</Link>
+                    <Link to={`/park/${park.id}`} className="text-blue-500 underline">
+                      View Details
+                    </Link>
                   </Popup>
                 </Marker>
               ) : null
@@ -94,8 +120,10 @@ const ResultsPage = () => {
         </div>
 
         {/* Content Section */}
-        <div className={`transition-all duration-300 ${isExpanded ? "h-1/4 md:w-1/3 md:h-full" : "h-3/4 md:h-full md:w-2/3 "} w-full overflow-auto p-4 `}>
-
+        <div
+          className={`transition-all duration-300 ${isExpanded ? 'h-1/4 md:w-1/3 md:h-full' : 'h-3/4 md:h-full md:w-2/3'
+            } w-full overflow-auto p-4`}
+        >
           {parks.length === 0 ? (
             <p className="text-center text-gray-500">No parks found.</p>
           ) : (
@@ -106,10 +134,17 @@ const ResultsPage = () => {
                 const currentImage = images[currentImageIndex];
 
                 return (
-                  <div key={park.id} className="relative group rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300">
+                  <div
+                    key={park.id}
+                    className="relative group rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300"
+                  >
                     <Link to={`/park/${park.id}`} className="block">
                       {currentImage ? (
-                        <img src={currentImage.url} alt={`Image of ${park.fullName}`} className="w-full h-40 object-cover" />
+                        <img
+                          src={currentImage.url}
+                          alt={`Image of ${park.fullName}`}
+                          className="w-full h-40 object-cover"
+                        />
                       ) : (
                         <div className="w-full h-40 bg-gray-200 flex items-center justify-center">
                           <span className="text-gray-500">No Image</span>
@@ -149,10 +184,9 @@ const ResultsPage = () => {
           onClick={() => setIsExpanded(!isExpanded)}
           className="fixed bottom-16 left-1/2 transform -translate-x-1/2 bg-blue-600 text-white p-3 rounded-full shadow-lg hover:bg-blue-700 transition duration-300 z-[9999]"
         >
-          <div className='flex flex-col justify-center items-center'>
+          <div className="flex flex-col justify-center items-center">
             Map View
             <ArrowUpDown className="w-6 h-6 md:rotate-90" />
-
           </div>
         </button>
       </div>

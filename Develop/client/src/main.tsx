@@ -9,6 +9,7 @@ import ParkInfo from './pages/ParkInfo.js'
 import MyReviews from './pages/MyReviews.js';
 import ResultsPage from './pages/ResultsPage.js';
 import Login from './pages/Login.js';
+import Community from './pages/Community.js';
 
 const router = createBrowserRouter([
   {
@@ -40,6 +41,11 @@ const router = createBrowserRouter([
       {
         path: '/login',
         element: <Login />
+      }
+      ,
+      {
+        path: '/community',
+        element: <Community />
       }
     ]
   }

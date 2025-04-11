@@ -76,10 +76,8 @@ const ResultsPage = () => {
 
   return (
     <>
-      <div className="flex flex-col h-screen relative transition-all duration-300 md:flex-row md:flex-wrap">
-        <div className="bg-black text-white text-center w-full border-t">
-          Results for <span className="font-bold ml-1 uppercase">{query}</span>
-        </div>
+      <div className="flex flex-col h-screen relative transition-all duration-300 md:flex-row ">
+
 
         {/* Map Section */}
         <div
@@ -124,10 +122,13 @@ const ResultsPage = () => {
           className={`transition-all duration-300 ${isExpanded ? 'h-1/4 md:w-1/3 md:h-full' : 'h-3/4 md:h-full md:w-2/3'
             } w-full overflow-auto p-4`}
         >
+          <div className=" text-center w-full py-6">
+            Results for <span className="font-bold ml-1 uppercase">{query}</span>
+          </div>
           {parks.length === 0 ? (
             <p className="text-center text-gray-500">No parks found.</p>
           ) : (
-            <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-2">
+            <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2">
               {parks.map((park) => {
                 const images = park.images || [];
                 const currentImageIndex = imageIndexes[park.id] || 0;
@@ -136,14 +137,14 @@ const ResultsPage = () => {
                 return (
                   <div
                     key={park.id}
-                    className="relative group rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300"
+                    className="relative group rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300 z-0"
                   >
                     <Link to={`/park/${park.id}`} className="block">
                       {currentImage ? (
                         <img
                           src={currentImage.url}
                           alt={`Image of ${park.fullName}`}
-                          className="w-full h-40 object-cover"
+                          className="w-full h-60 object-cover"
                         />
                       ) : (
                         <div className="w-full h-40 bg-gray-200 flex items-center justify-center">
@@ -168,11 +169,12 @@ const ResultsPage = () => {
                       </>
                     )}
                     <Link to={`/park/${park.id}`} className="block">
-                      <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-60 text-white text-center py-2 text-sm group-hover:bg-opacity-80 transition duration-300">
+                      <div className="absolute bottom-0 left-0 right-0 bg-white bg-opacity-60 text-black text-center py-2 text-sm group-hover:bg-opacity-80 transition duration-300">
                         {park.fullName}
                       </div>
                     </Link>
                   </div>
+
                 );
               })}
             </div>

@@ -62,7 +62,7 @@ export default function NavSearchBar() {
             </svg>
           </button>
           {isDropdownOpen && ( // Only show the dropdown if isDropdownOpen is true
-            <div className="absolute z-10 w-full bg-white border border-gray-300 rounded-lg shadow-lg max-h-[16rem] overflow-y-auto">
+            <div className="absolute z-50 w-full bg-white border border-gray-300 rounded-lg shadow-lg max-h-[16rem] overflow-y-auto">
               {Object.keys(stateMap).map((state) => (
                 <div
                   key={state}

@@ -14,7 +14,7 @@ const stateMap: Record<string, string> = {
 
 export 
 async function fetchParks(userInput: string) {
-    const apiKey = 'IjtCC2uKsdG5k1DIn07ABIZDFBvB0shlKY0Whu2i';
+    const apiKey = import.meta.env.VITE_API_KEY;
     let url;
     userInput = userInput.trim().toLowerCase();
 

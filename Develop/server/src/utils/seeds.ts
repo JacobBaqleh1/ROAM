@@ -11,9 +11,9 @@ const seedDatabase = async () => {
     console.log('Database connected!');
 
     // Clear the collections
-    await User.deleteMany({});
-    await Review.deleteMany({});
-    console.log('Collections cleared!');
+    // await User.deleteMany({});
+    // await Review.deleteMany({});
+    // console.log('Collections cleared!');
 
     const users = await User.insertMany([
       { username: 'jacob', email: 'jacob@example.com', password: 'password123' },

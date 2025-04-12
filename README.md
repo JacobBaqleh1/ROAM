@@ -13,6 +13,8 @@ ROAM is built using the **MERN stack**, which includes:
 - **Express.js** 🚀 - For backend server handling
 - **React.js** ⚛️ - For dynamic and responsive frontend UI
 - **Node.js** 🖥️ - For server-side JavaScript execution
+- **GraphQL** 🔗 - For seamless API queries and flexible data fetching
+  
 
 ## Features ✨
 - 🔍 **Explore Nearby Locations** - Find new places to visit based on your current location

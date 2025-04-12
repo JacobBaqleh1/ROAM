@@ -1,7 +1,11 @@
 import { Link } from 'react-router-dom';
 import jakeImg from '../assets/jake.png';
 import samImg from '../assets/sam.png';
+
 import roam from '../assets/roamLogo.jpg';
+
+import davidImg from '../assets/david.jpg';
+
 
 const Footer = () => {
   return (
@@ -16,6 +20,7 @@ const Footer = () => {
               Explore the beauty of national parks and connect with nature. Your adventure starts here.
             </p>
           </div>
+
 
           {/* Navigation Links */}
           <div className="text-center">
@@ -42,6 +47,7 @@ const Footer = () => {
                 </Link>
               </li>
             </ul>
+
           </div>
 
 

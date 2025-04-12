@@ -62,7 +62,7 @@ const Footer = () => {
               <h3 className="text-xl font-semibold">Sam</h3>
             </div>
             <div className="text-center">
-              <img src="https://via.placeholder.com/100" alt="David" className="w-24 h-24 rounded-full mx-auto mb-4" />
+              <img src={davidImg} alt="David" className="w-24 h-24 rounded-full mx-auto mb-4" />
               <h3 className="text-xl font-semibold">David</h3>
             </div>
             <div className="text-center">

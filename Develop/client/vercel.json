@@ -1,0 +1,9 @@
+{
+  "rewrites": [
+    {
+      "src": "/(.*)",
+      "destination": "/index.html",
+      "status": 200
+    }
+  ]
+}

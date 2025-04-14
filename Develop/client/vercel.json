@@ -1,9 +1,9 @@
 {
   "rewrites": [
     {
-      "src": "/(.*)",
-      "destination": "/index.html",
-      "status": 200
+      "source": "/(.*)",
+      "destination": "/index.html"
+      
     }
   ]
 }

@@ -35,7 +35,5 @@ This project is licensed under the **MIT License**.
 ## Contact 📩
 For any inquiries or contributions, feel free to reach out to the contributors or submit an issue on the repository.
 
-## Screenshots 📷
-![alt text](orscreenshot.png)
-![alt text](loginscreenshot.png)
+
 🚀 **Happy exploring with ROAM!**

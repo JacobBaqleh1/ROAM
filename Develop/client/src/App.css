@@ -3,6 +3,18 @@
 body {
   font-family: 'Delius', sans-serif;
 }
+.coda-regular {
+  font-family: "Coda", system-ui;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.coda-extrabold {
+  font-family: "Coda", system-ui;
+  font-weight: 800;
+  font-style: normal;
+}
+
 
 /* h1,
 h2,

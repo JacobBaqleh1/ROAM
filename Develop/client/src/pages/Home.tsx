@@ -41,12 +41,12 @@ const SearchParks = () => {
       <div className="relative flex min-h-[38rem] sm:h-[15rem] md:h-[40rem] flex-col items-center justify-start ">
 
         {/* Background Slideshow */}
-        <div className="absolute inset-0 -z-10 w-full  mx-auto  h-full overflow-hidden" >
+        <div className="absolute inset-0 z-0 w-full  mx-auto  h-full overflow-hidden" >
           <AutoCarousel />
         </div>
 
         {/* Form Container - Centering the Form */}
-        <div className="absolute inset-0 flex flex-col justify-center items-center ">
+        <div className="absolute inset-0 flex flex-col justify-center items-center z-10 ">
 
           <h1 className="text-3xl font-black text-center mb-4 text-white ">
             Exlpore National Parks
@@ -65,18 +65,37 @@ const SearchParks = () => {
         :
         error ? <div></div>
           :
-          <div className="max-w-5xl mx-auto p-4">
+          <div style={{
+                    backgroundImage: `url('/topograph.jpg')`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                  }}
+                  >
+          <div className="max-w-5xl mx-auto p-4 bg-white "
+            
+        >
             <h2 className="text-2xl font-bold mb-4 text-center">Recent Activity</h2>
-            <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 lg:gap-20 gap-4 '>
+            <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 lg:gap-20 gap-4 '
+            >
               {data.getAllReviews.slice(0, visibleReviews).map((review: any) => (
-                <div key={review._id} className="border border-gray-300">
-                  <h3 className="font-semibold">{review.username} wrote a review</h3>
-                  <p className="text-sm text-gray-500">{formatDate(review.createdAt)}</p>
-                  <img onClick={() => handleReviewClick(review.parkId)} src={review.image} className="w-[30rem] h-[20rem] " />
-                  <p>{review.parkFullName}</p>
-                  <p className="text-yellow-500">⭐ {review.rating}/5</p>
-                  <p className="mt-2">{review.comment}</p>
-
+                <div
+                  key={review._id}
+                  className="border border-gray-300 rounded overflow-hidden"
+                  
+                >
+                  {/* semi-opaque panel so text stays readable over the background */}
+                  <div className="bg-white/80 p-4">
+                    <h3 className="font-semibold">{review.username} wrote a review</h3>
+                    <p className="text-sm text-gray-500">{formatDate(review.createdAt)}</p>
+                    <img
+                      onClick={() => handleReviewClick(review.parkId)}
+                      src={review.image}
+                      className="w-full h-48 object-cover mt-2 rounded"
+                    />
+                    <p className="mt-2 font-medium">{review.parkFullName}</p>
+                    <p className="text-yellow-500">⭐ {review.rating}/5</p>
+                    <p className="mt-2">{review.comment}</p>
+                  </div>
                 </div>
               ))}
             </div>
@@ -85,7 +104,7 @@ const SearchParks = () => {
                 <button className='py-2 px-4 rounded-lg bg-blue-600 text-white' onClick={handleShowMoreReviews}>See More Reviews</button>
               </div>
             )}
-          </div>}
+          </div></div>}
 
 
     </div>

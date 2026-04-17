@@ -1,38 +1,34 @@
 import { useState } from 'react';
 import { useMutation } from '@apollo/client';
-import { ADD_REVIEW } from '../utils/mutations'; // Import the mutation
-import { QUERY_PARK_REVIEWS, QUERY_USER_REVIEWS } from '../utils/queries'; // Ensure the UI updates after submission
+import { ADD_REVIEW } from '../utils/mutations';
+import { QUERY_PARK_REVIEWS, QUERY_USER_REVIEWS } from '../utils/queries';
+import Button from './ui/Button';
+import { Textarea, Select } from './ui/Input';
 
-
-const LeaveReviewForm = ({parkFullName, parkId, parkImage, onClose }: {parkFullName:string, parkId: string, parkImage: string, onClose: () => void }) => {
+const LeaveReviewForm = ({ parkFullName, parkId, parkImage, onClose }: {
+  parkFullName: string;
+  parkId: string;
+  parkImage: string;
+  onClose: () => void;
+}) => {
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState('');
 
-   // Apollo Client mutation hook
   const [addReview, { loading, error }] = useMutation(ADD_REVIEW, {
-    refetchQueries: [{ query: QUERY_PARK_REVIEWS, variables: { parkId } },
-      { query: QUERY_USER_REVIEWS } 
-    ], // Refresh reviews after submission
+    refetchQueries: [
+      { query: QUERY_PARK_REVIEWS, variables: { parkId } },
+      { query: QUERY_USER_REVIEWS },
+    ],
   });
 
- const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     try {
       await addReview({
-        variables: {   
-             input: { 
-          parkId,
-          parkFullName,
-          image : parkImage,
-          rating,
-          comment,
-        }, },
+        variables: {
+          input: { parkId, parkFullName, image: parkImage, rating, comment },
+        },
       });
-
-    
-
-      // Close form after successful submission
       onClose();
     } catch (err) {
       console.error('Error submitting review:', err);
@@ -40,27 +36,42 @@ const LeaveReviewForm = ({parkFullName, parkId, parkImage, onClose }: {parkFullN
   };
 
   return (
-    <div className="border border-gray-300 p-4 mt-4">
-      <h2 className="text-xl font-bold">Leave a Review</h2>
-      <form onSubmit={handleSubmit} className="flex flex-col space-y-2">
-        <label>
-          Rating:
-          <select value={rating} onChange={(e) => setRating(Number(e.target.value))}>
-            {[1, 2, 3, 4, 5].map((num) => (
-              <option key={num} value={num}>{num} Stars</option>
-            ))}
-          </select>
-        </label>
-        <label>
-          Comment:
-          <textarea value={comment} onChange={(e) => setComment(e.target.value)} className="border p-1 w-full" />
-        </label>
-        {error && <p className="text-red-500">Error submitting review. Make sure you are signed in.</p>}
-        <div className="flex gap-2">
-          <button type="submit" className="bg-blue-500 text-white px-4 py-2" disabled={loading}>
-            {loading ? 'Submitting...' : 'Submit'}
-          </button>
-          <button type="button" onClick={onClose} className="bg-gray-300 px-4 py-2">Cancel</button>
+    <div className="border border-gray-200 rounded-xl p-5 mt-4 bg-white shadow-card">
+      <h2 className="text-lg font-bold text-gray-800 mb-4">Leave a Review</h2>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <Select
+          label="Rating"
+          value={rating}
+          onChange={(e) => setRating(Number(e.target.value))}
+        >
+          {[5, 4, 3, 2, 1].map((num) => (
+            <option key={num} value={num}>
+              {'★'.repeat(num)}{'☆'.repeat(5 - num)} — {num} star{num > 1 ? 's' : ''}
+            </option>
+          ))}
+        </Select>
+
+        <Textarea
+          label="Comment"
+          rows={4}
+          placeholder="Share your experience at this park…"
+          value={comment}
+          onChange={(e) => setComment(e.target.value)}
+        />
+
+        {error && (
+          <p className="text-sm text-red-500">
+            Error submitting review. Make sure you are signed in.
+          </p>
+        )}
+
+        <div className="flex gap-3">
+          <Button type="submit" variant="primary" size="md" loading={loading}>
+            Submit Review
+          </Button>
+          <Button type="button" variant="ghost" size="md" onClick={onClose}>
+            Cancel
+          </Button>
         </div>
       </form>
     </div>

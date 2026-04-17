@@ -2,63 +2,64 @@ import { useQuery, useMutation } from "@apollo/client";
 import { QUERY_USER_REVIEWS } from "../utils/queries";
 import { DELETE_REVIEW } from "../utils/mutations";
 import { useState } from "react";
-import EditReviewForm from "../components/EditReviewForm"; // Create this component for editing reviews
-// Profile picture component still needs work
-// import ProfilePictureUpload from "../components/ProfilePictureUpload";
+import EditReviewForm from "../components/EditReviewForm";
+import ReviewCard from "../components/ui/ReviewCard";
+import SkeletonCard from "../components/ui/SkeletonCard";
+import type { GetUserReviewsData } from "../models/graphql";
 
 const MyReviews = () => {
-  const { loading, error, data } = useQuery(QUERY_USER_REVIEWS);
+  const { loading, error, data } = useQuery<GetUserReviewsData>(QUERY_USER_REVIEWS);
   const [deleteReview] = useMutation(DELETE_REVIEW, {
     refetchQueries: [{ query: QUERY_USER_REVIEWS }],
   });
   const [editingReviewId, setEditingReviewId] = useState<string | null>(null);
 
-  if (loading) return <p>Loading reviews...</p>;
-  if (error) return <p className="text-red-500">Error fetching reviews: {error.message}</p>;
-
   const handleDelete = async (reviewId: string) => {
     try {
       await deleteReview({ variables: { reviewId } });
-
     } catch (err) {
       console.error("Error deleting review:", err);
     }
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <div>
-        {/* in the works */}
-        {/* <ProfilePictureUpload /> */}
-      </div>
-      <h1 className="text-3xl font-bold">My Reviews</h1>
-      {data?.getUserReviews?.length === 0 ? (
-        <p>No reviews yet.</p>
+    <div className="max-w-4xl mx-auto px-4 py-8">
+      <h1 className="text-3xl font-bold text-gray-800 mb-6">My Reviews</h1>
+
+      {error && (
+        <p className="text-red-500">Error fetching reviews: {error.message}</p>
+      )}
+
+      {loading ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          {Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />)}
+        </div>
+      ) : data?.getUserReviews?.length === 0 ? (
+        <div className="text-center py-16 text-gray-400">
+          <p className="text-xl mb-2">No reviews yet.</p>
+          <p className="text-sm">Visit a park and share your experience!</p>
+        </div>
       ) : (
-        <div className="space-y-4 mt-4">
-
-
-          {data?.getUserReviews?.map((review: any) => (
-            <div key={review._id} className="border p-4 rounded-lg shadow-lg bg-white">
-              <p className="text-lg">{review.parkFullName}</p>
-              <p className="text-lg">{review.comment}</p>
-              <p className="text-sm text-gray-500">{new Date(parseInt(review.createdAt)).toLocaleDateString()}</p>
-              <p className="text-yellow-500 font-bold">Rating: ⭐ {review.rating}/5</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          {data?.getUserReviews?.map((review) => (
+            <div key={review._id}>
               {editingReviewId === review._id ? (
-                <EditReviewForm
-                  reviewId={review._id}
-                  initialComment={review.comment}
-                  initialRating={review.rating}
-                  onClose={() => setEditingReviewId(null)} />
+                <div className="rounded-xl border border-gray-200 bg-white shadow-card p-4">
+                  <p className="font-semibold text-gray-800 mb-1">{review.parkFullName}</p>
+                  <EditReviewForm
+                    reviewId={review._id}
+                    initialComment={review.comment}
+                    initialRating={review.rating}
+                    onClose={() => setEditingReviewId(null)}
+                  />
+                </div>
               ) : (
-                <>
-                  <button className="mr-2 border px-4 py-1 rounded bg-blue-500 text-white" onClick={() => setEditingReviewId(review._id)}>
-                    Edit
-                  </button>
-                  <button className="border px-4 py-1 rounded bg-red-500 text-white" onClick={() => handleDelete(review._id)}>
-                    Delete
-                  </button>
-                </>
+                <ReviewCard
+                  review={review}
+                  linkToPark
+                  onEdit={(id) => setEditingReviewId(id)}
+                  onDelete={handleDelete}
+                />
               )}
             </div>
           ))}

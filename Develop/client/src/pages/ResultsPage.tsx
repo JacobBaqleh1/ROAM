@@ -148,7 +148,7 @@ const ResultsPage = () => {
     <div
       ref={containerRef}
       className={[
-        'flex flex-col h-screen md:flex-row',
+        'flex flex-col h-full md:flex-row',
         isDragging ? 'select-none ' + (isDesktop ? 'cursor-ew-resize' : 'cursor-ns-resize') : '',
       ].join(' ')}
     >

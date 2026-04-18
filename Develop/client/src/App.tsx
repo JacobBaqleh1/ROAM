@@ -1,5 +1,5 @@
 import './App.css';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import { ApolloClient, ApolloProvider, createHttpLink, InMemoryCache } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 import Navbar from './components/Navbar';
@@ -28,14 +28,17 @@ const client = new ApolloClient({
   cache: new InMemoryCache(),
 });
 function App() {
+  const location = useLocation();
+  const hideFooter = location.pathname === '/results';
+
   return (
     <ApolloProvider client={client} >
-      <div className='min-h-screen flex flex-col '>
+      <div className='h-screen flex flex-col overflow-hidden'>
         <Navbar />
-        <div className='flex-grow'>
+        <div className='flex-1 min-h-0 overflow-auto'>
           <Outlet />
+          {!hideFooter && <Footer />}
         </div>
-        <Footer />
       </div>
     </ApolloProvider>
   );

@@ -2,12 +2,13 @@ import { useState } from 'react';
 import { View, Text, TextInput, Pressable, Alert } from 'react-native';
 import { useMutation } from '@apollo/client/react';
 import { ADD_USER } from '../utils/mutations';
-import Auth from '../utils/auth';
+import { useAuth } from '../utils/useAuth';
 
 export default function SignupForm() {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const { login: authLogin } = useAuth();
   const [addUser, { loading }] = useMutation(ADD_USER);
 
   const handleSubmit = async () => {
@@ -16,19 +17,29 @@ export default function SignupForm() {
       const { data } = await addUser({
         variables: { input: { username, email, password } },
       });
-      await Auth.login((data as any).addUser.token);
+      await authLogin((data as any).addUser.token);
     } catch (e: any) {
       Alert.alert('Sign up failed', e.message || 'Something went wrong. Please try again.');
     }
   };
 
+  const disabled = !username || !email || !password || loading;
+
   return (
-    <View className="space-y-4">
+    <View style={{ gap: 16 }}>
       <View>
-        <Text className="text-sm font-medium text-gray-700 mb-1">Username</Text>
+        <Text style={{ fontSize: 13, fontWeight: '600', color: '#1A1A1A', marginBottom: 6 }}>Username</Text>
         <TextInput
-          className="bg-gray-100 border border-gray-300 rounded-lg px-3 py-3 text-base"
+          style={{
+            backgroundColor: '#F5F5F0',
+            borderRadius: 10,
+            paddingHorizontal: 14,
+            paddingVertical: 13,
+            fontSize: 15,
+            color: '#1A1A1A',
+          }}
           placeholder="Your username"
+          placeholderTextColor="#A3A3A3"
           value={username}
           onChangeText={setUsername}
           autoCapitalize="none"
@@ -36,10 +47,18 @@ export default function SignupForm() {
         />
       </View>
       <View>
-        <Text className="text-sm font-medium text-gray-700 mb-1">Email</Text>
+        <Text style={{ fontSize: 13, fontWeight: '600', color: '#1A1A1A', marginBottom: 6 }}>Email</Text>
         <TextInput
-          className="bg-gray-100 border border-gray-300 rounded-lg px-3 py-3 text-base"
+          style={{
+            backgroundColor: '#F5F5F0',
+            borderRadius: 10,
+            paddingHorizontal: 14,
+            paddingVertical: 13,
+            fontSize: 15,
+            color: '#1A1A1A',
+          }}
           placeholder="Your email"
+          placeholderTextColor="#A3A3A3"
           value={email}
           onChangeText={setEmail}
           autoCapitalize="none"
@@ -48,21 +67,35 @@ export default function SignupForm() {
         />
       </View>
       <View>
-        <Text className="text-sm font-medium text-gray-700 mb-1">Password</Text>
+        <Text style={{ fontSize: 13, fontWeight: '600', color: '#1A1A1A', marginBottom: 6 }}>Password</Text>
         <TextInput
-          className="bg-gray-100 border border-gray-300 rounded-lg px-3 py-3 text-base"
+          style={{
+            backgroundColor: '#F5F5F0',
+            borderRadius: 10,
+            paddingHorizontal: 14,
+            paddingVertical: 13,
+            fontSize: 15,
+            color: '#1A1A1A',
+          }}
           placeholder="Your password"
+          placeholderTextColor="#A3A3A3"
           value={password}
           onChangeText={setPassword}
           secureTextEntry
         />
       </View>
       <Pressable
-        className={`rounded-lg py-3 items-center ${(!username || !email || !password || loading) ? 'bg-gray-300' : 'bg-blue-600'}`}
+        style={{
+          backgroundColor: disabled ? '#E5E5E5' : '#1A1A1A',
+          borderRadius: 999,
+          paddingVertical: 15,
+          alignItems: 'center',
+          marginTop: 4,
+        }}
         onPress={handleSubmit}
-        disabled={!username || !email || !password || loading}
+        disabled={disabled}
       >
-        <Text className="text-white font-bold text-base">
+        <Text style={{ color: disabled ? '#A3A3A3' : 'white', fontWeight: '700', fontSize: 15 }}>
           {loading ? 'Creating account...' : 'Create Account'}
         </Text>
       </Pressable>

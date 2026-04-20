@@ -8,7 +8,7 @@ import { AuthProvider } from '../utils/useAuth';
 import { SearchProvider } from '../context/SearchContext';
 
 const httpLink = createHttpLink({
-  uri: 'https://roam-ynw2.onrender.com/graphql',
+  uri: `${process.env.EXPO_PUBLIC_API_URL ?? 'https://roam-ynw2.onrender.com'}/graphql`,
 });
 
 const authLink = setContext(async (_: any, prevContext: any) => {

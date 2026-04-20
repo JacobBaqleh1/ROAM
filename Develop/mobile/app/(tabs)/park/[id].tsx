@@ -6,6 +6,7 @@ import { useLocalSearchParams } from 'expo-router';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { fetchParkById } from '../../../utils/API';
 import { QUERY_ME, QUERY_PARK_REVIEWS } from '../../../utils/queries';
+import { useSearch } from '../../../context/SearchContext';
 import { SAVE_PARK } from '../../../utils/mutations';
 import { useAuth } from '../../../utils/useAuth';
 import ImageCarousel from '../../../components/ImageCarousel';
@@ -20,6 +21,7 @@ function formatDate(timestamp: string) {
 export default function ParkDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { isLoggedIn } = useAuth();
+  const { getParkById } = useSearch();
   const [park, setPark] = useState<any>(null);
   const [loadingPark, setLoadingPark] = useState(true);
   const [showReviewForm, setShowReviewForm] = useState(false);
@@ -36,6 +38,13 @@ export default function ParkDetailScreen() {
 
   useEffect(() => {
     if (!id) return;
+    // Check context cache first (covers RIDB parks that NPS API can't fetch)
+    const cached = getParkById(id);
+    if (cached) {
+      setPark(cached);
+      setLoadingPark(false);
+      return;
+    }
     setLoadingPark(true);
     fetchParkById(id).then((data) => {
       setPark(data);

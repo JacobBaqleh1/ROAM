@@ -1,6 +1,6 @@
 import stateMap from '../constants/stateMap';
 
-const BASE = 'https://roam-ynw2.onrender.com';
+const BASE = process.env.EXPO_PUBLIC_API_URL ?? 'https://roam-ynw2.onrender.com';
 
 export async function fetchParks(userInput: string) {
   userInput = (userInput || '').trim();

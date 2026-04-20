@@ -1,39 +1,25 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
-  View, Text, FlatList, Pressable, ActivityIndicator, ImageBackground, Alert,
+  View, Text, FlatList, Pressable, ActivityIndicator, ScrollView, Alert,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { useQuery } from '@apollo/client/react';
+import { Ionicons } from '@expo/vector-icons';
 import { QUERY_ALL_REVIEWS } from '../../utils/queries';
 import { fetchParks } from '../../utils/API';
 import { useSearch } from '../../context/SearchContext';
 import StatePickerModal from '../../components/StatePickerModal';
 import ReviewCard from '../../components/ReviewCard';
 
-const HERO_IMAGES = [
-  'https://www.nps.gov/common/uploads/structured_data/3C7B45AE-1DD8-B71B-0BED299D5B9F3B44.jpg',
-  'https://www.nps.gov/common/uploads/structured_data/3C84CA1D-1DD8-B71B-0B79E9C9A0E7E9E2.jpg',
-  'https://www.nps.gov/common/uploads/structured_data/3C86CE3E-1DD8-B71B-0B24E7B1B2127A4D.jpg',
-];
+const FILTER_CHIPS = ['Nearby', 'National Parks', 'Recreation Areas', 'Camping'];
 
 export default function HomeScreen() {
   const { setSearchResults } = useSearch();
-  const { loading, error, data, refetch } = useQuery(QUERY_ALL_REVIEWS);
+  const { loading, data } = useQuery(QUERY_ALL_REVIEWS);
   const [visibleCount, setVisibleCount] = useState(6);
-  const [heroIndex, setHeroIndex] = useState(0);
   const [searching, setSearching] = useState(false);
-
-  useEffect(() => {
-    const timer = setTimeout(() => refetch(), 2000);
-    return () => clearTimeout(timer);
-  }, [refetch]);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setHeroIndex((i) => (i + 1) % HERO_IMAGES.length);
-    }, 4000);
-    return () => clearInterval(interval);
-  }, []);
+  const [activeChip, setActiveChip] = useState('National Parks');
 
   const handleStateSelect = async (state: string) => {
     setSearching(true);
@@ -55,59 +41,96 @@ export default function HomeScreen() {
   const reviews = (data as any)?.getAllReviews ?? [];
 
   return (
-    <FlatList
-      data={reviews.slice(0, visibleCount)}
-      keyExtractor={(item) => item._id}
-      renderItem={({ item }) => (
-        <View className="px-4">
-          <ReviewCard review={item} />
-        </View>
-      )}
-      ListHeaderComponent={
-        <View>
-          {/* Hero */}
-          <ImageBackground
-            source={{ uri: HERO_IMAGES[heroIndex] }}
-            className="h-64 justify-center items-center"
-          >
-            <View className="absolute inset-0 bg-black/40" />
-            <Text className="text-3xl font-black text-white text-center z-10 px-4">
-              Explore National Parks
-            </Text>
-            <View className="mt-4 z-10 px-8 w-full">
-              {searching ? (
-                <ActivityIndicator color="white" />
-              ) : (
-                <StatePickerModal onSelect={handleStateSelect} />
-              )}
-            </View>
-          </ImageBackground>
-
-          {/* Section header */}
-          <View className="px-4 pt-6 pb-2">
-            <Text className="text-2xl font-bold text-gray-900">Recent Activity</Text>
+    <SafeAreaView className="flex-1 bg-white">
+      <FlatList
+        data={reviews.slice(0, visibleCount)}
+        keyExtractor={(item: any) => item._id}
+        renderItem={({ item }: any) => (
+          <View className="px-4">
+            <ReviewCard review={item} />
           </View>
-
-          {loading && (
-            <View className="py-8 items-center">
-              <ActivityIndicator size="large" color="#2563EB" />
+        )}
+        ListHeaderComponent={
+          <View>
+            {/* Search bar */}
+            <View className="px-4 pt-4 pb-3">
+              <StatePickerModal onSelect={handleStateSelect} searching={searching} />
             </View>
-          )}
-        </View>
-      }
-      ListFooterComponent={
-        visibleCount < reviews.length ? (
-          <View className="px-4 pb-6">
-            <Pressable
-              className="bg-blue-600 rounded-lg py-3 items-center"
-              onPress={() => setVisibleCount((v) => v + 6)}
+
+            {/* Filter chips */}
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{ paddingHorizontal: 16, gap: 8, paddingBottom: 4 }}
             >
-              <Text className="text-white font-semibold">See More Reviews</Text>
-            </Pressable>
+              {FILTER_CHIPS.map((chip) => (
+                <Pressable
+                  key={chip}
+                  onPress={() => setActiveChip(chip)}
+                  style={{
+                    paddingHorizontal: 14,
+                    paddingVertical: 8,
+                    borderRadius: 999,
+                    borderWidth: 1.5,
+                    borderColor: activeChip === chip ? '#1A1A1A' : '#E5E5E5',
+                    backgroundColor: activeChip === chip ? '#1A1A1A' : 'white',
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: 13,
+                      fontWeight: '500',
+                      color: activeChip === chip ? 'white' : '#1A1A1A',
+                    }}
+                  >
+                    {chip}
+                  </Text>
+                </Pressable>
+              ))}
+            </ScrollView>
+
+            {/* Section header */}
+            <View className="px-4 pt-5 pb-2 flex-row justify-between items-center">
+              <Text className="text-xl font-bold text-gray-900">Recent Activity</Text>
+            </View>
+
+            {loading && (
+              <View className="py-8 items-center">
+                <ActivityIndicator size="large" color="#2ECC71" />
+              </View>
+            )}
+
+            {!loading && reviews.length === 0 && (
+              <View className="py-12 items-center px-8">
+                <Ionicons name="leaf-outline" size={40} color="#A3A3A3" />
+                <Text className="text-base font-semibold text-gray-700 mt-3 text-center">No reviews yet</Text>
+                <Text className="text-sm text-center mt-1" style={{ color: '#737373' }}>
+                  Be the first to explore and leave a review.
+                </Text>
+              </View>
+            )}
           </View>
-        ) : null
-      }
-      contentContainerStyle={{ paddingBottom: 20 }}
-    />
+        }
+        ListFooterComponent={
+          visibleCount < reviews.length ? (
+            <View className="px-4 pb-8 pt-2">
+              <Pressable
+                style={{
+                  borderWidth: 1.5,
+                  borderColor: '#E5E5E5',
+                  borderRadius: 12,
+                  paddingVertical: 14,
+                  alignItems: 'center',
+                }}
+                onPress={() => setVisibleCount((v) => v + 6)}
+              >
+                <Text style={{ fontWeight: '600', color: '#1A1A1A' }}>See More Reviews</Text>
+              </Pressable>
+            </View>
+          ) : <View style={{ height: 32 }} />
+        }
+        contentContainerStyle={{ paddingBottom: 20 }}
+      />
+    </SafeAreaView>
   );
 }

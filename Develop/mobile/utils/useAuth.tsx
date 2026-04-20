@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import * as SecureStore from 'expo-secure-store';
 import { jwtDecode, type JwtPayload } from 'jwt-decode';
+import { router } from 'expo-router';
 
 const TOKEN_KEY = 'id_token';
 
@@ -19,6 +20,8 @@ interface AuthContextType {
   user: UserProfile | null;
   loading: boolean;
   refreshAuth: () => Promise<void>;
+  login: (token: string) => Promise<void>;
+  logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -26,6 +29,8 @@ const AuthContext = createContext<AuthContextType>({
   user: null,
   loading: true,
   refreshAuth: async () => {},
+  login: async () => {},
+  logout: async () => {},
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -58,12 +63,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  const login = useCallback(async (token: string) => {
+    await SecureStore.setItemAsync(TOKEN_KEY, token);
+    const decoded = jwtDecode<ExtendedJwt>(token);
+    setIsLoggedIn(true);
+    setUser(decoded.data);
+    router.replace('/');
+  }, []);
+
+  const logout = useCallback(async () => {
+    await SecureStore.deleteItemAsync(TOKEN_KEY);
+    setIsLoggedIn(false);
+    setUser(null);
+    router.replace('/');
+  }, []);
+
   useEffect(() => {
     refreshAuth();
   }, [refreshAuth]);
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, user, loading, refreshAuth }}>
+    <AuthContext.Provider value={{ isLoggedIn, user, loading, refreshAuth, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

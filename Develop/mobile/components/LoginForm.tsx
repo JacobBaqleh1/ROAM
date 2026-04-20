@@ -2,30 +2,41 @@ import { useState } from 'react';
 import { View, Text, TextInput, Pressable, Alert } from 'react-native';
 import { useMutation } from '@apollo/client/react';
 import { LOGIN_USER } from '../utils/mutations';
-import Auth from '../utils/auth';
+import { useAuth } from '../utils/useAuth';
 
 export default function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [login, { loading }] = useMutation(LOGIN_USER);
+  const { login: authLogin } = useAuth();
+  const [loginMutation, { loading }] = useMutation(LOGIN_USER);
 
   const handleSubmit = async () => {
     if (!email || !password) return;
     try {
-      const { data } = await login({ variables: { email, password } });
-      await Auth.login((data as any).login.token);
+      const { data } = await loginMutation({ variables: { email, password } });
+      await authLogin((data as any).login.token);
     } catch (e: any) {
       Alert.alert('Login failed', e.message || 'Invalid credentials. Please try again.');
     }
   };
 
+  const disabled = !email || !password || loading;
+
   return (
-    <View className="space-y-4">
+    <View style={{ gap: 16 }}>
       <View>
-        <Text className="text-sm font-medium text-gray-700 mb-1">Email</Text>
+        <Text style={{ fontSize: 13, fontWeight: '600', color: '#1A1A1A', marginBottom: 6 }}>Email</Text>
         <TextInput
-          className="bg-gray-100 border border-gray-300 rounded-lg px-3 py-3 text-base"
+          style={{
+            backgroundColor: '#F5F5F0',
+            borderRadius: 10,
+            paddingHorizontal: 14,
+            paddingVertical: 13,
+            fontSize: 15,
+            color: '#1A1A1A',
+          }}
           placeholder="Your email"
+          placeholderTextColor="#A3A3A3"
           value={email}
           onChangeText={setEmail}
           autoCapitalize="none"
@@ -34,21 +45,35 @@ export default function LoginForm() {
         />
       </View>
       <View>
-        <Text className="text-sm font-medium text-gray-700 mb-1">Password</Text>
+        <Text style={{ fontSize: 13, fontWeight: '600', color: '#1A1A1A', marginBottom: 6 }}>Password</Text>
         <TextInput
-          className="bg-gray-100 border border-gray-300 rounded-lg px-3 py-3 text-base"
+          style={{
+            backgroundColor: '#F5F5F0',
+            borderRadius: 10,
+            paddingHorizontal: 14,
+            paddingVertical: 13,
+            fontSize: 15,
+            color: '#1A1A1A',
+          }}
           placeholder="Your password"
+          placeholderTextColor="#A3A3A3"
           value={password}
           onChangeText={setPassword}
           secureTextEntry
         />
       </View>
       <Pressable
-        className={`rounded-lg py-3 items-center ${(!email || !password || loading) ? 'bg-gray-300' : 'bg-green-500'}`}
+        style={{
+          backgroundColor: disabled ? '#E5E5E5' : '#2ECC71',
+          borderRadius: 999,
+          paddingVertical: 15,
+          alignItems: 'center',
+          marginTop: 4,
+        }}
         onPress={handleSubmit}
-        disabled={!email || !password || loading}
+        disabled={disabled}
       >
-        <Text className="text-white font-bold text-base">
+        <Text style={{ color: disabled ? '#A3A3A3' : 'white', fontWeight: '700', fontSize: 15 }}>
           {loading ? 'Signing in...' : 'Sign In'}
         </Text>
       </Pressable>

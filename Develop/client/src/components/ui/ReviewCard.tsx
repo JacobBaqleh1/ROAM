@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import FadeImage from './FadeImage';
 import Button from './Button';
 
 export interface ReviewData {
@@ -42,20 +43,22 @@ function formatDate(timestamp: string) {
 export default function ReviewCard({ review, onEdit, onDelete, linkToPark = false }: ReviewCardProps) {
   const navigate = useNavigate();
 
+  const handleClick = linkToPark ? () => navigate(`/park/${review.parkId}`) : undefined;
+
   return (
     <div className="rounded-xl overflow-hidden border border-gray-200 bg-white shadow-card hover:shadow-card-hover transition-shadow duration-300 flex flex-col">
-      {review.image && (
-        <div
-          className={`overflow-hidden ${linkToPark ? 'cursor-pointer' : ''}`}
-          onClick={linkToPark ? () => navigate(`/park/${review.parkId}`) : undefined}
-        >
-          <img
-            src={review.image}
-            alt={review.parkFullName ?? 'Park photo'}
-            className="w-full h-48 object-cover hover:scale-105 transition-transform duration-300"
-          />
-        </div>
-      )}
+      <div
+        className={`overflow-hidden ${linkToPark ? 'cursor-pointer' : ''}`}
+        onClick={handleClick}
+      >
+        <FadeImage
+          src={review.image ?? ''}
+          alt={review.parkFullName ?? 'Park photo'}
+          className="w-full h-48"
+          imgClassName="hover:scale-105 transition-transform duration-300"
+          fallbackLabel={review.parkFullName ?? 'National Park'}
+        />
+      </div>
 
       <div className="p-4 flex flex-col flex-grow gap-2">
         <div className="flex items-center justify-between">

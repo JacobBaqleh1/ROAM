@@ -1,7 +1,8 @@
 import { useMutation, useQuery } from '@apollo/client';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { useEffect, useState, useRef } from 'react';
 import { fetchParkById } from '../utils/API';
+import FadeImage from '../components/ui/FadeImage';
 import { QUERY_ME, QUERY_PARK_REVIEWS } from '../utils/queries';
 import { SAVE_PARK } from '../utils/mutations';
 import LeaveReviewForm from '../components/LeaveReviewForm';
@@ -14,6 +15,16 @@ const ParkInfo = () => {
   const { id } = useParams();
   const [park, setPark] = useState<any>(null);
   const [showReviewForm, setShowReviewForm] = useState(false);
+  const [signInPrompt, setSignInPrompt] = useState<'save' | 'review' | null>(null);
+
+  const requireAuth = (target: 'save' | 'review', action: () => void) => {
+    if (!Auth.loggedIn()) {
+      setSignInPrompt(target);
+      setTimeout(() => setSignInPrompt(null), 4000);
+      return;
+    }
+    action();
+  };
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const reviewFormRef = useRef<HTMLDivElement>(null);
 
@@ -113,10 +124,13 @@ const ParkInfo = () => {
       {/* Image Carousel */}
       {park.images?.length > 0 && (
         <div className="relative w-full h-[500px] ">
-          <img
+          <FadeImage
+            key={currentImageIndex}
             src={park.images[currentImageIndex].url}
             alt={park.fullName}
-            className="w-full h-full object-cover  shadow-lg"
+            className="w-full h-full"
+            imgClassName="shadow-lg"
+            fallbackLabel={park.fullName}
           />
           {/* Left Arrow */}
           <button
@@ -146,7 +160,7 @@ const ParkInfo = () => {
         {/* Buttons */}
         <div className="flex gap-4 mt-6 justify-center">
           <button
-            onClick={() => handleSavePark(park)}
+            onClick={() => requireAuth('save', () => handleSavePark(park))}
             disabled={isParkSaved}
             className={`py-2 px-4 rounded-lg transition ${isParkSaved
               ? "bg-gray-400 cursor-not-allowed"
@@ -160,6 +174,12 @@ const ParkInfo = () => {
           </button>
 
         </div>
+        {signInPrompt === 'save' && (
+          <div className="mt-3 px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-center text-gray-600">
+            <Link to="/login" className="text-forest-500 font-semibold hover:underline">Sign in</Link>
+            {' '}to save parks to your profile.
+          </div>
+        )}
         <hr className="my-4 border-t border-gray-300" />
         <div className='grid grid-cols-1  mt-6'>
           <div className=' '>
@@ -216,7 +236,7 @@ const ParkInfo = () => {
 
           {!showReviewForm && (
             <button
-              onClick={handleScrollToReviewForm}
+              onClick={() => requireAuth('review', handleScrollToReviewForm)}
               className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 hover:bg-gray-100 transition"
             >
               <svg
@@ -234,6 +254,12 @@ const ParkInfo = () => {
             </button>
           )}
         </div>
+        {signInPrompt === 'review' && (
+          <div className="mt-3 px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-center text-gray-600">
+            <Link to="/login" className="text-forest-500 font-semibold hover:underline">Sign in</Link>
+            {' '}to leave a review.
+          </div>
+        )}
 
         {loading && <p>Loading reviews...</p>}
         {error && <p className="text-red-500">Error fetching reviews: {error.message}</p>}

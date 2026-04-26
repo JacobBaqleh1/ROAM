@@ -13,7 +13,7 @@ const AppNavbar = () => {
 
   return (
     <>
-      <nav className="bg-black relative z-[100]">
+      <nav className="bg-black sticky top-0 z-[100]">
         <div
           className={
             isHome

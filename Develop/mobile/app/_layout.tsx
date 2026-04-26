@@ -4,6 +4,7 @@ import { ApolloProvider } from '@apollo/client/react';
 import { setContext } from '@apollo/client/link/context';
 import * as SecureStore from 'expo-secure-store';
 import { Stack } from 'expo-router';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { AuthProvider } from '../utils/useAuth';
 import { SearchProvider } from '../context/SearchContext';
 
@@ -28,15 +29,17 @@ const client = new ApolloClient({
 
 export default function RootLayout() {
   return (
-    <ApolloProvider client={client}>
-      <AuthProvider>
-        <SearchProvider>
-          <Stack>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="login" options={{ title: 'Sign In', headerBackTitle: 'Back' }} />
-          </Stack>
-        </SearchProvider>
-      </AuthProvider>
-    </ApolloProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <ApolloProvider client={client}>
+        <AuthProvider>
+          <SearchProvider>
+            <Stack>
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              <Stack.Screen name="login" options={{ title: 'Sign In', headerBackTitle: 'Back' }} />
+            </Stack>
+          </SearchProvider>
+        </AuthProvider>
+      </ApolloProvider>
+    </GestureHandlerRootView>
   );
 }

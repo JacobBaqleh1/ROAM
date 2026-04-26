@@ -24,12 +24,12 @@ const SearchParks = () => {
   return (
     <div>
       {/* Hero section */}
-      <div className="relative flex min-h-[38rem] sm:h-[15rem] md:h-[40rem] flex-col items-center justify-start">
+      <div className="relative flex min-h-[38rem] sm:h-[15rem] md:h-[50rem] flex-col items-center justify-start">
         <div className="absolute inset-0 z-0 w-full h-full overflow-hidden">
           <AutoCarousel />
         </div>
 
-        <div className="absolute inset-0 flex flex-col justify-center items-center z-10 px-4">
+        <div className="absolute inset-0 flex flex-col justify-start items-center z-10 px-4 pt-8 overflow-hidden">
           <h1 className="text-4xl md:text-5xl font-black text-center mb-4 text-white text-shadow font-display">
             Explore National Parks
           </h1>

@@ -6,6 +6,7 @@ import Auth from '../utils/auth.js';
 import { QUERY_ME } from '../utils/queries.js';
 import { DELETE_PARK } from '../utils/mutations.js';
 import { Park } from '../models/Park.js';
+import FadeImage from '../components/ui/FadeImage';
 
 interface UserData {
   _id: string;
@@ -79,9 +80,12 @@ const SavedParks = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 ">
             {userData.savedParks.map((park) => (
               <div key={park.parkId} className=" rounded-lg shadow-lg overflow-hidden flex flex-col">
-                {park.images?.length > 0 && (
-                  <img src={park.images[0].url} alt={`View of ${park.fullName}`} className="w-full h-68 object-cover" />
-                )}
+                <FadeImage
+                  src={park.images?.[0]?.url ?? ''}
+                  alt={`View of ${park.fullName}`}
+                  className="w-full h-48"
+                  fallbackLabel={park.fullName}
+                />
                 <div className="p-4 flex flex-col flex-grow">
                   <h3 className="text-lg  font-semibold">{park.fullName}</h3>
                   <p className="text-sm text-gray-400">Location: {park.states}</p>

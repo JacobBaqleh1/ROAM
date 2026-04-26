@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import {
-  Modal, View, Text, FlatList, Pressable, TextInput, SafeAreaView, ActivityIndicator,
+  Modal, View, Text, FlatList, Pressable, TextInput, ActivityIndicator,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import stateMap from '../constants/stateMap';
 

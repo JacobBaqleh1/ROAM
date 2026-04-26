@@ -1,82 +1,107 @@
 import { useState } from "react";
 import { fetchParks } from "../utils/API";
 import { useNavigate } from "react-router-dom";
+import { Search } from "lucide-react";
 
 const stateMap: Record<string, string> = {
-  "alabama": "AL", "alaska": "AK", "arizona": "AZ", "arkansas": "AR", "california": "CA",
-  "colorado": "CO", "connecticut": "CT", "delaware": "DE", "florida": "FL", "georgia": "GA",
-  "hawaii": "HI", "idaho": "ID", "illinois": "IL", "indiana": "IN", "iowa": "IA",
-  "kansas": "KS", "kentucky": "KY", "louisiana": "LA", "maine": "ME", "maryland": "MD",
-  "massachusetts": "MA", "michigan": "MI", "minnesota": "MN", "mississippi": "MS", "missouri": "MO",
-  "montana": "MT", "nebraska": "NE", "nevada": "NV", "new hampshire": "NH", "new jersey": "NJ",
-  "new mexico": "NM", "new york": "NY", "north carolina": "NC", "north dakota": "ND", "ohio": "OH",
-  "oklahoma": "OK", "oregon": "OR", "pennsylvania": "PA", "rhode island": "RI", "south carolina": "SC",
-  "south dakota": "SD", "tennessee": "TN", "texas": "TX", "utah": "UT", "vermont": "VT",
-  "virginia": "VA", "washington": "WA", "west virginia": "WV", "wisconsin": "WI", "wyoming": "WY"
+  "alabama": "AL", "alaska": "AK", "arizona": "AZ", "arkansas": "AR",
+  "california": "CA", "colorado": "CO", "connecticut": "CT", "delaware": "DE",
+  "florida": "FL", "georgia": "GA", "hawaii": "HI", "idaho": "ID",
+  "illinois": "IL", "indiana": "IN", "iowa": "IA", "kansas": "KS",
+  "kentucky": "KY", "louisiana": "LA", "maine": "ME", "maryland": "MD",
+  "massachusetts": "MA", "michigan": "MI", "minnesota": "MN",
+  "mississippi": "MS", "missouri": "MO", "montana": "MT", "nebraska": "NE",
+  "nevada": "NV", "new hampshire": "NH", "new jersey": "NJ",
+  "new mexico": "NM", "new york": "NY", "north carolina": "NC",
+  "north dakota": "ND", "ohio": "OH", "oklahoma": "OK", "oregon": "OR",
+  "pennsylvania": "PA", "rhode island": "RI", "south carolina": "SC",
+  "south dakota": "SD", "tennessee": "TN", "texas": "TX", "utah": "UT",
+  "vermont": "VT", "virginia": "VA", "washington": "WA",
+  "west virginia": "WV", "wisconsin": "WI", "wyoming": "WY",
 };
 
+const toTitle = (s: string) =>
+  s.split(" ").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+
 export default function NavSearchBar() {
-  const [selectedState, setSelectedState] = useState('');
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false); // State to control dropdown visibility
-  const [err, setError] = useState('');
+  const [inputValue, setInputValue] = useState("");
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [loading, setLoading] = useState<string | null>(null);
+  const [err, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleStateSelect = async (state: string) => {
-    setSelectedState(state);
-    setIsDropdownOpen(false); // Close the dropdown after selecting a state
-    setError('');
-
+  const handleStateClick = async (stateName: string) => {
+    if (loading) return;
+    const stateKey = stateName.toLowerCase();
+    if (!stateMap[stateKey]) return;
+    setLoading(stateName);
+    setError("");
+    setInputValue(stateName);
+    setShowSuggestions(false);
     try {
-      const response = await fetchParks(state);
+      const response = await fetchParks(stateKey);
       if (!response || response.length === 0) {
-        setError('No parks found. Try another state.');
+        setError("No parks found.");
+        setLoading(null);
         return;
       }
-      navigate('/results', { state: { parks: response, query: state } });
-    } catch (err) {
-      setError('Error fetching parks. Please try again.');
-      console.error('Error fetching parks:', err);
+      navigate("/results", { state: { parks: response, query: stateKey } });
+    } catch {
+      setError("Error fetching parks.");
+      setLoading(null);
     }
   };
 
+  const suggestions =
+    inputValue.length > 0
+      ? Object.keys(stateMap).filter(
+          s =>
+            s.startsWith(inputValue.toLowerCase()) ||
+            s.split(" ").some(w => w.startsWith(inputValue.toLowerCase()))
+        )
+      : [];
+
   return (
-    <div>
-      <div className="w-full max-w-2xl mx-auto px-4">
-        <div className="relative">
-          <button
-            onClick={() => setIsDropdownOpen(!isDropdownOpen)} // Toggle dropdown visibility
-            className="w-full p-3 rounded-full border border-gray-300 bg-white focus:outline-none focus:ring-2 focus:ring-green-500 text-lg text-center flex items-center justify-between"
-          >
-            <span>{selectedState || "Select a state"}</span>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 text-gray-500"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fillRule="evenodd"
-                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                clipRule="evenodd"
-              />
-            </svg>
-          </button>
-          {isDropdownOpen && ( // Only show the dropdown if isDropdownOpen is true
-            <div className="absolute z-50 w-full bg-white border border-gray-300 rounded-lg shadow-lg max-h-[16rem] overflow-y-auto">
-              {Object.keys(stateMap).map((state) => (
-                <div
-                  key={state}
-                  onClick={() => handleStateSelect(state)}
-                  className="p-2 hover:bg-gray-100 cursor-pointer"
-                >
-                  {state.charAt(0).toUpperCase() + state.slice(1)} {/* Capitalize */}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+    <div className="relative w-full">
+      <div className="relative flex items-center">
+        <Search size={15} className="absolute left-3 text-gray-400 pointer-events-none" />
+        <input
+          type="text"
+          value={loading ? `Loading ${inputValue}…` : inputValue}
+          onChange={e => {
+            setInputValue(e.target.value);
+            setShowSuggestions(true);
+            setError("");
+          }}
+          onFocus={() => setShowSuggestions(true)}
+          onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
+          onKeyDown={e => {
+            if (e.key === "Enter" && suggestions.length > 0) {
+              handleStateClick(toTitle(suggestions[0]));
+            }
+          }}
+          disabled={!!loading}
+          placeholder="Search a state…"
+          className="w-full pl-8 pr-3 py-1.5 rounded-full bg-white border border-gray-200 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-forest-500 disabled:opacity-60"
+        />
       </div>
-      {err && <p className="text-red-500 text-center mt-2">{err}</p>}
+
+      {showSuggestions && suggestions.length > 0 && (
+        <div className="absolute z-50 w-full mt-1 bg-white border border-gray-100 rounded-lg shadow-lg max-h-56 overflow-y-auto">
+          {suggestions.slice(0, 8).map(s => (
+            <button
+              key={s}
+              onMouseDown={() => handleStateClick(toTitle(s))}
+              className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center justify-between"
+            >
+              <span className="capitalize">{s}</span>
+              <span className="text-xs text-gray-400 font-mono">{stateMap[s]}</span>
+            </button>
+          ))}
+        </div>
+      )}
+
+      {err && <p className="text-red-400 text-xs mt-1 pl-1">{err}</p>}
     </div>
   );
 }

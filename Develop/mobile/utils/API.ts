@@ -50,17 +50,49 @@ export async function fetchParks(userInput: string) {
       if (r.ok) {
         const json = await r.json();
         const rec = Array.isArray(json.RECDATA) ? json.RECDATA : [];
-        ridbData = rec.map((it: any) => ({
-          id: String(it.FacilityID ?? it.facilityID ?? it.id ?? ''),
-          fullName: it.FacilityName ?? it.facilityName ?? '',
-          description: it.FacilityDescription ?? it.FacilityDescriptionBody ?? '',
-          url: it.FacilityReservationURL ?? it.ReservableURL ?? '',
-          parkCode: 'RIDB',
-          latitude: it.FacilityLatitude ?? it.Latitude ?? null,
-          longitude: it.FacilityLongitude ?? it.Longitude ?? null,
-          source: 'ridb',
-          raw: it,
-        }));
+        ridbData = rec.map((it: any) => {
+          const media = Array.isArray(it.FACILITYMEDIA) ? it.FACILITYMEDIA : [];
+          const images = media
+            .filter((m: any) => /image|photo/i.test(m.MediaType ?? ''))
+            .map((m: any) => ({
+              url: m.URL ?? m.url ?? '',
+              title: m.Title ?? m.title ?? '',
+              credit: m.Credits ?? m.credits ?? '',
+              caption: m.Caption ?? m.caption ?? '',
+              altText: m.Title ?? m.title ?? '',
+            }))
+            .filter((m: any) => m.url);
+
+          const addr = Array.isArray(it.FACILITYADDRESS) ? it.FACILITYADDRESS[0] : null;
+          const stateCode = it.FacilityStateCode ?? addr?.AddressStateCode ?? '';
+          const address = addr
+            ? [addr.AddressLine1, addr.City, addr.AddressStateCode, addr.PostalCode]
+                .filter(Boolean).join(', ')
+            : '';
+
+          const activities = Array.isArray(it.FACILITYACTIVITY)
+            ? it.FACILITYACTIVITY.map((a: any) => a.ActivityName).filter(Boolean)
+            : [];
+
+          return {
+            id: String(it.FacilityID ?? it.facilityID ?? it.id ?? ''),
+            fullName: it.FacilityName ?? it.facilityName ?? '',
+            description: it.FacilityDescription ?? it.FacilityDescriptionBody ?? '',
+            url: it.FacilityReservationURL ?? it.ReservableURL ?? '',
+            states: stateCode,
+            images,
+            phone: it.FacilityPhone ?? '',
+            email: it.FacilityEmail ?? '',
+            facilityType: it.FacilityTypeDescription ?? '',
+            activities,
+            address,
+            parkCode: 'RIDB',
+            latitude: it.FacilityLatitude ?? it.Latitude ?? null,
+            longitude: it.FacilityLongitude ?? it.Longitude ?? null,
+            source: 'ridb',
+            raw: it,
+          };
+        });
       }
     }
 

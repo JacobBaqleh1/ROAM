@@ -1,7 +1,8 @@
 import { useLocation, Link } from 'react-router-dom';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ExternalLink } from 'lucide-react';
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
+import FadeImage from '../components/ui/FadeImage';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
@@ -15,7 +16,14 @@ interface Park {
   designation?: string;
   activities?: { id: string; name: string }[];
   images?: { url: string }[];
+  source?: string;
+  url?: string;
 }
+
+const stripHtml = (html: string) => {
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  return doc.body.textContent ?? '';
+};
 
 // ── Custom marker icon factory ────────────────────────────────
 // SVG teardrop pin. Default: slate-gray. Active: forest green with glow.
@@ -118,6 +126,21 @@ const ResultsPage = () => {
     });
   }, [selectedParkId]);
 
+  // Card hover → Map pan (debounced so scrolling past cards doesn't spam tile requests)
+  useEffect(() => {
+    if (!hoveredParkId || !mapRef.current) return;
+    const timer = setTimeout(() => {
+      const hovered = parks.find(p => p.id === hoveredParkId);
+      if (hovered?.latitude && hovered?.longitude && mapRef.current) {
+        mapRef.current.panTo(
+          [parseFloat(hovered.latitude), parseFloat(hovered.longitude)],
+          { animate: true, duration: 0.5 }
+        );
+      }
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [hoveredParkId]);
+
   const getCenter = (): [number, number] => {
     const valid = parks.filter((p) => p.latitude && p.longitude);
     if (valid.length === 0) return [39.8283, -98.5795];
@@ -148,7 +171,7 @@ const ResultsPage = () => {
     <div
       ref={containerRef}
       className={[
-        'flex flex-col h-full md:flex-row',
+        'flex flex-col h-full md:flex-row overflow-hidden',
         isDragging ? 'select-none ' + (isDesktop ? 'cursor-ew-resize' : 'cursor-ns-resize') : '',
       ].join(' ')}
     >
@@ -188,6 +211,7 @@ const ResultsPage = () => {
             ) : null
           )}
         </MapContainer>
+
       </div>
 
       {/* ── List panel — handle + scroll area as flex siblings ── */}
@@ -251,22 +275,17 @@ const ResultsPage = () => {
                     {/* Thumbnail with carousel */}
                     <div className="relative flex-shrink-0 w-full h-44 @sm:w-28 @sm:h-auto @md:w-44 overflow-hidden">
                       <Link to={`/park/${park.id}`} className="absolute inset-0">
-                        {currentImage ? (
-                          <img
-                            key={`${park.id}-${currentImageIndex}`}
-                            src={currentImage.url}
-                            alt={`Image of ${park.fullName}`}
-                            className={[
-                              'absolute inset-0 w-full h-full object-cover',
-                              slideDirections[park.id] === 'left'  ? 'animate-slide-from-right' :
-                              slideDirections[park.id] === 'right' ? 'animate-slide-from-left'  : '',
-                            ].join(' ')}
-                          />
-                        ) : (
-                          <div className="absolute inset-0 bg-gray-200 flex items-center justify-center">
-                            <span className="text-gray-400 text-xs">No Image</span>
-                          </div>
-                        )}
+                        <FadeImage
+                          key={`${park.id}-${currentImageIndex}`}
+                          src={currentImage?.url ?? ''}
+                          alt={`Image of ${park.fullName}`}
+                          className="w-full h-full"
+                          imgClassName={
+                            slideDirections[park.id] === 'left'  ? 'animate-slide-from-right' :
+                            slideDirections[park.id] === 'right' ? 'animate-slide-from-left'  : ''
+                          }
+                          fallbackLabel={park.fullName}
+                        />
                       </Link>
                       {images.length > 1 && (
                         <>
@@ -293,11 +312,15 @@ const ResultsPage = () => {
                       </h3>
 
                       <div className="flex items-center gap-2 flex-wrap">
-                        {park.designation && (
+                        {park.source === 'ridb' ? (
+                          <span className="text-xs bg-amber-500 text-white px-2 py-0.5 rounded-full whitespace-nowrap">
+                            Recreation Facility
+                          </span>
+                        ) : park.designation ? (
                           <span className="text-xs bg-forest-500 text-white px-2 py-0.5 rounded-full whitespace-nowrap">
                             {park.designation}
                           </span>
-                        )}
+                        ) : null}
                         {park.states && (
                           <span className="text-xs text-gray-500 uppercase tracking-wide">
                             {park.states.split(',').join(' · ')}
@@ -307,11 +330,21 @@ const ResultsPage = () => {
 
                       {park.description && (
                         <p className="hidden @md:block text-xs text-gray-600 leading-relaxed line-clamp-2">
-                          {park.description}
+                          {stripHtml(park.description)}
                         </p>
                       )}
 
-                      {park.activities && park.activities.length > 0 && (
+                      {park.source === 'ridb' && park.url ? (
+                        <a
+                          href={park.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={e => e.stopPropagation()}
+                          className="hidden @md:flex items-center gap-1 text-xs text-amber-600 hover:underline mt-auto"
+                        >
+                          <ExternalLink size={11} /> Reserve on recreation.gov
+                        </a>
+                      ) : park.activities && park.activities.length > 0 ? (
                         <div className="hidden @lg:flex flex-wrap gap-1 mt-auto pt-1">
                           {park.activities.slice(0, 4).map((a) => (
                             <span key={a.id} className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">
@@ -322,7 +355,7 @@ const ResultsPage = () => {
                             <span className="text-xs text-gray-400 self-center">+{park.activities.length - 4} more</span>
                           )}
                         </div>
-                      )}
+                      ) : null}
                     </Link>
                   </div>
                 );

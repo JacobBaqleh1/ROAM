@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import {
-  View, Text, FlatList, Pressable, SafeAreaView,
+  View, Text, FlatList, Pressable,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useSearch } from '../../context/SearchContext';
 import ParkCard from '../../components/ParkCard';
@@ -85,7 +86,7 @@ export default function ResultsScreen() {
       {/* Content */}
       {showMap ? (
         <View style={{ flex: 1 }}>
-          <ParkMap parks={parks} region={region} />
+          <ParkMap parks={parks} region={region} key={query} />
           <ParkListSheet parks={parks} onClose={() => setShowMap(false)} />
         </View>
       ) : (

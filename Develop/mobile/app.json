@@ -2,6 +2,7 @@
   "expo": {
     "name": "ROAM",
     "slug": "roam-mobile",
+    "privacy": "https://roam-sigma.vercel.app/privacy",
     "scheme": "roam",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -15,14 +16,15 @@
     },
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.roam.app",
+      "bundleIdentifier": "com.roam-explorer.app",
+      "deploymentTarget": "16.0",
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "Used to center the park map on your location.",
         "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
-      "package": "com.roam.app",
+      "package": "com.roam-explorer.app",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#000000"

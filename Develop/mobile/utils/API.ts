@@ -10,93 +10,41 @@ export async function fetchParks(userInput: string) {
   const isAbbrev = Object.values(stateMap).includes(userInput.toUpperCase());
 
   const npsParams = new URLSearchParams();
-  const ridbParams = new URLSearchParams();
+  // ridbParams kept for when campground feature is re-enabled
+  // const ridbParams = new URLSearchParams();
 
   if (isState) {
     const code = stateMap[userInput.toLowerCase()];
     npsParams.set('stateCode', code);
-    ridbParams.set('state', code);
+    // ridbParams.set('state', code);
   } else if (isAbbrev) {
     const code = userInput.toUpperCase();
     npsParams.set('stateCode', code);
-    ridbParams.set('state', code);
+    // ridbParams.set('state', code);
   } else {
     npsParams.set('q', userInput);
-    ridbParams.set('query', userInput);
+    // ridbParams.set('query', userInput);
   }
 
   npsParams.set('limit', '100');
-  ridbParams.set('limit', '50');
+  // ridbParams.set('limit', '50');
 
   try {
-    const [npsResult, ridbResult] = await Promise.allSettled([
-      fetch(`${BASE}/api/nps?${npsParams.toString()}`),
-      fetch(`${BASE}/api/ridb?${ridbParams.toString()}`),
-    ]);
+    const npsResult = await fetch(`${BASE}/api/nps?${npsParams.toString()}`).catch(() => null);
 
     let npsData: any[] = [];
-    let ridbData: any[] = [];
 
-    if (npsResult.status === 'fulfilled') {
-      const r = npsResult.value;
-      if (r.ok) {
-        const json = await r.json();
-        npsData = Array.isArray(json.data) ? json.data : [];
-      }
+    if (npsResult?.ok) {
+      const json = await npsResult.json();
+      npsData = Array.isArray(json.data) ? json.data : [];
     }
 
-    if (ridbResult.status === 'fulfilled') {
-      const r = ridbResult.value;
-      if (r.ok) {
-        const json = await r.json();
-        const rec = Array.isArray(json.RECDATA) ? json.RECDATA : [];
-        ridbData = rec.map((it: any) => {
-          const media = Array.isArray(it.FACILITYMEDIA) ? it.FACILITYMEDIA : [];
-          const images = media
-            .filter((m: any) => /image|photo/i.test(m.MediaType ?? ''))
-            .map((m: any) => ({
-              url: m.URL ?? m.url ?? '',
-              title: m.Title ?? m.title ?? '',
-              credit: m.Credits ?? m.credits ?? '',
-              caption: m.Caption ?? m.caption ?? '',
-              altText: m.Title ?? m.title ?? '',
-            }))
-            .filter((m: any) => m.url);
+    // RIDB campsite results are paused — re-enable when campground feature is ready
+    // const ridbResult = await fetch(`${BASE}/api/ridb?${ridbParams.toString()}`).catch(() => null);
+    // let ridbData: any[] = [];
+    // if (ridbResult?.ok) { ... map RIDB facilities ... }
 
-          const addr = Array.isArray(it.FACILITYADDRESS) ? it.FACILITYADDRESS[0] : null;
-          const stateCode = it.FacilityStateCode ?? addr?.AddressStateCode ?? '';
-          const address = addr
-            ? [addr.AddressLine1, addr.City, addr.AddressStateCode, addr.PostalCode]
-                .filter(Boolean).join(', ')
-            : '';
-
-          const activities = Array.isArray(it.FACILITYACTIVITY)
-            ? it.FACILITYACTIVITY.map((a: any) => a.ActivityName).filter(Boolean)
-            : [];
-
-          return {
-            id: String(it.FacilityID ?? it.facilityID ?? it.id ?? ''),
-            fullName: it.FacilityName ?? it.facilityName ?? '',
-            description: it.FacilityDescription ?? it.FacilityDescriptionBody ?? '',
-            url: it.FacilityReservationURL ?? it.ReservableURL ?? '',
-            states: stateCode,
-            images,
-            phone: it.FacilityPhone ?? '',
-            email: it.FacilityEmail ?? '',
-            facilityType: it.FacilityTypeDescription ?? '',
-            activities,
-            address,
-            parkCode: 'RIDB',
-            latitude: it.FacilityLatitude ?? it.Latitude ?? null,
-            longitude: it.FacilityLongitude ?? it.Longitude ?? null,
-            source: 'ridb',
-            raw: it,
-          };
-        });
-      }
-    }
-
-    return [...npsData, ...ridbData];
+    return [...npsData];
   } catch (err) {
     console.error('Error fetching parks', err);
     return [];

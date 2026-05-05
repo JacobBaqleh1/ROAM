@@ -10,6 +10,7 @@ import MyReviews from './pages/MyReviews.js';
 import ResultsPage from './pages/ResultsPage.js';
 import Login from './pages/Login.js';
 import Community from './pages/Community.js';
+import Privacy from './pages/Privacy.js';
 
 const router = createBrowserRouter([
   {
@@ -46,6 +47,10 @@ const router = createBrowserRouter([
       {
         path: '/community',
         element: <Community />
+      },
+      {
+        path: '/privacy',
+        element: <Privacy />
       }
     ]
   }

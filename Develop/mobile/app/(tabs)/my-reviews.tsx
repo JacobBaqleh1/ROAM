@@ -47,6 +47,7 @@ export default function MyReviewsScreen() {
 
   const handleSettingsPress = () => {
     Alert.alert('Settings', undefined, [
+      { text: 'Privacy Policy', onPress: () => router.push('/privacy') },
       { text: 'Log Out', style: 'destructive', onPress: logout },
       { text: 'Cancel', style: 'cancel' },
     ]);

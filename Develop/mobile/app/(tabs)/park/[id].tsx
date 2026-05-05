@@ -193,11 +193,15 @@ export default function ParkDetailScreen() {
             <View className="h-px bg-gray-200 my-4" />
             <Text className="text-xl font-semibold text-center underline mb-3">Activities</Text>
             <View className="flex-row flex-wrap gap-2">
-              {park.activities.map((a: string) => (
-                <View key={a} className="bg-gray-100 px-3 py-1 rounded-full">
-                  <Text className="text-gray-700 text-sm">{a}</Text>
-                </View>
-              ))}
+              {park.activities.map((a: any, i: number) => {
+                const label = typeof a === 'string' ? a : (a?.name ?? a?.ActivityName ?? '');
+                if (!label) return null;
+                return (
+                  <View key={`${label}-${i}`} className="bg-gray-100 px-3 py-1 rounded-full">
+                    <Text className="text-gray-700 text-sm">{label}</Text>
+                  </View>
+                );
+              })}
             </View>
           </>
         )}

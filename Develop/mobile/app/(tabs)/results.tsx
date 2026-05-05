@@ -87,7 +87,31 @@ export default function ResultsScreen() {
       {showMap ? (
         <View style={{ flex: 1 }}>
           <ParkMap parks={parks} region={region} key={query} />
-          <ParkListSheet parks={parks} onClose={() => setShowMap(false)} />
+          <ParkListSheet parks={parks} parkCount={parks.length} query={query} />
+          {/* Floating List button — mirrors the Map button in list view */}
+          <Pressable
+            style={{
+              position: 'absolute',
+              bottom: 100,
+              alignSelf: 'center',
+              backgroundColor: '#1A1A1A',
+              flexDirection: 'row',
+              alignItems: 'center',
+              paddingHorizontal: 16,
+              paddingVertical: 10,
+              borderRadius: 999,
+              gap: 6,
+              shadowColor: '#000',
+              shadowOpacity: 0.2,
+              shadowRadius: 8,
+              shadowOffset: { width: 0, height: 2 },
+              elevation: 6,
+            }}
+            onPress={() => setShowMap(false)}
+          >
+            <Ionicons name="list-outline" size={16} color="white" />
+            <Text style={{ color: 'white', fontWeight: '600', fontSize: 14 }}>List</Text>
+          </Pressable>
         </View>
       ) : (
         <>

@@ -36,6 +36,7 @@ export default function RootLayout() {
             <Stack>
               <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
               <Stack.Screen name="login" options={{ title: 'Sign In', headerBackTitle: 'Back' }} />
+              <Stack.Screen name="privacy" options={{ title: 'Privacy Policy', headerBackTitle: 'Back' }} />
             </Stack>
           </SearchProvider>
         </AuthProvider>

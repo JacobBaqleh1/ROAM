@@ -19,82 +19,58 @@ async function fetchParks(userInput: string) {
   const isState = Object.keys(stateMap).includes(userInput.toLowerCase());
   const isAbbrev = Object.values(stateMap).includes(userInput.toUpperCase());
 
-  // build params used for both proxies
+  // build NPS params
   const npsParams = new URLSearchParams();
-  const ridbParams = new URLSearchParams();
+  // const ridbParams = new URLSearchParams(); // RIDB disabled — re-enable when campsite UI is ready
 
   if (isState) {
     const code = stateMap[userInput.toLowerCase()];
     npsParams.set('stateCode', code);
-    ridbParams.set('state', code);
+    // ridbParams.set('state', code);
   } else if (isAbbrev) {
     const code = userInput.toUpperCase();
     npsParams.set('stateCode', code);
-    ridbParams.set('state', code);
+    // ridbParams.set('state', code);
   } else {
     npsParams.set('q', userInput);
-    ridbParams.set('query', userInput);
+    // ridbParams.set('query', userInput);
   }
 
-  // sensible per-page defaults
   npsParams.set('limit', '100');
-  ridbParams.set('limit', '50');
+  // ridbParams.set('limit', '50');
 
   try {
-    // fetch both proxies in parallel
-    const [npsResult, ridbResult] = await Promise.allSettled([
-      fetch(`/api/nps?${npsParams.toString()}`),
-      fetch(`/api/ridb?${ridbParams.toString()}`)
-    ]);
+    const npsResponse = await fetch(`/api/nps?${npsParams.toString()}`);
 
     let npsData: any[] = [];
-    let ridbData: any[] = [];
 
-    if (npsResult.status === 'fulfilled') {
-      const r = npsResult.value;
-      if (r.ok) {
-        const json = await r.json();
-        npsData = Array.isArray(json.data) ? json.data : [];
-      } else {
-        console.warn('NPS proxy returned status', r.status);
-      }
+    if (npsResponse.ok) {
+      const json = await npsResponse.json();
+      npsData = Array.isArray(json.data) ? json.data : [];
     } else {
-      console.error('NPS fetch failed', npsResult.reason);
+      console.warn('NPS proxy returned status', npsResponse.status);
     }
 
-    if (ridbResult.status === 'fulfilled') {
-      const r = ridbResult.value;
-      if (r.ok) {
-        const json = await r.json();
-        // RIDB returns RECDATA array
-        const rec = Array.isArray(json.RECDATA) ? json.RECDATA : [];
-        // map RIDB items into a small, predictable shape so UI can use them alongside NPS results
-        ridbData = rec.map((it: any) => ({
-          id: String(it.FacilityID ?? it.facilityID ?? it.id ?? ''),
-          fullName: it.FacilityName ?? it.facilityName ?? '',
-          description: it.FacilityDescription ?? it.FacilityDescriptionBody ?? '',
-          url: it.FacilityReservationURL ?? it.ReservableURL ?? '',
-          parkCode: 'RIDB',
-          latitude: it.FacilityLatitude ?? it.Latitude ?? null,
-          longitude: it.FacilityLongitude ?? it.Longitude ?? null,
-          source: 'ridb',
-          raw: it
-        }));
-        // debug log sample
-        console.log('RIDB proxy returned', { url: r.url, returned: ridbData.length, sample: ridbData.slice(0,3) });
-      } else {
-        console.warn('RIDB proxy returned status', r.status);
-      }
-    } else {
-      console.error('RIDB fetch failed', ridbResult.reason);
-    }
+    // RIDB campsite fetch disabled — preserved for future re-enable
+    // const ridbResponse = await fetch(`/api/ridb?${ridbParams.toString()}`);
+    // let ridbData: any[] = [];
+    // if (ridbResponse.ok) {
+    //   const json = await ridbResponse.json();
+    //   const rec = Array.isArray(json.RECDATA) ? json.RECDATA : [];
+    //   ridbData = rec.map((it: any) => ({
+    //     id: String(it.FacilityID ?? it.facilityID ?? it.id ?? ''),
+    //     fullName: it.FacilityName ?? it.facilityName ?? '',
+    //     description: it.FacilityDescription ?? it.FacilityDescriptionBody ?? '',
+    //     url: it.FacilityReservationURL ?? it.ReservableURL ?? '',
+    //     parkCode: 'RIDB',
+    //     latitude: it.FacilityLatitude ?? it.Latitude ?? null,
+    //     longitude: it.FacilityLongitude ?? it.Longitude ?? null,
+    //     source: 'ridb',
+    //     raw: it
+    //   }));
+    // }
 
-    // debug log for NPS
-    console.log('NPS proxy results:', { npsCount: npsData.length, ridbCount: ridbData.length });
-
-    // combine NPS + RIDB (NPS first)
-    const combined = [...npsData, ...ridbData];
-    return combined;
+    return npsData; // return [...npsData, ...ridbData] when RIDB is re-enabled
   } catch (err) {
     console.error('Error fetching parks from proxies', err);
     return [];

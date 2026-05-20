@@ -1,4 +1,5 @@
-import { Tabs } from 'expo-router';
+import { Tabs, router } from 'expo-router';
+import { Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../utils/useAuth';
 
@@ -81,6 +82,11 @@ export default function TabLayout() {
           href: null,
           title: 'Park Details',
           headerShown: true,
+          headerLeft: () => (
+            <Pressable onPress={() => router.back()} style={{ paddingLeft: 16, paddingRight: 8 }}>
+              <Ionicons name="chevron-back" size={24} color="#1A1A1A" />
+            </Pressable>
+          ),
         }}
       />
     </Tabs>

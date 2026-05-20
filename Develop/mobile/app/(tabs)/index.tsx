@@ -42,6 +42,11 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
+      {/* Search bar — outside FlatList so dropdown isn't painted over by list items */}
+      <View style={{ zIndex: 999, elevation: 999 }} className="px-4 pt-4 pb-3">
+        <StatePickerModal onSelect={handleStateSelect} searching={searching} />
+      </View>
+
       <FlatList
         data={reviews.slice(0, visibleCount)}
         keyExtractor={(item: any) => item._id}
@@ -52,11 +57,6 @@ export default function HomeScreen() {
         )}
         ListHeaderComponent={
           <View>
-            {/* Search bar */}
-            <View className="px-4 pt-4 pb-3">
-              <StatePickerModal onSelect={handleStateSelect} searching={searching} />
-            </View>
-
             {/* Filter chips */}
             <ScrollView
               horizontal

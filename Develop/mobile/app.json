@@ -24,7 +24,7 @@
       }
     },
     "android": {
-      "package": "com.roam-explorer.app",
+      "package": "com.roamexplorer.app",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#000000"
@@ -49,6 +49,12 @@
       "eas": {
         "projectId": "6393b472-313f-4c02-94f1-87a5f1b1b985"
       }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/6393b472-313f-4c02-94f1-87a5f1b1b985"
     }
   }
 }

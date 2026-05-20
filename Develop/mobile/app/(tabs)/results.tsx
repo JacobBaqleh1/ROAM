@@ -54,7 +54,7 @@ export default function ResultsScreen() {
   if (!parks.length) {
     return (
       <SafeAreaView className="flex-1 bg-white">
-        <View className="px-4 pt-4 pb-3">
+        <View style={{ zIndex: 999, elevation: 999 }} className="px-4 pt-4 pb-3">
           <StatePickerModal onSelect={handleStateSelect} searching={searching} />
         </View>
         <View className="flex-1 justify-center items-center px-8">
@@ -71,7 +71,7 @@ export default function ResultsScreen() {
   return (
     <View className="flex-1 bg-white">
       {/* Search bar + count row */}
-      <SafeAreaView edges={['top'] as any}>
+      <SafeAreaView edges={['top'] as any} style={{ zIndex: 999, elevation: 999 }}>
         <View className="px-4 pt-2 pb-2">
           <StatePickerModal onSelect={handleStateSelect} searching={searching} />
         </View>
@@ -88,30 +88,6 @@ export default function ResultsScreen() {
         <View style={{ flex: 1 }}>
           <ParkMap parks={parks} region={region} key={query} />
           <ParkListSheet parks={parks} parkCount={parks.length} query={query} />
-          {/* Floating List button — mirrors the Map button in list view */}
-          <Pressable
-            style={{
-              position: 'absolute',
-              bottom: 100,
-              alignSelf: 'center',
-              backgroundColor: '#1A1A1A',
-              flexDirection: 'row',
-              alignItems: 'center',
-              paddingHorizontal: 16,
-              paddingVertical: 10,
-              borderRadius: 999,
-              gap: 6,
-              shadowColor: '#000',
-              shadowOpacity: 0.2,
-              shadowRadius: 8,
-              shadowOffset: { width: 0, height: 2 },
-              elevation: 6,
-            }}
-            onPress={() => setShowMap(false)}
-          >
-            <Ionicons name="list-outline" size={16} color="white" />
-            <Text style={{ color: 'white', fontWeight: '600', fontSize: 14 }}>List</Text>
-          </Pressable>
         </View>
       ) : (
         <>

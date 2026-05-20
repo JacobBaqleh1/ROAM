@@ -1,8 +1,7 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import {
-  Modal, View, Text, FlatList, Pressable, TextInput, ActivityIndicator,
+  View, Text, TextInput, FlatList, Pressable, ActivityIndicator, StyleSheet,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import stateMap from '../constants/stateMap';
 
@@ -11,101 +10,157 @@ interface Props {
   searching?: boolean;
 }
 
-const STATE_NAMES = Object.keys(stateMap).map(
-  (s) => s.charAt(0).toUpperCase() + s.slice(1)
-);
+const toTitle = (s: string) =>
+  s.split(' ').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 
 export default function StatePickerModal({ onSelect, searching = false }: Props) {
-  const [visible, setVisible] = useState(false);
+  const [inputValue, setInputValue] = useState('');
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const [selected, setSelected] = useState('');
-  const [search, setSearch] = useState('');
+  const inputRef = useRef<TextInput>(null);
 
-  const filtered = STATE_NAMES.filter((s) =>
-    s.toLowerCase().includes(search.toLowerCase())
-  );
+  const suggestions = inputValue.length > 0
+    ? Object.keys(stateMap).filter((s) =>
+        s.startsWith(inputValue.toLowerCase()) ||
+        s.split(' ').some((w) => w.startsWith(inputValue.toLowerCase()))
+      ).slice(0, 8)
+    : [];
 
-  const handleSelect = (state: string) => {
-    setSelected(state);
-    setVisible(false);
-    setSearch('');
-    onSelect(state.toLowerCase());
+  const handleSelect = (stateName: string) => {
+    const titled = toTitle(stateName);
+    setSelected(titled);
+    setInputValue(titled);
+    setShowSuggestions(false);
+    inputRef.current?.blur();
+    onSelect(stateName);
+  };
+
+  const handleChangeText = (text: string) => {
+    setInputValue(text);
+    setSelected('');
+    setShowSuggestions(true);
   };
 
   return (
-    <>
-      <Pressable
-        style={{
-          backgroundColor: '#F5F5F0',
-          borderRadius: 999,
-          paddingHorizontal: 16,
-          paddingVertical: 12,
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: 8,
-        }}
-        onPress={() => !searching && setVisible(true)}
-      >
-        <Ionicons name="search-outline" size={18} color="#737373" />
-        <Text style={{ flex: 1, fontSize: 15, color: selected ? '#1A1A1A' : '#A3A3A3' }}>
-          {searching ? 'Searching...' : selected || 'Find parks by state'}
-        </Text>
+    <View style={styles.wrapper}>
+      {/* Input row */}
+      <View style={styles.inputRow}>
         {searching ? (
-          <ActivityIndicator size="small" color="#737373" />
+          <ActivityIndicator size="small" color="#737373" style={styles.icon} />
         ) : (
-          <Ionicons name="options-outline" size={18} color="#737373" />
+          <Ionicons name="search-outline" size={16} color="#737373" style={styles.icon} />
         )}
-      </Pressable>
+        <TextInput
+          ref={inputRef}
+          style={styles.input}
+          value={searching ? `Loading ${selected}…` : inputValue}
+          onChangeText={handleChangeText}
+          onFocus={() => setShowSuggestions(true)}
+          placeholder="Search a state…"
+          placeholderTextColor="#A3A3A3"
+          editable={!searching}
+          returnKeyType="search"
+          onSubmitEditing={() => {
+            if (suggestions.length > 0) handleSelect(suggestions[0]);
+          }}
+        />
+        {inputValue.length > 0 && !searching && (
+          <Pressable onPress={() => { setInputValue(''); setSelected(''); setShowSuggestions(false); }}>
+            <Ionicons name="close-circle" size={16} color="#A3A3A3" style={styles.clearIcon} />
+          </Pressable>
+        )}
+      </View>
 
-      <Modal visible={visible} animationType="slide" presentationStyle="pageSheet">
-        <SafeAreaView className="flex-1 bg-white">
-          <View className="flex-row justify-between items-center px-4 py-3 border-b border-gray-100">
-            <Text className="text-xl font-bold text-gray-900">Select a State</Text>
-            <Pressable onPress={() => { setVisible(false); setSearch(''); }}>
-              <Text style={{ color: '#2ECC71', fontSize: 16, fontWeight: '600' }}>Cancel</Text>
-            </Pressable>
-          </View>
-          <View className="px-4 py-3 border-b border-gray-100">
-            <View
-              style={{
-                backgroundColor: '#F5F5F0',
-                borderRadius: 12,
-                flexDirection: 'row',
-                alignItems: 'center',
-                paddingHorizontal: 12,
-                gap: 8,
-              }}
-            >
-              <Ionicons name="search-outline" size={16} color="#A3A3A3" />
-              <TextInput
-                style={{ flex: 1, paddingVertical: 10, fontSize: 15, color: '#1A1A1A' }}
-                placeholder="Search states..."
-                placeholderTextColor="#A3A3A3"
-                value={search}
-                onChangeText={setSearch}
-                autoFocus
-              />
-            </View>
-          </View>
+      {/* Suggestions dropdown */}
+      {showSuggestions && suggestions.length > 0 && (
+        <View style={styles.dropdown}>
           <FlatList
-            data={filtered}
+            data={suggestions}
             keyExtractor={(item) => item}
+            keyboardShouldPersistTaps="always"
+            scrollEnabled={suggestions.length > 5}
+            style={{ maxHeight: 240 }}
             renderItem={({ item }) => (
               <Pressable
-                style={({ pressed }) => ({
-                  paddingHorizontal: 16,
-                  paddingVertical: 14,
-                  borderBottomWidth: 1,
-                  borderBottomColor: '#F5F5F0',
-                  backgroundColor: pressed ? '#F5F5F0' : 'white',
-                })}
+                style={({ pressed }) => [styles.suggestion, pressed && styles.suggestionPressed]}
                 onPress={() => handleSelect(item)}
               >
-                <Text style={{ fontSize: 16, color: '#1A1A1A' }}>{item}</Text>
+                <Text style={styles.suggestionName}>{toTitle(item)}</Text>
+                <Text style={styles.suggestionAbbr}>{stateMap[item]}</Text>
               </Pressable>
             )}
+            ItemSeparatorComponent={() => <View style={styles.separator} />}
           />
-        </SafeAreaView>
-      </Modal>
-    </>
+        </View>
+      )}
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  wrapper: {
+    zIndex: 999,
+    elevation: 999,
+  },
+  inputRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F5F5F0',
+    borderRadius: 999,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+  },
+  icon: {
+    marginRight: 8,
+  },
+  clearIcon: {
+    marginLeft: 6,
+  },
+  input: {
+    flex: 1,
+    fontSize: 15,
+    color: '#1A1A1A',
+  },
+  dropdown: {
+    position: 'absolute',
+    top: 50,
+    left: 0,
+    right: 0,
+    backgroundColor: 'white',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#E5E5E5',
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 8,
+    overflow: 'hidden',
+  },
+  suggestion: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: 'white',
+  },
+  suggestionPressed: {
+    backgroundColor: '#F5F5F0',
+  },
+  suggestionName: {
+    fontSize: 15,
+    color: '#1A1A1A',
+  },
+  suggestionAbbr: {
+    fontSize: 12,
+    color: '#A3A3A3',
+    fontFamily: 'monospace',
+    fontWeight: '500',
+  },
+  separator: {
+    height: StyleSheet.hairlineWidth,
+    backgroundColor: '#F0F0F0',
+    marginHorizontal: 16,
+  },
+});

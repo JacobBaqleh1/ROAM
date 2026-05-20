@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
-import { View, FlatList, Dimensions, StyleSheet, Text } from 'react-native';
+import { useEffect, useState } from 'react';
+import { View, FlatList, StyleSheet, Text, LayoutChangeEvent } from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -7,12 +7,6 @@ import Animated, {
 } from 'react-native-reanimated';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import ParkCard from './ParkCard';
-
-const { height: SCREEN_HEIGHT } = Dimensions.get('window');
-
-const SNAP_PEEK = SCREEN_HEIGHT - 80;   // just the handle + count strip
-const SNAP_HALF = SCREEN_HEIGHT * 0.50; // half screen list
-const SNAP_FULL = SCREEN_HEIGHT * 0.12; // nearly full list
 
 interface Park {
   id: string;
@@ -30,31 +24,38 @@ interface Props {
 }
 
 export default function ParkListSheet({ parks, parkCount, query }: Props) {
-  const translateY = useSharedValue(SCREEN_HEIGHT);
+  const [containerHeight, setContainerHeight] = useState(0);
+  const translateY = useSharedValue(9999);
   const startY = useSharedValue(0);
 
-  useEffect(() => {
-    translateY.value = withSpring(SNAP_PEEK, { damping: 50, stiffness: 300, mass: 0.8 });
-  }, []);
+  const snapPeek = containerHeight - 80;
+  const snapHalf = containerHeight * 0.50;
+  const snapFull = containerHeight * 0.12;
+
+  const onLayout = (e: LayoutChangeEvent) => {
+    const h = e.nativeEvent.layout.height;
+    setContainerHeight(h);
+    translateY.value = withSpring(h - 80, { damping: 50, stiffness: 300, mass: 0.8 });
+  };
 
   const gesture = Gesture.Pan()
     .onBegin(() => {
       startY.value = translateY.value;
     })
     .onChange((e) => {
-      translateY.value = Math.max(SNAP_FULL, startY.value + e.translationY);
+      translateY.value = Math.max(snapFull, startY.value + e.translationY);
     })
     .onEnd((e) => {
       const y = translateY.value;
       const vy = e.velocityY;
 
       let target: number;
-      if (vy < -800 || y < (SNAP_FULL + SNAP_HALF) / 2) {
-        target = SNAP_FULL;
-      } else if (vy > 800 || y > (SNAP_HALF + SNAP_PEEK) / 2) {
-        target = SNAP_PEEK;
+      if (vy < -800 || y < (snapFull + snapHalf) / 2) {
+        target = snapFull;
+      } else if (vy > 800 || y > (snapHalf + snapPeek) / 2) {
+        target = snapPeek;
       } else {
-        target = SNAP_HALF;
+        target = snapHalf;
       }
 
       translateY.value = withSpring(target, { damping: 50, stiffness: 300, mass: 0.8 });
@@ -65,7 +66,7 @@ export default function ParkListSheet({ parks, parkCount, query }: Props) {
   }));
 
   return (
-    <Animated.View style={[styles.sheet, animatedStyle]}>
+    <Animated.View style={[styles.sheet, animatedStyle]} onLayout={onLayout}>
       <GestureDetector gesture={gesture}>
         <View style={styles.header}>
           <View style={styles.handle} />
@@ -110,11 +111,12 @@ const styles = StyleSheet.create({
     borderBottomColor: '#E5E7EB',
   },
   handle: {
-    width: 40,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: '#D1D5DB',
+    width: 36,
+    height: 5,
+    borderRadius: 3,
+    backgroundColor: '#9CA3AF',
     marginBottom: 10,
+    alignSelf: 'center',
   },
   countText: {
     fontSize: 14,

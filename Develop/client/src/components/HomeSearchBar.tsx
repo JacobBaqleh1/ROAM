@@ -46,7 +46,7 @@ export default function HomeSearchBar() {
         setLoading(null);
         return;
       }
-      navigate("/results", { state: { parks: response, query: stateKey } });
+      navigate("/map", { state: { parks: response, query: stateKey } });
     } catch {
       setError("Error fetching parks. Please try again.");
       setLoading(null);

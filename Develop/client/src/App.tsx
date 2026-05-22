@@ -5,9 +5,7 @@ import { setContext } from '@apollo/client/link/context';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 const httpLink = createHttpLink({
-  uri: process.env.NODE_ENV === 'development'
-    ? 'http://localhost:3000/graphql'  // Local development endpoint
-    : 'https://roam-ynw2.onrender.com/graphql' // Production endpoint
+  uri: import.meta.env.VITE_GRAPHQL_URI ?? 'https://roam-ynw2.onrender.com/graphql' // Production endpoint
 
 });
 // Construct request middleware that will attach the JWT token to every request as an `authorization` header
@@ -29,7 +27,7 @@ const client = new ApolloClient({
 });
 function App() {
   const location = useLocation();
-  const hideFooter = location.pathname === '/results';
+  const hideFooter = location.pathname === '/map';
 
   return (
     <ApolloProvider client={client} >

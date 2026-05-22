@@ -7,7 +7,7 @@ import SearchParks from './pages/Home.js'
 import SavedParks from './pages/SavedParks.js'
 import ParkInfo from './pages/ParkInfo.js'
 import MyReviews from './pages/MyReviews.js';
-import ResultsPage from './pages/ResultsPage.js';
+import MapExplore from './pages/MapExplore.js';
 import Login from './pages/Login.js';
 import Community from './pages/Community.js';
 import Privacy from './pages/Privacy.js';
@@ -36,8 +36,8 @@ const router = createBrowserRouter([
       }
       ,
       {
-        path: '/results',
-        element: <ResultsPage />
+        path: '/map',
+        element: <MapExplore />
       },
       {
         path: '/login',

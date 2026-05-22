@@ -77,6 +77,17 @@ async function fetchParks(userInput: string) {
   }
 }
 
+export async function fetchAllParks(): Promise<any[]> {
+  try {
+    const res = await fetch('/api/nps?limit=500');
+    if (!res.ok) return [];
+    const json = await res.json();
+    return Array.isArray(json.data) ? json.data : [];
+  } catch {
+    return [];
+  }
+}
+
 export async function fetchParkById(id: string) {
   const res = await fetch(`/api/nps?id=${encodeURIComponent(id)}`);
   if (!res.ok) return null;

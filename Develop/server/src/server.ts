@@ -37,8 +37,8 @@ const startApolloServer = async () => {
   app.use(
     cors({
       origin: (origin, callback) => {
-        // Allow requests with no origin (native mobile apps, Postman, curl)
         if (!origin) return callback(null, true);
+        if (process.env.NODE_ENV !== 'production') return callback(null, true);
         if (allowedOrigins.includes(origin)) return callback(null, true);
         callback(new Error(`CORS: origin ${origin} not allowed`));
       },

@@ -10,6 +10,7 @@ const AppNavbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const isHome = location.pathname === '/';
+  const isMap  = location.pathname === '/map';
 
   return (
     <>
@@ -29,7 +30,7 @@ const AppNavbar = () => {
           </Link>
 
           {/* Search bar (hidden on home page) */}
-          {!isHome && (
+          {!isHome && !isMap && (
             <div className="hidden md:block flex-1 mx-8 max-w-sm">
               <NavSearchBar />
             </div>
@@ -63,7 +64,7 @@ const AppNavbar = () => {
         </div>
 
         {/* Mobile search bar (non-home pages, below the top bar) */}
-        {!isHome && (
+        {!isHome && !isMap && (
           <div className="md:hidden px-4 pb-2">
             <NavSearchBar />
           </div>

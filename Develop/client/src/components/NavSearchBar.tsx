@@ -23,7 +23,7 @@ const stateMap: Record<string, string> = {
 const toTitle = (s: string) =>
   s.split(" ").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
 
-export default function NavSearchBar() {
+export default function NavSearchBar({ onResults }: { onResults?: (parks: any[], query: string) => void } = {}) {
   const [inputValue, setInputValue] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [loading, setLoading] = useState<string | null>(null);
@@ -45,7 +45,13 @@ export default function NavSearchBar() {
         setLoading(null);
         return;
       }
-      navigate("/results", { state: { parks: response, query: stateKey } });
+      if (onResults) {
+        onResults(response, stateKey);
+        setInputValue("");
+        setLoading(null);
+        return;
+      }
+      navigate("/map", { state: { parks: response, query: stateKey } });
     } catch {
       setError("Error fetching parks.");
       setLoading(null);

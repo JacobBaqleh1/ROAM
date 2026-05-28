@@ -119,7 +119,7 @@ export default function HomeSearchBar() {
       {err && <p className="text-red-300 text-center mb-2 text-sm">{err}</p>}
 
       {/* US Map — iPad and above only */}
-      <div className="hidden md:block">
+      <div className="hidden md:block pb-10">
       <ComposableMap
         projection="geoAlbersUsa"
         style={{ width: "100%", height: "auto" }}

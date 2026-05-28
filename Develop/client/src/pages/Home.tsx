@@ -26,7 +26,7 @@ const SearchParks = () => {
   return (
     <div>
       {/* Hero section */}
-      <div className="relative flex min-h-[38rem] sm:h-[15rem] md:h-[50rem] flex-col items-center justify-start">
+      <div className="relative flex min-h-[38rem] sm:h-[15rem] md:h-[62rem] flex-col items-center justify-start">
         <div className="absolute inset-0 z-0 w-full h-full overflow-hidden">
           <AutoCarousel />
         </div>

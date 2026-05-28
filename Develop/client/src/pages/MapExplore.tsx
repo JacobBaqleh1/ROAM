@@ -186,7 +186,7 @@ function ParkPanel({ park, onShowState }: { park: any; onShowState: (parks: any[
           </div>
         )}
         <Link
-          to={`/park/${park.parkCode ?? park.id}`}
+          to={`/park/${park.id}`}
           className="mt-2 text-sm text-forest-600 hover:underline font-medium"
         >
           View full page →
@@ -236,15 +236,16 @@ export default function MapExplore() {
     });
   }, []);
 
-  // Open results panel when navigated here from HomeSearchBar / NavSearchBar
+  // Open results panel when navigated here from HomeSearchBar / NavSearchBar.
+  // Delay flyToParks so the Leaflet map has fully painted before fitBounds runs.
   useEffect(() => {
     const s = location.state as { parks?: any[]; query?: string } | null;
-    if (s?.parks?.length) {
-      setPanelParks(s.parks);
-      setPanelQuery(s.query ?? '');
-      setPanelType('results');
-      flyToParks(s.parks);
-    }
+    if (!s?.parks?.length) return;
+    setPanelParks(s.parks);
+    setPanelQuery(s.query ?? '');
+    setPanelType('results');
+    const t = setTimeout(() => flyToParks(s.parks!), 300);
+    return () => clearTimeout(t);
   }, []);
 
   // Fetch park detail whenever panelParkId changes

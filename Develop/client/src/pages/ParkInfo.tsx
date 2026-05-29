@@ -114,7 +114,67 @@ const ParkInfo = () => {
     );
   };
 
-  if (!park) return <p>Loading park details...</p>;
+  if (!park) return (
+    <div className="max-w-6xl mx-auto animate-pulse">
+      {/* Hero image */}
+      <div className="w-full h-[500px] bg-gray-200" />
+
+      <div className="px-6 mt-4 space-y-4">
+        {/* Title */}
+        <div className="h-9 bg-gray-200 rounded-lg w-2/3" />
+        <div className="h-5 bg-gray-200 rounded w-24" />
+        <hr className="border-gray-200" />
+
+        {/* Save button */}
+        <div className="flex justify-center">
+          <div className="h-10 w-32 bg-gray-200 rounded-lg" />
+        </div>
+        <hr className="border-gray-200" />
+
+        {/* Description */}
+        <div className="h-6 bg-gray-200 rounded w-40 mx-auto" />
+        <div className="space-y-2 mt-2">
+          <div className="h-4 bg-gray-200 rounded w-full" />
+          <div className="h-4 bg-gray-200 rounded w-full" />
+          <div className="h-4 bg-gray-200 rounded w-5/6" />
+          <div className="h-4 bg-gray-200 rounded w-4/6" />
+        </div>
+        <hr className="border-gray-200" />
+
+        {/* Contact card */}
+        <div className="bg-gray-100 rounded-lg p-4 space-y-3">
+          <div className="h-6 bg-gray-200 rounded w-28 mx-auto" />
+          <div className="h-4 bg-gray-200 rounded w-48" />
+          <div className="h-4 bg-gray-200 rounded w-36" />
+          <div className="h-4 bg-gray-200 rounded w-52" />
+        </div>
+        <hr className="border-gray-200" />
+
+        {/* Reviews header */}
+        <div className="flex justify-between items-center p-4 bg-gray-100 rounded-lg">
+          <div className="h-6 bg-gray-200 rounded w-24" />
+          <div className="h-8 bg-gray-200 rounded-lg w-32" />
+        </div>
+
+        {/* Review cards */}
+        {[1, 2].map(i => (
+          <div key={i} className="border border-gray-200 rounded-xl p-5 space-y-3">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-full bg-gray-200 flex-shrink-0" />
+              <div className="space-y-2 flex-1">
+                <div className="h-4 bg-gray-200 rounded w-32" />
+                <div className="h-3 bg-gray-200 rounded w-20" />
+              </div>
+            </div>
+            <div className="h-4 bg-gray-200 rounded w-full" />
+            <div className="h-4 bg-gray-200 rounded w-3/4" />
+            <div className="h-4 bg-gray-200 rounded w-16" />
+          </div>
+        ))}
+        <div className="pb-8" />
+      </div>
+    </div>
+  );
   if (error) console.error("GraphQL error:", error);
 
   return (

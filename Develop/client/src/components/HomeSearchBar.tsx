@@ -1,4 +1,4 @@
-import { lazy, Suspense, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { fetchParks } from "../utils/API";
 import { useNavigate } from "react-router-dom";
 
@@ -34,7 +34,21 @@ export default function HomeSearchBar() {
   const [err, setError] = useState("");
   const [inputValue, setInputValue] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [showMap, setShowMap] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)");
+    if (!mq.matches) return;
+
+    const enableMap = () => setShowMap(true);
+    if ("requestIdleCallback" in window) {
+      const id = requestIdleCallback(enableMap);
+      return () => cancelIdleCallback(id);
+    }
+    const t = setTimeout(enableMap, 1);
+    return () => clearTimeout(t);
+  }, []);
 
   const handleStateClick = async (stateName: string) => {
     if (loading) return;
@@ -119,14 +133,16 @@ export default function HomeSearchBar() {
 
       {err && <p className="text-red-300 text-center mb-2 text-sm">{err}</p>}
 
-      <Suspense fallback={<MapFallback />}>
-        <HomeSearchMap
-          stateMap={stateMap}
-          loading={loading}
-          onStateClick={handleStateClick}
-          onHover={setHoveredState}
-        />
-      </Suspense>
+      {showMap && (
+        <Suspense fallback={<MapFallback />}>
+          <HomeSearchMap
+            stateMap={stateMap}
+            loading={loading}
+            onStateClick={handleStateClick}
+            onHover={setHoveredState}
+          />
+        </Suspense>
+      )}
     </div>
   );
 }

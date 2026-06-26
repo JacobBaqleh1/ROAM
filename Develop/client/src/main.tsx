@@ -6,6 +6,7 @@ import { AuthProvider } from './utils/useAuth.js';
 import App from './App.jsx';
 import SearchParks from './pages/Home.js';
 
+const ApolloLayout = lazy(() => import('./layouts/ApolloLayout.js'));
 const SavedParks = lazy(() => import('./pages/SavedParks.js'));
 const ParkInfo = lazy(() => import('./pages/ParkInfo.js'));
 const MyReviews = lazy(() => import('./pages/MyReviews.js'));
@@ -44,50 +45,10 @@ const router = createBrowserRouter([
         element: <SearchParks />,
       },
       {
-        path: '/saved',
-        element: (
-          <LazyPage>
-            <SavedParks />
-          </LazyPage>
-        ),
-      },
-      {
-        path: '/park/:id',
-        element: (
-          <LazyPage>
-            <ParkInfo />
-          </LazyPage>
-        ),
-      },
-      {
-        path: '/my-reviews',
-        element: (
-          <LazyPage>
-            <MyReviews />
-          </LazyPage>
-        ),
-      },
-      {
         path: '/map',
         element: (
           <LazyPage>
             <MapExplore />
-          </LazyPage>
-        ),
-      },
-      {
-        path: '/login',
-        element: (
-          <LazyPage>
-            <Login />
-          </LazyPage>
-        ),
-      },
-      {
-        path: '/community',
-        element: (
-          <LazyPage>
-            <Community />
           </LazyPage>
         ),
       },
@@ -98,6 +59,55 @@ const router = createBrowserRouter([
             <Privacy />
           </LazyPage>
         ),
+      },
+      {
+        element: (
+          <LazyPage>
+            <ApolloLayout />
+          </LazyPage>
+        ),
+        children: [
+          {
+            path: '/saved',
+            element: (
+              <LazyPage>
+                <SavedParks />
+              </LazyPage>
+            ),
+          },
+          {
+            path: '/park/:id',
+            element: (
+              <LazyPage>
+                <ParkInfo />
+              </LazyPage>
+            ),
+          },
+          {
+            path: '/my-reviews',
+            element: (
+              <LazyPage>
+                <MyReviews />
+              </LazyPage>
+            ),
+          },
+          {
+            path: '/login',
+            element: (
+              <LazyPage>
+                <Login />
+              </LazyPage>
+            ),
+          },
+          {
+            path: '/community',
+            element: (
+              <LazyPage>
+                <Community />
+              </LazyPage>
+            ),
+          },
+        ],
       },
     ],
   },

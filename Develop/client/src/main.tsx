@@ -1,63 +1,110 @@
-import ReactDOM from 'react-dom/client'
-import { createBrowserRouter, Link, RouterProvider } from 'react-router-dom'
+import { lazy, Suspense, type ReactNode } from 'react';
+import ReactDOM from 'react-dom/client';
+import { createBrowserRouter, Link, RouterProvider } from 'react-router-dom';
 
 import { AuthProvider } from './utils/useAuth.js';
-import App from './App.jsx'
-import SearchParks from './pages/Home.js'
-import SavedParks from './pages/SavedParks.js'
-import ParkInfo from './pages/ParkInfo.js'
-import MyReviews from './pages/MyReviews.js';
-import MapExplore from './pages/MapExplore.js';
-import Login from './pages/Login.js';
-import Community from './pages/Community.js';
-import Privacy from './pages/Privacy.js';
+import App from './App.jsx';
+import SearchParks from './pages/Home.js';
+
+const SavedParks = lazy(() => import('./pages/SavedParks.js'));
+const ParkInfo = lazy(() => import('./pages/ParkInfo.js'));
+const MyReviews = lazy(() => import('./pages/MyReviews.js'));
+const MapExplore = lazy(() => import('./pages/MapExplore.js'));
+const Login = lazy(() => import('./pages/Login.js'));
+const Community = lazy(() => import('./pages/Community.js'));
+const Privacy = lazy(() => import('./pages/Privacy.js'));
+
+function PageLoader() {
+  return (
+    <div className="flex items-center justify-center min-h-[40vh]">
+      <div className="w-10 h-10 border-4 border-forest-500 border-t-transparent rounded-full animate-spin" />
+    </div>
+  );
+}
+
+function LazyPage({ children }: { children: ReactNode }) {
+  return <Suspense fallback={<PageLoader />}>{children}</Suspense>;
+}
 
 const router = createBrowserRouter([
   {
     path: '/',
     element: <App />,
-    errorElement: <h1 className='display-2'>Wrong page! <span className='text-blue-500'><Link to='/'>Return Home</Link></span></h1>,
+    errorElement: (
+      <h1 className="display-2">
+        Wrong page!{' '}
+        <span className="text-blue-500">
+          <Link to="/">Return Home</Link>
+        </span>
+      </h1>
+    ),
     children: [
       {
         index: true,
-        element: <SearchParks />
-      }, {
+        element: <SearchParks />,
+      },
+      {
         path: '/saved',
-        element: <SavedParks />
-      }
-      , {
+        element: (
+          <LazyPage>
+            <SavedParks />
+          </LazyPage>
+        ),
+      },
+      {
         path: '/park/:id',
-        element: <ParkInfo />
-      }
-      ,
+        element: (
+          <LazyPage>
+            <ParkInfo />
+          </LazyPage>
+        ),
+      },
       {
         path: '/my-reviews',
-        element: <MyReviews />
-      }
-      ,
+        element: (
+          <LazyPage>
+            <MyReviews />
+          </LazyPage>
+        ),
+      },
       {
         path: '/map',
-        element: <MapExplore />
+        element: (
+          <LazyPage>
+            <MapExplore />
+          </LazyPage>
+        ),
       },
       {
         path: '/login',
-        element: <Login />
-      }
-      ,
+        element: (
+          <LazyPage>
+            <Login />
+          </LazyPage>
+        ),
+      },
       {
         path: '/community',
-        element: <Community />
+        element: (
+          <LazyPage>
+            <Community />
+          </LazyPage>
+        ),
       },
       {
         path: '/privacy',
-        element: <Privacy />
-      }
-    ]
-  }
-])
+        element: (
+          <LazyPage>
+            <Privacy />
+          </LazyPage>
+        ),
+      },
+    ],
+  },
+]);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <AuthProvider>
     <RouterProvider router={router} />
   </AuthProvider>
-)
+);

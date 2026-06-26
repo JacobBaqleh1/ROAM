@@ -82,7 +82,7 @@ const SavedParks = () => {
               <div key={park.parkId} className=" rounded-lg shadow-lg overflow-hidden flex flex-col">
                 <FadeImage
                   src={park.images?.[0]?.url ?? ''}
-                  alt={`View of ${park.fullName}`}
+                  alt={park.images?.[0]?.altText ?? `View of ${park.fullName}`}
                   className="w-full h-48"
                   fallbackLabel={park.fullName}
                 />

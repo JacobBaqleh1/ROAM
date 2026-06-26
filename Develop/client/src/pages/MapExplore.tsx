@@ -78,7 +78,7 @@ function ResultsPanel({
           <div className="w-24 h-20 flex-shrink-0">
             <FadeImage
               src={park.images?.[0]?.url ?? ''}
-              alt={park.fullName}
+              alt={park.images?.[0]?.altText ?? park.fullName}
               className="w-full h-full"
               fallbackLabel={park.fullName}
             />
@@ -140,7 +140,7 @@ function ParkPanel({ park, onShowState }: { park: any; onShowState: (parks: any[
           <FadeImage
             key={imageIndex}
             src={images[imageIndex]?.url ?? ''}
-            alt={park.fullName}
+            alt={images[imageIndex]?.altText ?? park.fullName}
             className="w-full h-full"
             fallbackLabel={park.fullName}
           />

@@ -187,10 +187,11 @@ const ParkInfo = () => {
           <FadeImage
             key={currentImageIndex}
             src={park.images[currentImageIndex].url}
-            alt={park.fullName}
+            alt={park.images[currentImageIndex].altText ?? park.fullName}
             className="w-full h-full"
             imgClassName="shadow-lg"
             fallbackLabel={park.fullName}
+            priority
           />
           {/* Left Arrow */}
           <button

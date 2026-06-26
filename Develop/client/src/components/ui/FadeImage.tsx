@@ -7,6 +7,10 @@ interface FadeImageProps {
   className?: string;
   imgClassName?: string;
   fallbackLabel?: string;
+  loading?: 'lazy' | 'eager';
+  priority?: boolean;
+  width?: number;
+  height?: number;
 }
 
 export default function FadeImage({
@@ -15,6 +19,10 @@ export default function FadeImage({
   className = '',
   imgClassName = '',
   fallbackLabel,
+  loading,
+  priority = false,
+  width,
+  height,
 }: FadeImageProps) {
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(!src);
@@ -36,6 +44,11 @@ export default function FadeImage({
       <img
         src={src}
         alt={alt}
+        loading={priority ? 'eager' : (loading ?? 'lazy')}
+        decoding="async"
+        fetchPriority={priority ? 'high' : undefined}
+        width={width}
+        height={height}
         onLoad={() => setLoaded(true)}
         onError={() => setError(true)}
         className={`w-full h-full object-cover transition-opacity duration-500 ${loaded ? 'opacity-100' : 'opacity-0'} ${imgClassName}`}

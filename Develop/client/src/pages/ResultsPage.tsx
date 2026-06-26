@@ -15,7 +15,7 @@ interface Park {
   states?: string;
   designation?: string;
   activities?: { id: string; name: string }[];
-  images?: { url: string }[];
+  images?: { url: string; altText?: string }[];
   source?: string;
   url?: string;
 }
@@ -249,7 +249,7 @@ const ResultsPage = () => {
             <p className="text-center text-gray-500">No parks found.</p>
           ) : (
             <div className="flex flex-col gap-3">
-              {parks.map((park) => {
+              {parks.map((park, parkIndex) => {
                 const images            = park.images || [];
                 const currentImageIndex = imageIndexes[park.id] || 0;
                 const currentImage      = images[currentImageIndex];
@@ -278,13 +278,14 @@ const ResultsPage = () => {
                         <FadeImage
                           key={`${park.id}-${currentImageIndex}`}
                           src={currentImage?.url ?? ''}
-                          alt={`Image of ${park.fullName}`}
+                          alt={currentImage?.altText ?? `Image of ${park.fullName}`}
                           className="w-full h-full"
                           imgClassName={
                             slideDirections[park.id] === 'left'  ? 'animate-slide-from-right' :
                             slideDirections[park.id] === 'right' ? 'animate-slide-from-left'  : ''
                           }
                           fallbackLabel={park.fullName}
+                          priority={parkIndex === 0}
                         />
                       </Link>
                       {images.length > 1 && (

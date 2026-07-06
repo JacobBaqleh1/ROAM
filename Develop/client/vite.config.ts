@@ -21,7 +21,6 @@ export default defineConfig({
       output: {
         manualChunks(id) {
           if (id.includes('node_modules')) {
-            if (id.includes('@apollo/client') || id.includes('/graphql/')) return 'apollo';
             if (id.includes('react-router') || id.includes('@remix-run/router')) return 'router';
             if (id.includes('react-dom') || id.includes('/react/')) return 'react-vendor';
           }

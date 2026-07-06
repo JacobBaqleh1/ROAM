@@ -1,12 +1,13 @@
 import { lazy, Suspense, type ReactNode } from 'react';
 import ReactDOM from 'react-dom/client';
+import { ApolloProvider } from '@apollo/client';
 import { createBrowserRouter, Link, RouterProvider } from 'react-router-dom';
 
 import { AuthProvider } from './utils/useAuth.js';
+import { apolloClient } from './utils/apolloClient.js';
 import App from './App.jsx';
 import SearchParks from './pages/Home.js';
 
-const ApolloLayout = lazy(() => import('./layouts/ApolloLayout.js'));
 const SavedParks = lazy(() => import('./pages/SavedParks.js'));
 const ParkInfo = lazy(() => import('./pages/ParkInfo.js'));
 const MyReviews = lazy(() => import('./pages/MyReviews.js'));
@@ -61,53 +62,44 @@ const router = createBrowserRouter([
         ),
       },
       {
+        path: '/saved',
         element: (
           <LazyPage>
-            <ApolloLayout />
+            <SavedParks />
           </LazyPage>
         ),
-        children: [
-          {
-            path: '/saved',
-            element: (
-              <LazyPage>
-                <SavedParks />
-              </LazyPage>
-            ),
-          },
-          {
-            path: '/park/:id',
-            element: (
-              <LazyPage>
-                <ParkInfo />
-              </LazyPage>
-            ),
-          },
-          {
-            path: '/my-reviews',
-            element: (
-              <LazyPage>
-                <MyReviews />
-              </LazyPage>
-            ),
-          },
-          {
-            path: '/login',
-            element: (
-              <LazyPage>
-                <Login />
-              </LazyPage>
-            ),
-          },
-          {
-            path: '/community',
-            element: (
-              <LazyPage>
-                <Community />
-              </LazyPage>
-            ),
-          },
-        ],
+      },
+      {
+        path: '/park/:id',
+        element: (
+          <LazyPage>
+            <ParkInfo />
+          </LazyPage>
+        ),
+      },
+      {
+        path: '/my-reviews',
+        element: (
+          <LazyPage>
+            <MyReviews />
+          </LazyPage>
+        ),
+      },
+      {
+        path: '/login',
+        element: (
+          <LazyPage>
+            <Login />
+          </LazyPage>
+        ),
+      },
+      {
+        path: '/community',
+        element: (
+          <LazyPage>
+            <Community />
+          </LazyPage>
+        ),
       },
     ],
   },
@@ -115,6 +107,8 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <AuthProvider>
-    <RouterProvider router={router} />
+    <ApolloProvider client={apolloClient}>
+      <RouterProvider router={router} />
+    </ApolloProvider>
   </AuthProvider>
 );

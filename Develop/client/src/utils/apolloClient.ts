@@ -1,5 +1,4 @@
-import { Outlet } from 'react-router-dom';
-import { ApolloClient, ApolloProvider, createHttpLink, InMemoryCache } from '@apollo/client';
+import { ApolloClient, createHttpLink, InMemoryCache } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 
 const httpLink = createHttpLink({
@@ -16,15 +15,7 @@ const authLink = setContext((_, { headers }) => {
   };
 });
 
-const client = new ApolloClient({
+export const apolloClient = new ApolloClient({
   link: authLink.concat(httpLink),
   cache: new InMemoryCache(),
 });
-
-export default function ApolloLayout() {
-  return (
-    <ApolloProvider client={client}>
-      <Outlet />
-    </ApolloProvider>
-  );
-}

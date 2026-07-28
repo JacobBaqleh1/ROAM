@@ -1,31 +1,66 @@
 import { useMutation, useQuery } from '@apollo/client';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useEffect, useState, useRef } from 'react';
 import { fetchParkById } from '../utils/API';
 import FadeImage from '../components/ui/FadeImage';
+import Button from '../components/ui/Button';
 import { QUERY_ME, QUERY_PARK_REVIEWS } from '../utils/queries';
 import { SAVE_PARK } from '../utils/mutations';
 import LeaveReviewForm from '../components/LeaveReviewForm';
 import Auth from '../utils/auth.js';
+import type { GetParkReviewsData } from '../models/graphql';
 
-import { ArrowLeft, ArrowRight } from 'lucide-react'; // Optional: For nicer arrows
-import saveSvg from "../assets/save-svgrepo-com.svg";
+import {
+  ChevronLeft,
+  ChevronRight,
+  ArrowLeft,
+  MapPin,
+  Globe,
+  Phone,
+  Mail,
+  Bookmark,
+  BookmarkCheck,
+  Star,
+  PenLine,
+  RotateCw,
+  MountainSnow,
+} from 'lucide-react';
+
+const formatDate = (timestamp: string) => {
+  if (!timestamp) return '';
+  return new Date(parseInt(timestamp)).toLocaleDateString(undefined, {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  });
+};
+
+function StarRow({ rating, size = 14 }: { rating: number; size?: number }) {
+  const filled = Math.round(rating);
+  return (
+    <span className="inline-flex items-center gap-0.5" aria-label={`${rating} out of 5 stars`}>
+      {Array.from({ length: 5 }).map((_, i) => (
+        <Star
+          key={i}
+          size={size}
+          className={i < filled ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}
+        />
+      ))}
+    </span>
+  );
+}
 
 const ParkInfo = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
+
   const [park, setPark] = useState<any>(null);
+  const [parkFailed, setParkFailed] = useState(false);
+  const [reloadKey, setReloadKey] = useState(0);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [signInPrompt, setSignInPrompt] = useState<'save' | 'review' | null>(null);
-
-  const requireAuth = (target: 'save' | 'review', action: () => void) => {
-    if (!Auth.loggedIn()) {
-      setSignInPrompt(target);
-      setTimeout(() => setSignInPrompt(null), 4000);
-      return;
-    }
-    action();
-  };
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [saveFailed, setSaveFailed] = useState(false);
   const reviewFormRef = useRef<HTMLDivElement>(null);
 
   const [saveParkMutation] = useMutation(SAVE_PARK, {
@@ -36,34 +71,68 @@ const ParkInfo = () => {
     skip: !Auth.loggedIn(),
   });
 
-  const { loading, error, data } = useQuery(QUERY_PARK_REVIEWS, {
+  const {
+    loading: reviewsLoading,
+    error: reviewsError,
+    data: reviewsData,
+    refetch: refetchReviews,
+  } = useQuery<GetParkReviewsData>(QUERY_PARK_REVIEWS, {
     variables: { parkId: id },
+    skip: !id,
+    notifyOnNetworkStatusChange: true,
   });
 
-
+  const reviews = reviewsData?.getParkReviews ?? [];
+  const averageRating = reviews.length
+    ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length
+    : 0;
 
   useEffect(() => {
     if (!id) return;
+    let cancelled = false;
+
     setPark(null);
+    setParkFailed(false);
+
     const getParkDetails = async () => {
-      const data = await fetchParkById(id);
-      setPark(data);
-      setCurrentImageIndex(0); // Reset index when loading a new park
-      console.log(data);
+      try {
+        const data = await fetchParkById(id);
+        if (cancelled) return;
+        if (!data) {
+          setParkFailed(true);
+          return;
+        }
+        setPark(data);
+        setCurrentImageIndex(0);
+      } catch {
+        if (!cancelled) setParkFailed(true);
+      }
     };
     getParkDetails();
-  }, [id]);
+
+    return () => {
+      cancelled = true;
+    };
+  }, [id, reloadKey]);
+
+  const requireAuth = (target: 'save' | 'review', action: () => void) => {
+    if (!Auth.loggedIn()) {
+      setSignInPrompt(target);
+      setTimeout(() => setSignInPrompt(null), 4000);
+      return;
+    }
+    action();
+  };
 
   const handleScrollToReviewForm = () => {
     setShowReviewForm(true);
     setTimeout(() => {
-      reviewFormRef.current?.scrollIntoView({
-        behavior: 'smooth', block: 'start'
-      });
+      reviewFormRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 0);
-  }
+  };
 
   const handleSavePark = async (park: any) => {
+    setSaveFailed(false);
     try {
       await saveParkMutation({
         variables: {
@@ -82,276 +151,354 @@ const ParkInfo = () => {
           },
         },
       });
-    } catch (err) {
-      console.error('Error saving park:', err);
+    } catch {
+      setSaveFailed(true);
     }
-  };
-
-  const formatDate = (timestamp: any) => {
-    if (!timestamp) return "Invalid date";
-    const date = new Date(parseInt(timestamp));
-    return date.toLocaleDateString();
-  };
-
-  const renderRating = (rating: number) => {
-    if (!rating || rating < 1 || rating > 5) return "No rating available";
-    return "★".repeat(rating) + "☆".repeat(5 - rating);
   };
 
   const isParkSaved = !!(park && userData?.me?.savedParks?.some(
     (savedPark: any) => savedPark.parkId === park.id
   ));
 
+  const images: any[] = park?.images ?? [];
+
   const handlePrevImage = () => {
-    setCurrentImageIndex((prevIndex) =>
-      prevIndex === 0 ? park.images.length - 1 : prevIndex - 1
-    );
+    setCurrentImageIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
   };
 
   const handleNextImage = () => {
-    setCurrentImageIndex((prevIndex) =>
-      prevIndex === park.images.length - 1 ? 0 : prevIndex + 1
-    );
+    setCurrentImageIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
   };
 
-  if (!park) return (
-    <div className="max-w-6xl mx-auto animate-pulse">
-      {/* Hero image */}
-      <div className="w-full h-[500px] bg-gray-200" />
-
-      <div className="px-6 mt-4 space-y-4">
-        {/* Title */}
-        <div className="h-9 bg-gray-200 rounded-lg w-2/3" />
-        <div className="h-5 bg-gray-200 rounded w-24" />
-        <hr className="border-gray-200" />
-
-        {/* Save button */}
-        <div className="flex justify-center">
-          <div className="h-10 w-32 bg-gray-200 rounded-lg" />
+  if (parkFailed) {
+    return (
+      <div className="max-w-lg mx-auto px-6 py-24 text-center">
+        <div className="w-16 h-16 mx-auto rounded-full bg-forest-50 flex items-center justify-center">
+          <MountainSnow className="text-forest-500" size={28} />
         </div>
-        <hr className="border-gray-200" />
-
-        {/* Description */}
-        <div className="h-6 bg-gray-200 rounded w-40 mx-auto" />
-        <div className="space-y-2 mt-2">
-          <div className="h-4 bg-gray-200 rounded w-full" />
-          <div className="h-4 bg-gray-200 rounded w-full" />
-          <div className="h-4 bg-gray-200 rounded w-5/6" />
-          <div className="h-4 bg-gray-200 rounded w-4/6" />
+        <h1 className="mt-5 text-2xl font-bold text-gray-800">We couldn’t load this park</h1>
+        <p className="mt-2 text-gray-500">
+          The park directory didn’t respond. Check your connection and try again.
+        </p>
+        <div className="mt-6 flex gap-3 justify-center">
+          <Button variant="primary" size="md" onClick={() => setReloadKey((k) => k + 1)}>
+            <RotateCw size={16} /> Try again
+          </Button>
+          <Button variant="outline" size="md" onClick={() => navigate('/')}>
+            Back to search
+          </Button>
         </div>
-        <hr className="border-gray-200" />
-
-        {/* Contact card */}
-        <div className="bg-gray-100 rounded-lg p-4 space-y-3">
-          <div className="h-6 bg-gray-200 rounded w-28 mx-auto" />
-          <div className="h-4 bg-gray-200 rounded w-48" />
-          <div className="h-4 bg-gray-200 rounded w-36" />
-          <div className="h-4 bg-gray-200 rounded w-52" />
-        </div>
-        <hr className="border-gray-200" />
-
-        {/* Reviews header */}
-        <div className="flex justify-between items-center p-4 bg-gray-100 rounded-lg">
-          <div className="h-6 bg-gray-200 rounded w-24" />
-          <div className="h-8 bg-gray-200 rounded-lg w-32" />
-        </div>
-
-        {/* Review cards */}
-        {[1, 2].map(i => (
-          <div key={i} className="border border-gray-200 rounded-xl p-5 space-y-3">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full bg-gray-200 flex-shrink-0" />
-              <div className="space-y-2 flex-1">
-                <div className="h-4 bg-gray-200 rounded w-32" />
-                <div className="h-3 bg-gray-200 rounded w-20" />
-              </div>
-            </div>
-            <div className="h-4 bg-gray-200 rounded w-full" />
-            <div className="h-4 bg-gray-200 rounded w-3/4" />
-            <div className="h-4 bg-gray-200 rounded w-16" />
-          </div>
-        ))}
-        <div className="pb-8" />
       </div>
-    </div>
-  );
-  if (error) console.error("GraphQL error:", error);
+    );
+  }
+
+  if (!park) {
+    return (
+      <div className="animate-pulse">
+        <div className="w-full h-[45vh] min-h-[320px] bg-gray-200" />
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 grid gap-8 lg:grid-cols-[1fr_320px] items-start">
+          <div className="space-y-4 lg:order-1">
+            <div className="h-7 bg-gray-200 rounded w-40" />
+            <div className="space-y-2">
+              <div className="h-4 bg-gray-200 rounded w-full" />
+              <div className="h-4 bg-gray-200 rounded w-full" />
+              <div className="h-4 bg-gray-200 rounded w-5/6" />
+              <div className="h-4 bg-gray-200 rounded w-3/5" />
+            </div>
+            <div className="h-40 bg-gray-100 rounded-xl" />
+            <div className="h-40 bg-gray-100 rounded-xl" />
+          </div>
+          <div className="order-first lg:order-2 space-y-3">
+            <div className="h-11 bg-gray-200 rounded-xl" />
+            <div className="h-11 bg-gray-200 rounded-xl" />
+            <div className="h-44 bg-gray-100 rounded-xl" />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="max-w-6xl mx-auto">
-
-
-      {/* Image Carousel */}
-      {park.images?.length > 0 && (
-        <div className="relative w-full h-[500px] ">
+    <div className="pb-16">
+      {/* ── Hero ──────────────────────────────────────────────── */}
+      <section className="relative w-full h-[55vh] min-h-[340px] max-h-[560px] bg-gray-900 overflow-hidden">
+        <div className="absolute inset-0">
           <FadeImage
             key={currentImageIndex}
-            src={park.images[currentImageIndex].url}
-            alt={park.images[currentImageIndex].altText ?? park.fullName}
+            src={images[currentImageIndex]?.url ?? ''}
+            alt={images[currentImageIndex]?.altText ?? park.fullName}
             className="w-full h-full"
-            imgClassName="shadow-lg"
             fallbackLabel={park.fullName}
             priority
           />
-          {/* Left Arrow */}
-          <button
-            onClick={handlePrevImage}
-            className="absolute top-1/2 left-4 transform -translate-y-1/2 bg-white/70 hover:bg-white p-2 rounded-full shadow-md"
-          >
-            <ArrowLeft size={24} />
-          </button>
-          {/* Right Arrow */}
-          <button
-            onClick={handleNextImage}
-            className="absolute top-1/2 right-4 transform -translate-y-1/2 bg-white/70 hover:bg-white p-2 rounded-full shadow-md"
-          >
-            <ArrowRight size={24} />
-          </button>
-          {/* Image Counter */}
-          <div className="absolute bottom-4 right-4 bg-white/80 px-3 py-1 rounded-full text-sm">
-            {currentImageIndex + 1} / {park.images.length}
-          </div>
         </div>
-      )}
-      <div className='px-6 mt-4'>
-        {/* Park Info */}
-        <h1 className="text-4xl font-extrabold text-gray-800">{park.fullName}</h1>
-        <p className="text-lg text-gray-600 mt-2">{park.states}</p>
-        <hr className="my-4 border-t border-gray-300" />
-        {/* Buttons */}
-        <div className="flex gap-4 mt-6 justify-center">
-          <button
-            onClick={() => requireAuth('save', () => handleSavePark(park))}
-            disabled={isParkSaved}
-            className={`py-2 px-4 rounded-lg transition ${isParkSaved
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-blue-600 hover:bg-blue-700 text-white"
-              }`}
-          >
-            <div className='flex justify-center align-middle '>
-              <img src={saveSvg} alt="save icon" className='w-8 h-8' />
-              <p className='content-center'>{isParkSaved ? "Saved!" : "Save Park"}</p>
-            </div>
-          </button>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-black/40 pointer-events-none" />
 
-        </div>
-        {signInPrompt === 'save' && (
-          <div className="mt-3 px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-center text-gray-600">
-            <Link to="/login" className="text-forest-500 font-semibold hover:underline">Sign in</Link>
-            {' '}to save parks to your profile.
-          </div>
+        <Link
+          to="/"
+          className="absolute top-4 left-4 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/40 hover:bg-black/60 text-white text-sm backdrop-blur-sm transition"
+        >
+          <ArrowLeft size={16} /> Back
+        </Link>
+
+        {images.length > 1 && (
+          <>
+            <button
+              onClick={handlePrevImage}
+              aria-label="Previous photo"
+              className="absolute top-1/2 left-3 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-full bg-black/35 hover:bg-black/60 text-white backdrop-blur-sm transition"
+            >
+              <ChevronLeft size={22} />
+            </button>
+            <button
+              onClick={handleNextImage}
+              aria-label="Next photo"
+              className="absolute top-1/2 right-3 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-full bg-black/35 hover:bg-black/60 text-white backdrop-blur-sm transition"
+            >
+              <ChevronRight size={22} />
+            </button>
+            <div className="absolute top-4 right-4 flex gap-1.5">
+              {images.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setCurrentImageIndex(i)}
+                  aria-label={`Photo ${i + 1}`}
+                  className={`h-1.5 rounded-full transition-all ${
+                    i === currentImageIndex ? 'w-6 bg-white' : 'w-1.5 bg-white/50 hover:bg-white/80'
+                  }`}
+                />
+              ))}
+            </div>
+          </>
         )}
-        <hr className="my-4 border-t border-gray-300" />
-        <div className='grid grid-cols-1  mt-6'>
-          <div className=' '>
-            <h2 className='text-2xl underline text-center font-semibold '>Description</h2>
-            <p className="mt-2 text-gray-700">{park.description}</p>
+
+        <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-8">
+          <div className="max-w-6xl mx-auto">
+            {park.designation && (
+              <span className="inline-block text-xs font-semibold uppercase tracking-wide bg-forest-500 text-white px-2.5 py-1 rounded-full">
+                {park.designation}
+              </span>
+            )}
+            <h1 className="mt-3 text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white text-shadow leading-tight">
+              {park.fullName}
+            </h1>
+            <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-white/90 text-sm">
+              {park.states && (
+                <span className="inline-flex items-center gap-1.5">
+                  <MapPin size={15} />
+                  {park.states.split(',').join(' · ')}
+                </span>
+              )}
+              {reviews.length > 0 && (
+                <span className="inline-flex items-center gap-1.5">
+                  <StarRow rating={averageRating} />
+                  <span className="font-semibold">{averageRating.toFixed(1)}</span>
+                  <span className="text-white/70">
+                    ({reviews.length} {reviews.length === 1 ? 'review' : 'reviews'})
+                  </span>
+                </span>
+              )}
+            </div>
           </div>
-          <hr className="my-4 border-t border-gray-300 block" />
-          <div className="bg-white shadow-md rounded-lg p-4 mt-6">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4 text-center underline">Contact</h2>
-            <div className="space-y-3 text-gray-700 text-sm sm:text-base">
-              <a
-                href={park.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 text-blue-600 hover:text-blue-800 transition-colors"
+        </div>
+      </section>
+
+      {/* ── Body ──────────────────────────────────────────────── */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 grid gap-8 lg:grid-cols-[1fr_320px] items-start">
+
+        {/* Main column */}
+        <div className="space-y-8 lg:order-1 min-w-0">
+          <section>
+            <h2 className="text-xl font-bold text-gray-800">About this park</h2>
+            <p className="mt-3 text-gray-600 leading-relaxed">{park.description}</p>
+          </section>
+
+          {park.activities?.length > 0 && (
+            <section>
+              <h2 className="text-xl font-bold text-gray-800">Things to do</h2>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {park.activities.map((activity: any) => (
+                  <span
+                    key={activity.id}
+                    className="text-sm bg-sage-100 text-forest-600 px-3 py-1 rounded-full"
+                  >
+                    {activity.name}
+                  </span>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* Reviews */}
+          <section>
+            <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-gray-200">
+              <h2 className="text-xl font-bold text-gray-800">
+                Reviews
+                {reviews.length > 0 && (
+                  <span className="ml-2 text-base font-normal text-gray-400">{reviews.length}</span>
+                )}
+              </h2>
+              {reviews.length > 0 && (
+                <div className="flex items-center gap-2 text-sm text-gray-500">
+                  <StarRow rating={averageRating} />
+                  <span className="font-semibold text-gray-700">{averageRating.toFixed(1)}</span>
+                  out of 5
+                </div>
+              )}
+            </div>
+
+            {showReviewForm && (
+              <div ref={reviewFormRef} className="scroll-mt-6">
+                <LeaveReviewForm
+                  parkFullName={park.fullName}
+                  parkId={id ?? ''}
+                  parkImage={images[0]?.url || ''}
+                  onClose={() => setShowReviewForm(false)}
+                />
+              </div>
+            )}
+
+            {reviewsLoading && (
+              <div className="mt-4 space-y-4 animate-pulse">
+                {[1, 2].map((i) => (
+                  <div key={i} className="rounded-xl border border-gray-200 p-5 space-y-3">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-gray-200" />
+                      <div className="space-y-2">
+                        <div className="h-3.5 w-28 bg-gray-200 rounded" />
+                        <div className="h-3 w-20 bg-gray-200 rounded" />
+                      </div>
+                    </div>
+                    <div className="h-3.5 bg-gray-200 rounded w-full" />
+                    <div className="h-3.5 bg-gray-200 rounded w-4/6" />
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {!reviewsLoading && reviewsError && (
+              <div className="mt-4 rounded-xl border border-gray-200 bg-gray-50 p-6 text-center">
+                <p className="text-gray-700 font-medium">Reviews aren’t available right now</p>
+                <p className="mt-1 text-sm text-gray-500">
+                  Everything else about {park.fullName} is still here.
+                </p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="mt-4"
+                  onClick={() => refetchReviews().catch(() => {})}
+                >
+                  <RotateCw size={14} /> Try again
+                </Button>
+              </div>
+            )}
+
+            {!reviewsLoading && !reviewsError && reviews.length === 0 && (
+              <div className="mt-4 rounded-xl border border-dashed border-gray-300 p-8 text-center">
+                <p className="text-gray-700 font-medium">No reviews yet</p>
+                <p className="mt-1 text-sm text-gray-500">
+                  Be the first to share what this park is like.
+                </p>
+              </div>
+            )}
+
+            <div className="mt-4 space-y-4">
+              {reviews.map((review) => (
+                <article
+                  key={review._id}
+                  className="rounded-xl border border-gray-200 bg-white p-5 shadow-card"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-forest-50 text-forest-600 font-semibold flex items-center justify-center flex-shrink-0">
+                      {review.username?.[0]?.toUpperCase() ?? '?'}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="font-semibold text-gray-800 truncate">{review.username}</p>
+                      <p className="text-xs text-gray-400">{formatDate(review.createdAt)}</p>
+                    </div>
+                    <div className="ml-auto">
+                      <StarRow rating={review.rating} />
+                    </div>
+                  </div>
+                  <p className="mt-3 text-gray-600 leading-relaxed">
+                    {review.comment || 'No review content available.'}
+                  </p>
+                </article>
+              ))}
+            </div>
+          </section>
+        </div>
+
+        {/* Sidebar */}
+        <aside className="order-first lg:order-2 lg:sticky lg:top-6 space-y-4">
+          <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-card space-y-3">
+            <Button
+              variant={isParkSaved ? 'outline' : 'primary'}
+              size="lg"
+              className="w-full"
+              disabled={isParkSaved}
+              onClick={() => requireAuth('save', () => handleSavePark(park))}
+            >
+              {isParkSaved ? <BookmarkCheck size={18} /> : <Bookmark size={18} />}
+              {isParkSaved ? 'Saved to your list' : 'Save park'}
+            </Button>
+
+            {!showReviewForm && (
+              <Button
+                variant="outline"
+                size="lg"
+                className="w-full"
+                onClick={() => requireAuth('review', handleScrollToReviewForm)}
               >
-                <span role="img" aria-label="website">🌐</span>
-                Official Park Website
-              </a>
-              {park.contacts.phoneNumbers?.[0]?.phoneNumber && (
-                <p className="flex items-center gap-2">
-                  <span role="img" aria-label="phone">📱</span>
+                <PenLine size={18} /> Leave a review
+              </Button>
+            )}
+
+            {signInPrompt && (
+              <p className="text-sm text-center text-gray-600">
+                <Link to="/login" className="text-forest-500 font-semibold hover:underline">
+                  Sign in
+                </Link>{' '}
+                {signInPrompt === 'save' ? 'to save parks to your profile.' : 'to leave a review.'}
+              </p>
+            )}
+
+            {saveFailed && (
+              <p className="text-sm text-center text-gray-600">
+                Couldn’t save right now — please try again in a moment.
+              </p>
+            )}
+          </div>
+
+          <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-card">
+            <h2 className="text-sm font-bold uppercase tracking-wide text-gray-400">Contact</h2>
+            <div className="mt-3 space-y-3 text-sm">
+              {park.url && (
+                <a
+                  href={park.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2.5 text-forest-600 hover:underline"
+                >
+                  <Globe size={16} className="flex-shrink-0" />
+                  Official park website
+                </a>
+              )}
+              {park.contacts?.phoneNumbers?.[0]?.phoneNumber && (
+                <p className="flex items-center gap-2.5 text-gray-600">
+                  <Phone size={16} className="flex-shrink-0 text-gray-400" />
                   {park.contacts.phoneNumbers[0].phoneNumber}
                 </p>
               )}
-              {park.contacts.emailAddresses?.[0]?.emailAddress && (
-                <p className="flex items-center gap-2">
-                  <span role="img" aria-label="email">📩</span>
+              {park.contacts?.emailAddresses?.[0]?.emailAddress && (
+                <p className="flex items-center gap-2.5 text-gray-600 break-all">
+                  <Mail size={16} className="flex-shrink-0 text-gray-400" />
                   {park.contacts.emailAddresses[0].emailAddress}
                 </p>
               )}
             </div>
           </div>
-        </div>
-        <hr className="my-4 border-t border-gray-300" />
-
-
-
-        {/* Review Form */}
-        {showReviewForm && (
-          <div ref={reviewFormRef} className="mt-6">
-            <LeaveReviewForm
-              parkFullName={park.fullName}
-              parkId={id ?? ''}
-              parkImage={park.images?.[0]?.url || ''}
-              onClose={() => setShowReviewForm(false)}
-            />
-          </div>
-        )}
-
-        {/* Reviews Section */}
-        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-6 mb-4 p-4 bg-white shadow-md rounded-lg">
-          <h2 className="text-2xl font-semibold text-gray-800">Reviews</h2>
-
-          {!showReviewForm && (
-            <button
-              onClick={() => requireAuth('review', handleScrollToReviewForm)}
-              className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 hover:bg-gray-100 transition"
-            >
-              <svg
-                stroke="currentColor"
-                fill="currentColor"
-                strokeWidth="0"
-                viewBox="0 0 1024 1024"
-                height="1.2em"
-                width="1.2em"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path d="M908.1 353.1l-253.9-36.9L540.7 86.1c-3.1-6.3-8.2-11.4-14.5-14.5-15.8-7.8-35-1.3-42.9 14.5L369.8 316.2l-253.9 36.9c-7 1-13.4 4.3-18.3 9.3a32.05 32.05 0 0 0 .6 45.3l183.7 179.1-43.4 252.9a31.95 31.95 0 0 0 46.4 33.7L512 754l227.1 119.4c6.2 3.3 13.4 4.4 20.3 3.2 17.4-3 29.1-19.5 26.1-36.9l-43.4-252.9 183.7-179.1c5-4.9 8.3-11.3 9.3-18.3 2.7-17.5-9.5-33.7-27-36.3zM664.8 561.6l36.1 210.3L512 672.7 323.1 772l36.1-210.3-152.8-149L417.6 382 512 190.7 606.4 382l211.2 30.7-152.8 148.9z"></path>
-              </svg>
-              Leave a Review
-            </button>
-          )}
-        </div>
-        {signInPrompt === 'review' && (
-          <div className="mt-3 px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-center text-gray-600">
-            <Link to="/login" className="text-forest-500 font-semibold hover:underline">Sign in</Link>
-            {' '}to leave a review.
-          </div>
-        )}
-
-        {loading && <p>Loading reviews...</p>}
-        {error && <p className="text-red-500">Error fetching reviews: {error.message}</p>}
-        {data?.getParkReviews?.length === 0 && <p className='mt-2 mb-6'>No reviews yet. Be the first to leave one!</p>}
-
-        {/* Reviews List */}
-        <div className="space-y-6 mt-4">
-          {data?.getParkReviews?.map((review: any) => (
-            <div
-              key={review._id}
-              className="border border-gray-300 rounded-xl shadow-md p-5 bg-white"
-            >
-              {/* Reviewer Info */}
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center text-gray-500">
-                  {review.username[0].toUpperCase()}
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold">{review.username}</h3>
-                  <p className="text-sm text-gray-500">{formatDate(review.createdAt)}</p>
-                </div>
-              </div>
-
-              {/* Review Text */}
-              <p className="text-gray-800 mb-3">{review.comment || "No review content available."}</p>
-
-              {/* Rating */}
-              <p className="text-yellow-500 text-xl">{renderRating(review.rating)}</p>
-            </div>
-          ))}
-        </div>
+        </aside>
       </div>
     </div>
   );

@@ -28,6 +28,8 @@ const startApolloServer = async () => {
 
   const app = express();
   const allowedOrigins = [
+    'https://roamparks.app',
+    'https://www.roamparks.app',
     'https://roam-sigma.vercel.app',
     'http://localhost:8081',
     'http://localhost:3000',
@@ -40,7 +42,8 @@ const startApolloServer = async () => {
         if (!origin) return callback(null, true);
         if (process.env.NODE_ENV !== 'production') return callback(null, true);
         if (allowedOrigins.includes(origin)) return callback(null, true);
-        callback(new Error(`CORS: origin ${origin} not allowed`));
+        // Deny without throwing — throwing can leave preflight without CORS headers
+        callback(null, false);
       },
       methods: ['GET', 'POST', 'OPTIONS'],
       allowedHeaders: ['Authorization', 'Content-Type'],
